@@ -1,0 +1,32 @@
+{
+  "name": "chart_js",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "new": "npm run start -- --reset-cache",
+    "link": "react-native link",
+    "test": "jest"
+  },
+  "dependencies": {
+    "immutability-helper": "^2.7.0",
+    "lodash": "^4.17.10",
+    "react": "16.3.1",
+    "react-addons-update": "^15.6.2",
+    "react-native": "0.55.4",
+    "react-native-charts-wrapper": "^0.4.3",
+    "react-navigation": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-jest": "23.0.1",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "23.1.0",
+    "eslint": "^4.19.1",
+    "react-test-renderer": "16.3.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
