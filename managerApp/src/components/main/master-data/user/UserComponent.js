@@ -1,30 +1,18 @@
-import React, { Component,PureComponent } from "react";
-import { FlatList, StyleSheet, View ,RefreshControl,ScrollView} from "react-native";
+import React, { Component } from "react";
+import { FlatList,View ,RefreshControl} from "react-native";
 import {
   Container,
-  Text,
-  Content,
-  Icon,
-  Left,
-  Card,
-  CardItem,
-  CardSwiper,
-  Right,
-  Badge,
-  CheckBox,
-  ListItem,
-  Button,
-  Body,
   Spinner,
-  List,
+  Fab,
+  Icon,
 } from "native-base";
-import HeaderComponent from "../HeaderComponent";
-import { Color, ColorsChart } from "../../../common/Color";
-import { sideMenuStyles } from "../../../common/Styles";
-import { APIREQUEST } from "../../../services/ApiRequest";
-import { AuthService } from "../../../services/AuthService";
-import { Notifiy } from "../../../common/Notify";
-import ItemUserComponent from "../item-flatlist/ItemUserComponent";
+import { APIREQUEST } from "../../../../services/ApiRequest";
+
+import ItemUserComponent from "./ItemUserComponent";
+import { ColorsChart } from "../../../../common/Color";
+import HeaderComponent from "../../HeaderComponent";
+
+
 export default class UserComponent extends Component {
   constructor(props) {
     super(props);
@@ -135,6 +123,14 @@ export default class UserComponent extends Component {
           onEndReached={ (info)=>this.handleLoadMore(info)}
           onEndReachedThreshold={0.2}
         />
+        <Fab 
+            direction="up"
+            containerStyle={{ }}
+            style={{ backgroundColor: '#5067FF' }}
+            position="bottomRight"
+            onPress={() => alert('ok')}>
+            <Icon name="add" />
+        </Fab>
       </Container>
         
     );

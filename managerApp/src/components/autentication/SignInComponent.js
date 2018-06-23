@@ -20,7 +20,6 @@ class SignInComponent extends Component {
       isLoading: false,
       firstLoading: true,
     }; 
-  
   }
   componentWillMount(){  
     ApiService.timeoutRequest(AsyncStorage.getItem(keyStore),5000).then(data => {

@@ -9,7 +9,7 @@ class MainComponent extends Component {
     }
     render() {
         return (  
-           <RouterMenu/>               
+           <RouterMenu screenProps = {this.props}/>               
         );
     }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Image, AsyncStorage } from "react-native";
-import { withNavigation, DrawerActions } from 'react-navigation';
+import { NavigationActions, DrawerActions } from 'react-navigation';
 import {
   Text,
   Container,
@@ -76,11 +76,13 @@ export default class SideMenuComponent extends Component {
     Global.userInfo = null;
     AsyncStorage.clear().then(() => {
          this.props.navigation.navigate(SignInScreen);
+         //this.props.navigation.dispatch(NavigationActions.popToTop());
       }).catch(_ => {
     });
   }
   onChangeScreen(route) {
     const { navigate } = this.props.navigation;
+   //const { navigate }=  this.props.screenProps.navigation
     //Notifiy.success(JSON.stringify(this.props.navigation))
     if (route) {
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
@@ -144,9 +146,11 @@ class ItemMenuComponent extends Component {
   }
   onChangeScreen(route){
     const { navigate } = this.props.navigation;  
+    //const { navigate }=  this.props.screenProps.navigation
     if (route) {
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
       navigate(route);
+     // this.props.navigation.dispatch(NavigationActions.navigate(route));
     }
   }
   render(){

@@ -36,7 +36,7 @@ export default class App extends Component {
     
     return ( 
       <Root>
-        <RouterStack/> 
+        <RouterStack screenProps = {this.props}/> 
       </Root> 
     );
   }

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {View} from 'react-native'
-import { ColorsChart, Color } from '../../../common/Color';
-import { Button, ListItem, Badge, Body, Right,Text, Left, Thumbnail } from 'native-base';
-import Icon from 'react-native-vector-icons/Entypo';
+
+import { ColorsChart,  } from '../../../common/Color';
+import { Button, ListItem, Body, Right,Text, Left, Thumbnail } from 'native-base';
+
 export default class ItemAvatarComponent extends Component {
     render() {
         const btnActive = <Button success style={{ height: 20 }}>

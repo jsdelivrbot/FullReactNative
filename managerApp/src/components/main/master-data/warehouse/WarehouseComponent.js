@@ -1,33 +1,19 @@
-import React, { Component,PureComponent } from "react";
-import { FlatList, StyleSheet, View ,RefreshControl,ScrollView} from "react-native";
+import React, { Component } from "react";
+import { FlatList, View ,RefreshControl,} from "react-native";
 import {
   Container,
-  Text,
-  Content,
-  Icon,
-  Left,
-  Card,
-  CardItem,
-  CardSwiper,
-  Right,
-  Badge,
-  CheckBox,
-  ListItem,
-  Button,
-  Body,
   Spinner,
   List,
+  Fab,
+  Icon,
 } from "native-base";
-import HeaderComponent from "../HeaderComponent";
-import { Color, ColorsChart } from "../../../common/Color";
-import { sideMenuStyles } from "../../../common/Styles";
-import { APIREQUEST } from "../../../services/ApiRequest";
-import { AuthService } from "../../../services/AuthService";
-import { Notifiy } from "../../../common/Notify";
-import BaseComponent from "../../BaseComponent";
-import ItemAvatarComponent from "../item-flatlist/ItemAvatarComponent";
-import ItemWarehouseComponent from "../item-flatlist/ItemWarehouseComponent";
-import { ConfigWarehouseScreen } from "../../../common/ScreenName";
+import { APIREQUEST } from "../../../../services/ApiRequest";
+
+import { ConfigWarehouseScreen } from "../../../../common/ScreenName";
+import { ColorsChart } from "../../../../common/Color";
+import ItemWarehouseComponent from "./ItemWarehouseComponent";
+import HeaderComponent from "../../HeaderComponent";
+import BaseComponent from "../../../BaseComponent";
 export default class WarehouseComponent extends BaseComponent {
   constructor(props) {
     super(props);
@@ -140,8 +126,15 @@ export default class WarehouseComponent extends BaseComponent {
           onEndReached={ (info)=>this.handleLoadMore(info)}
           onEndReachedThreshold={0.2}
         />
-      </Container>
-        
+        <Fab 
+            direction="up"
+            containerStyle={{ }}
+            style={{ backgroundColor: '#5067FF' }}
+            position="bottomRight"
+            onPress={() => this.props.navigation.navigate(ConfigWarehouseScreen)}>
+            <Icon name="add" />
+        </Fab>
+      </Container>   
     );
   }
 }

@@ -25,37 +25,27 @@ import {
     Color
 } from './common/Color';
 import SideMenuComponent from './components/main/SideMenuComponent';
-import SystemMailComponent from './components/main/master-data/SystemMailComponent';
-import UserComponent from './components/main/master-data/UserComponent';
+import SystemMailComponent from './components/main/master-data/system-mail/SystemMailComponent';
+import UserComponent from './components/main/master-data/user/UserComponent';
 import DashboardComponent from './components/main/dashboard/DashboardComponent';
-import MasterDataComponent from './components/main/master-data/MasterDataComponent';
-import WarehouseComponent from './components/main/master-data/WarehouseComponent';
-import ConfigWarehouseComponent from './components/main/master-data/ConfigWarehouseComponent';
+import MasterDataComponent from './components/main/test-component/MasterDataComponent';
+import WarehouseComponent from './components/main/master-data/warehouse/WarehouseComponent';
+import ConfigWarehouseComponent from './components/main/master-data/warehouse/ConfigWarehouseComponent';
 import HeaderComponent from './components/main/HeaderComponent';
-import { styles } from './common/Styles';
-import { Icon } from 'native-base';
 export const WIDTH = Dimensions.get('screen').width / 100;
-
-
-
+export const optionHeaderHiden = {
+    headerTransparent: true,
+	headerLeft: null
+}
 const routes = {
     DashboardScreen: {
-        screen: DashboardComponent,
-        navigationOptions: {
-            title: 'Dashboard'
-        }
+        screen: DashboardComponent,    
     },
     MasterDataScreen: {
-        screen: MasterDataComponent,
-        navigationOptions: {
-            title: 'Master Data'
-        }
+        screen: MasterDataComponent,    
     },
     SystemMailScreen: {
-        screen: SystemMailComponent,
-        navigationOptions: {
-            title: 'System Mail'
-        }
+        screen: SystemMailComponent
     },
     SignInScreen: {
         screen: SignInComponent
@@ -83,7 +73,6 @@ const optionsDrawer = {
     },
 };
 
-
 export const RouterMenu = createDrawerNavigator(routes, optionsDrawer);
 
 const routerStack = {
@@ -98,37 +87,10 @@ const optionsStack = {
     initialRouteName: SignInScreen,
     navigationOptions: (props ) =>(
         {
-            header: <HeaderComponent {...props}/>,
+           // header: <HeaderComponent {...props}/>,
+             headerTransparent: true,
+	         headerLeft: null
         }
     )
 }
 export const RouterStack = createStackNavigator(routerStack,optionsStack)
-// export const RouterMenu = createDrawerNavigator({
-//     DashboardScreen: {
-//         screen: DashboardComponent,
-//         // navigationOptions: {
-//         //     drawerLabel: 'Dashboard'
-//         // }
-//     },
-//     MasterDataScreen: {
-//         screen: MasterDataComponent,
-//         navigationOptions: {
-//             drawerLabel: 'Master data',
-//             drawerIcon: () => (
-//             <Image
-//                 source={require('./assets/icons/home-icon.png')}
-//                 style={{width: 30, height: 30, borderRadius: 15}}
-//             />
-//             )
-//         }
-//     }
-// },{
-//     initialRouteName: DashboardScreen,
-//     drawerPosition: 'left',
-//     drawerWidth: width * 0.75,
-//     drawerBackgroundColor: Color.white,
-//     contentOptions: {
-//         inactiveTintColor: Color.smartlog,
-//         activeTintColor: Color.blue
-//     } 
-// })

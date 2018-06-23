@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {View} from 'react-native'
-import { ColorsChart, Color } from '../../../common/Color';
+import PropTypes from 'prop-types'
+import { ColorsChart, Color } from '../../../../common/Color';
 import { Button, ListItem, Badge, Body, Right,Text,Icon } from 'native-base';
 
 export default class ItemUserComponent extends Component {
@@ -43,4 +44,9 @@ export default class ItemUserComponent extends Component {
         </ListItem>
       );
     }
+  }
+  ItemUserComponent.defaultProps = {
+  }
+  ItemUserComponent.propTypes  = {
+    item: PropTypes.object
   }

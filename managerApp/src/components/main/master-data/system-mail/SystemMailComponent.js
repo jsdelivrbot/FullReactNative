@@ -1,16 +1,13 @@
-import React, { Component,PureComponent } from "react";
-import { FlatList, StyleSheet, View ,RefreshControl,ScrollView} from "react-native";
+import React, { Component } from "react";
+import { FlatList,RefreshControl,} from "react-native";
 import {
   Container,
   Spinner,
 } from "native-base";
-import HeaderComponent from "../HeaderComponent";
-import { Color, ColorsChart } from "../../../common/Color";
-import { sideMenuStyles } from "../../../common/Styles";
-import { APIREQUEST } from "../../../services/ApiRequest";
-import { AuthService } from "../../../services/AuthService";
-import { Notifiy } from "../../../common/Notify";
-import ItemWarehouseComponent from "../item-flatlist/ItemWarehouseComponent";
+import HeaderComponent from "../../HeaderComponent";
+import { Color, ColorsChart } from "../../../../common/Color";
+import ItemWarehouseComponent from "../warehouse/ItemWarehouseComponent";
+
 
 export default class SystemMailComponent extends Component {
   constructor(props) {

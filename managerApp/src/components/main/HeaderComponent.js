@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import { View,TouchableHighlight,Image,StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import {
-    DrawerActions
+    DrawerActions,
+    NavigationActions
 } from 'react-navigation';
-import { Icon} from 'native-base';
+import { Icon, Header, Left, Right, Button} from 'native-base';
 import { styles } from '../../common/Styles';
 export default class HeaderComponent extends Component {
     constructor(props){
         super(props);
-     
     }
    render() {
-    return (<View style={styles.headerView}>  
-            <TouchableHighlight style={{ marginLeft: 10}}
-                onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}>
-                <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
-            </TouchableHighlight>
-        </View>);
+        return (
+            <Header style={styles.headerView}>
+                <Left>
+                    <Button transparent onPress={() => alert(JSON.stringify(this.props.screenProps.navigation))}>
+                    <Icon name='arrow-back' />
+                    </Button>
+                </Left>
+                <Right>
+                    <Button transparent onPress={() => this.props.navigation.dispatch(DrawerActions.openDrawer())}>
+                    <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
+                    </Button>
+                </Right>
+            </Header>
+        );
     }
 }
 
