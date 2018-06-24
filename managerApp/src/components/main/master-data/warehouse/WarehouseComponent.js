@@ -25,6 +25,7 @@ export default class WarehouseComponent extends BaseComponent {
       limit: 12,
       total: 0,
     };
+    alert(JSON.stringify(this.props.screenProps.rootNavigation));
   }
   componentWillMount(){
     this.handleRefresh();
@@ -97,7 +98,8 @@ export default class WarehouseComponent extends BaseComponent {
     //Notifiy.warning(JSON.stringify('componentDidUpdate'));
   }
   onChangeConfig(){
-    this.props.navigation.navigate(ConfigWarehouseScreen);
+    //this.props.navigation.navigate(ConfigWarehouseScreen);
+    this.props.screenProps.rootNavigation.navigate(ConfigWarehouseScreen);
   }
   render() {
     return (

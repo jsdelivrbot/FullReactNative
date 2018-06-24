@@ -27,7 +27,7 @@ export default class App extends Component {
     this.state = {
       isLoading: true
     }
-    STRINGS.setLanguage("en");
+    STRINGS.setLanguage("vn");
   }
   componentWillMount(){
   
@@ -36,7 +36,7 @@ export default class App extends Component {
     
     return ( 
       <Root>
-        <RouterStack screenProps = {this.props}/> 
+        <RouterStack /> 
       </Root> 
     );
   }

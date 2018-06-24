@@ -17,7 +17,17 @@ export let STRINGS = new LocalizedStrings({
             systemMail: 'System Mail',
             user: 'User',
             warehouse: 'List Warehouse'
+        },
+        CONFIGWAREHOUSE: {
+            company: 'Company',
+            warehouseCode: 'Warehouse Code',
+            warehouseName:  'Warehouse Name',
+            city: 'City',
+            district: 'District',
+            ward: 'Ward',
+            address:'Address'
         }
+
     },
     vn: {
         SIGNIN: {
@@ -35,6 +45,15 @@ export let STRINGS = new LocalizedStrings({
             systemMail: 'Mail hệ thống',
             user: 'Người dùng',
             warehouse: 'Danh sách kho',
+        },
+        CONFIGWAREHOUSE: {
+            company: 'Công ty',
+            warehouseCode: 'Mã kho',
+            warehouseName:  'Tên kho',
+            city: 'Thành phố',
+            district: 'Quận',
+            ward: 'Phường',
+            address:'Địa chỉ'
         }
     }
 });

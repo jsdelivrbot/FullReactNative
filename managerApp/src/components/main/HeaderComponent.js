@@ -7,22 +7,24 @@ import {
 import { Icon, Header, Left, Right, Button} from 'native-base';
 import { styles } from '../../common/Styles';
 export default class HeaderComponent extends Component {
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
    render() {
+       
         return (
             <Header style={styles.headerView}>
                 <Left>
-                    <Button transparent onPress={() => alert(JSON.stringify(this.props.screenProps.navigation))}>
-                    <Icon name='arrow-back' />
-                    </Button>
-                </Left>
-                <Right>
                     <Button transparent onPress={() => this.props.navigation.dispatch(DrawerActions.openDrawer())}>
                     <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
                     </Button>
+                </Left>
+                <Right>
+                    <Button transparent onPress={() => alert(JSON.stringify(this.props.navigation.goBack()))}>
+                    <Icon name='search' />
+                    </Button>
                 </Right>
+                
             </Header>
         );
     }

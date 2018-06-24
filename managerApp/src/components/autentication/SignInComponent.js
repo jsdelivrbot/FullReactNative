@@ -3,7 +3,7 @@ import { TouchableOpacity, Alert,AsyncStorage,Image } from "react-native";
 import { styles, sideMenuStyles } from "../../common/Styles";
 import { STRINGS } from "../../common/Language";
 import { Container, Item, Input,Text, Spinner, Content, View } from "native-base";
-import { MainScreen } from "../../common/ScreenName";
+import { MainScreen, MenuScreen } from "../../common/ScreenName";
 import { AuthService } from "../../services/AuthService";
 import { ColorsChart, Color } from "../../common/Color";
 import { Notifiy } from "../../common/Notify";
@@ -21,13 +21,16 @@ class SignInComponent extends Component {
       firstLoading: true,
     }; 
   }
+  static navigationOptions = {
+    header: null
+  }
   componentWillMount(){  
     ApiService.timeoutRequest(AsyncStorage.getItem(keyStore),5000).then(data => {
   
       if(data !=null) {
         
         Global.userInfo = JSON.parse(data)
-        this.props.navigation.navigate(MainScreen);
+        this.props.navigation.navigate(MenuScreen);
       }
       this.setState({
         firstLoading: false
@@ -47,7 +50,7 @@ class SignInComponent extends Component {
       authService.signIn(username,password).then( async data => { 
       Global.userInfo = data.res;
       ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(data.res)),5000);
-      this.props.navigation.navigate(MainScreen);
+      this.props.navigation.navigate(MenuScreen);
       this.setState({
         isLoading: false
       })

@@ -82,11 +82,11 @@ export default class SideMenuComponent extends Component {
   }
   onChangeScreen(route) {
     const { navigate } = this.props.navigation;
-   //const { navigate }=  this.props.screenProps.navigation
-    //Notifiy.success(JSON.stringify(this.props.navigation))
+    //const rootNavigation = this.props.screenProps.rootNavigation;
     if (route) {
+     
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
-      navigate(route);
+      navigate(route,{backScreen: route});
     }
   }
   render() {
@@ -146,10 +146,12 @@ class ItemMenuComponent extends Component {
   }
   onChangeScreen(route){
     const { navigate } = this.props.navigation;  
-    //const { navigate }=  this.props.screenProps.navigation
+    //const rootNavigation = this.props.screenProps.rootNavigation;
+    
     if (route) {
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
-      navigate(route);
+      //rootNavigation.navigate(route);
+      navigate(route,{backScreen: route});
      // this.props.navigation.dispatch(NavigationActions.navigate(route));
     }
   }
