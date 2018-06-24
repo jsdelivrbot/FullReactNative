@@ -5,8 +5,6 @@ import {
     DrawerActions,
     NavigationActions
 } from 'react-navigation';
-import BlankPage2 from './BlankPage2';
-import SideMenu from '../routers/SideMenu';
 export default class Home extends Component {
   render() {
     return (

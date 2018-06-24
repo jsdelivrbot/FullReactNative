@@ -10,7 +10,7 @@ import { APIREQUEST } from "../../../../services/ApiRequest";
 
 import ItemUserComponent from "./ItemUserComponent";
 import { ColorsChart } from "../../../../common/Color";
-import HeaderComponent from "../../HeaderComponent";
+import HeaderComponent from "../../header/HeaderComponent";
 
 
 export default class UserComponent extends Component {

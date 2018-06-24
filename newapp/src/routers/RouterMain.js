@@ -19,9 +19,9 @@ export const optionHeaderHiden = {
     headerTransparent: true,
 	headerLeft: null
 }
-RouterMenu.navigationOptions = ({ navigation }) => ({
-    header: null
-  });
+// RouterMenu.navigationOptions = ({ navigation }) => ({
+//     header: null
+//   });
 const routerStack = {
     drawer: {
         screen: RouterMenu

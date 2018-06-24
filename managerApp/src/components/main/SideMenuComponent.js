@@ -22,6 +22,7 @@ import { Notifiy } from "../../common/Notify";
 export default class SideMenuComponent extends Component {
   constructor(props) {
     super(props);
+    alert(JSON.stringify(this.props.navigation));
     this.state = {
       datas: [
         {
@@ -82,11 +83,10 @@ export default class SideMenuComponent extends Component {
   }
   onChangeScreen(route) {
     const { navigate } = this.props.navigation;
-    //const rootNavigation = this.props.screenProps.rootNavigation;
     if (route) {
      
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
-      navigate(route,{backScreen: route});
+      navigate(route);
     }
   }
   render() {
@@ -141,18 +141,11 @@ export default class SideMenuComponent extends Component {
   }
 }
 class ItemMenuComponent extends Component {
-  constructor(props) {
-    super(props);
-  }
   onChangeScreen(route){
     const { navigate } = this.props.navigation;  
-    //const rootNavigation = this.props.screenProps.rootNavigation;
-    
     if (route) {
       this.props.navigation.dispatch(DrawerActions.toggleDrawer())
-      //rootNavigation.navigate(route);
-      navigate(route,{backScreen: route});
-     // this.props.navigation.dispatch(NavigationActions.navigate(route));
+      navigate(route);
     }
   }
   render(){

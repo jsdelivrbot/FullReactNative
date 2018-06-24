@@ -11,11 +11,13 @@ const WIDTH = Dimensions.get('screen').width / 100;
 import Home from '../screens/Home';
 import SideMenu from './SideMenu';
 import BlankPage2 from '../screens/BlankPage2';
+import BlankPage from '../screens/BlankPage';
 const routerDrawer = {
     home: {
         screen: Home,    
     },
-    blankPage2: { screen: BlankPage2 }
+    blankPage2: { screen: BlankPage2 },
+    blankPage: { screen: BlankPage }
 };
 const optionsDrawer = {
      initialRouteName: 'home' ,

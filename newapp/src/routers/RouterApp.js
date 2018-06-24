@@ -24,7 +24,7 @@ const routerStack = {
         screen: Login,    
     },
     main: {
-        screen: ()=>  <RouterMain/>,    
+        screen: RouterMain,    
     }
 };
 

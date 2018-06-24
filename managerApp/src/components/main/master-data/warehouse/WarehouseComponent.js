@@ -12,9 +12,8 @@ import { APIREQUEST } from "../../../../services/ApiRequest";
 import { ConfigWarehouseScreen } from "../../../../common/ScreenName";
 import { ColorsChart } from "../../../../common/Color";
 import ItemWarehouseComponent from "./ItemWarehouseComponent";
-import HeaderComponent from "../../HeaderComponent";
-import BaseComponent from "../../../BaseComponent";
-export default class WarehouseComponent extends BaseComponent {
+import HeaderComponent from "../../header/HeaderComponent";
+export default class WarehouseComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,8 +24,10 @@ export default class WarehouseComponent extends BaseComponent {
       limit: 12,
       total: 0,
     };
-    alert(JSON.stringify(this.props.screenProps.rootNavigation));
   }
+  static navigationOptions = {
+    header: null
+  };
   componentWillMount(){
     this.handleRefresh();
   }
@@ -98,8 +99,7 @@ export default class WarehouseComponent extends BaseComponent {
     //Notifiy.warning(JSON.stringify('componentDidUpdate'));
   }
   onChangeConfig(){
-    //this.props.navigation.navigate(ConfigWarehouseScreen);
-    this.props.screenProps.rootNavigation.navigate(ConfigWarehouseScreen);
+    this.props.navigation.navigate(ConfigWarehouseScreen);
   }
   render() {
     return (

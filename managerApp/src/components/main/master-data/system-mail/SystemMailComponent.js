@@ -4,7 +4,7 @@ import {
   Container,
   Spinner,
 } from "native-base";
-import HeaderComponent from "../../HeaderComponent";
+import HeaderComponent from "../../header/HeaderComponent";
 import { Color, ColorsChart } from "../../../../common/Color";
 import ItemWarehouseComponent from "../warehouse/ItemWarehouseComponent";
 

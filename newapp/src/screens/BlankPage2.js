@@ -1,15 +1,21 @@
 import React, { Component } from 'react'
-import {View,StyleSheet } from 'react-native'
+import {View,StyleSheet,BackHandler } from 'react-native'
 import { Container, Button, Text, Header, Left, Body, Title, Right, Icon } from 'native-base';
 import {
     DrawerActions,
     NavigationActions
 } from 'react-navigation';
 export default class BlankPage2 extends Component {
+  constructor(props){
+    super();
+    // BackHandler.exitApp();
+    
+  }
     static navigationOptions = {
         header: null
       };
   render() {
+    alert(JSON.stringify(this.props.navigation));
     return (
       <Container >
          <Header  style= {styles.headerView}>

@@ -21,16 +21,13 @@ class SignInComponent extends Component {
       firstLoading: true,
     }; 
   }
-  static navigationOptions = {
-    header: null
-  }
   componentWillMount(){  
     ApiService.timeoutRequest(AsyncStorage.getItem(keyStore),5000).then(data => {
   
       if(data !=null) {
         
         Global.userInfo = JSON.parse(data)
-        this.props.navigation.navigate(MenuScreen);
+        this.props.navigation.navigate(MainScreen);
       }
       this.setState({
         firstLoading: false
@@ -50,7 +47,7 @@ class SignInComponent extends Component {
       authService.signIn(username,password).then( async data => { 
       Global.userInfo = data.res;
       ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(data.res)),5000);
-      this.props.navigation.navigate(MenuScreen);
+      this.props.navigation.navigate(MainScreen);
       this.setState({
         isLoading: false
       })

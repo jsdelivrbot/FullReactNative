@@ -5,23 +5,22 @@ import {
     NavigationActions
 } from 'react-navigation';
 import { Icon, Header, Left, Right, Button} from 'native-base';
-import { styles } from '../../common/Styles';
+import { styles } from '../../../common/Styles';
+import { MainScreen } from '../../../common/ScreenName';
+
 export default class HeaderComponent extends Component {
-    // constructor(props){
-    //     super(props);
-    // }
    render() {
        
         return (
             <Header style={styles.headerView}>
                 <Left>
                     <Button transparent onPress={() => this.props.navigation.dispatch(DrawerActions.openDrawer())}>
-                    <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
+                        <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
                     </Button>
                 </Left>
                 <Right>
-                    <Button transparent onPress={() => alert(JSON.stringify(this.props.navigation.goBack()))}>
-                    <Icon name='search' />
+                    <Button transparent >
+                        <Icon name='search' />
                     </Button>
                 </Right>
                 

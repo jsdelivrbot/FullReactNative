@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right } from 'native-base';
+import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body } from 'native-base';
 import { Color } from '../../../../common/Color';
-import { optionHeaderHiden } from '../../../../RouterNavigation';
 import { STRINGS } from '../../../../common/Language';
-import HeaderComponent from '../../HeaderComponent';
+import HeaderComponent from '../../header/HeaderComponent';
 import { styles } from '../../../../common/Styles';
+import TestHeaderComponent from '../../test-component/TestHeaderComponent';
 
 
 export default class ConfigWarehouseComponent extends Component {
@@ -14,22 +14,10 @@ export default class ConfigWarehouseComponent extends Component {
       this.state = {
         active: true
       };
-      alert(JSON.stringify(this.props.navigation));
+     // alert(JSON.stringify(this.props.navigation.goBack()));
   } 
-  static navigationOptions = () => ({
-    header: <Header style={styles.headerView}>
-    <Left>
-        <Button transparent >
-        <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
-        </Button>
-    </Left>
-    <Right>
-        <Button transparent onPress={() => alert(JSON.stringify(this.props.navigation.goBack()))}>
-        <Icon name='search' />
-        </Button>
-    </Right>
-    
-  </Header>
+  static navigationOptions = ({navigation}) => ({
+    header: <TestHeaderComponent navigation={navigation}/>
   });
   render() {
     return (
