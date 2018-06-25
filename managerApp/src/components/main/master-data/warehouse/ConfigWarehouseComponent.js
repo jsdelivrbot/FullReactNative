@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body, Content } from 'native-base';
+import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body, Content, StyleProvider } from 'native-base';
 import { Color } from '../../../../common/Color';
 import { STRINGS } from '../../../../common/Language';
-import TestHeaderComponent from '../../test-component/TestHeaderComponent';
+import getTheme from '../../../../assets/native-base-theme/components';
+import material from '../../../../assets/native-base-theme/variables/material';
+import HeaderBackComponent from '../../header/HeaderBackComponent';
 
 
 export default class ConfigWarehouseComponent extends Component {
@@ -14,17 +16,30 @@ export default class ConfigWarehouseComponent extends Component {
       };
      // alert(JSON.stringify(this.props.navigation.goBack()));
   } 
+ 
+  onChangeLanguage(){   
+    let keyLangue =STRINGS.getLanguage();
+       if(keyLangue === 'en') {
+         keyLangue ='vn'
+       } else {
+         keyLangue = 'en'
+       }
+      STRINGS.setLanguage(keyLangue);
+      this.setState({});
+  }
   static navigationOptions = ({navigation}) => ({
-    header: <TestHeaderComponent navigation={navigation}/>
+    header: null
   });
   render() {
     return (
-        <Content style={{ flex: 1,margin:20 }} >
-        <Form>
-          <Item floatingLabel last >
+      <StyleProvider style={getTheme(material)}>
+          <Content style={{ flex: 1 }} >
+          <HeaderBackComponent title = {'Add'} navigation={this.props.navigation} onChangeLanguage = {this.onChangeLanguage.bind(this)}/>
+         <Form style={{margin: 20}}>
+          <Item  floatingLabel last >
             <Label style={{color:Color.smartlog}}>{STRINGS.CONFIGWAREHOUSE.company}</Label>
-            <Input style/>
-          </Item>
+            <Input style={{fontSize:12}}/>
+          </Item> 
           <Item floatingLabel last>
             <Label style={{color:Color.smartlog}}>{STRINGS.CONFIGWAREHOUSE.warehouseCode}</Label>
             <Input  />
@@ -51,16 +66,12 @@ export default class ConfigWarehouseComponent extends Component {
           </Item>
           <Item last style ={{height: 65}}>
             <CheckBox checked={false} />
-          </Item>
-          <Item style={{alignItems:'center',justifyContent:'center'}}>
-            <Button full>
-              <Icon name='add' />
-              <Text> Add </Text>
-            </Button>
-          </Item>
+          </Item> 
+         
           
         </Form>
       </Content>
+      </StyleProvider>
     )
   }
 }

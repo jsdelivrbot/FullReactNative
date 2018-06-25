@@ -7,6 +7,8 @@ const UserScreen = "UserScreen";
 const WarehouseScreen = "WarehouseScreen";
 const MenuScreen = "MenuScreen";
 const ConfigWarehouseScreen = "ConfigWarehouseScreen";
+const OWnersScreen = "OWnersScreen";
+
 export  {
     MainScreen,
     SignInScreen,
@@ -17,4 +19,5 @@ export  {
     WarehouseScreen,
     MenuScreen,
     ConfigWarehouseScreen,
+    OWnersScreen
 };

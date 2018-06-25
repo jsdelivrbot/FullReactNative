@@ -24,6 +24,7 @@ export default class WarehouseComponent extends Component {
       limit: 12,
       total: 0,
     };
+    
   }
   static navigationOptions = {
     header: null
@@ -62,9 +63,6 @@ export default class WarehouseComponent extends Component {
     });
   }
   handleLoadMore(info){
-    
-    console.log('handleLoadMore');
-    console.log(this.state.data.length)
     if(this.state.data.length == this.state.total) {
         return
     }
@@ -98,9 +96,6 @@ export default class WarehouseComponent extends Component {
   componentDidUpdate(){
     //Notifiy.warning(JSON.stringify('componentDidUpdate'));
   }
-  onChangeConfig(){
-    this.props.navigation.navigate(ConfigWarehouseScreen);
-  }
   render() {
     return (
       <Container style= {{flex:1}}>
@@ -108,14 +103,18 @@ export default class WarehouseComponent extends Component {
         <FlatList
           data={this.state.data}
           keyExtractor = {(x,i) =>i.toString()}
-       
+
           ListFooterComponent = { () =>
             this.state.isLoading 
             ? <Spinner  color = {ColorsChart[0]}></Spinner> 
             : null
           }
           renderItem={({ item, index }) => {
-            return <ItemWarehouseComponent item={item} index={index} onChangeConfig = {this.onChangeConfig.bind(this)} />;
+            return <ItemWarehouseComponent 
+                        item={item} 
+                        index={index} 
+                        {...this.props}
+                        />;
           }}
           refreshControl = {
             <RefreshControl   

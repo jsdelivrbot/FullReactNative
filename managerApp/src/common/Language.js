@@ -16,7 +16,11 @@ export let STRINGS = new LocalizedStrings({
             masterData: 'Master data',
             systemMail: 'System Mail',
             user: 'User',
-            warehouse: 'List Warehouse'
+            warehouse: 'List Warehouse',
+            owners: 'Owners',
+            //Role
+            roles: 'Roles',
+           
         },
         CONFIGWAREHOUSE: {
             company: 'Company',
@@ -45,6 +49,9 @@ export let STRINGS = new LocalizedStrings({
             systemMail: 'Mail hệ thống',
             user: 'Người dùng',
             warehouse: 'Danh sách kho',
+            owners: 'Chủ sở hữu',
+            //Role
+            roles: 'Quyền',
         },
         CONFIGWAREHOUSE: {
             company: 'Công ty',

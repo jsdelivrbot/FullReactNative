@@ -6,11 +6,17 @@ import HeaderComponent from '../header/HeaderComponent';
 
 export default class DashboardComponent extends Component {
     
-   
+    
     render() {
+        
         return (
             <Container>
                 <HeaderComponent {...this.props}/>
+                {/* <Button onPress = {()=>this.props.navigation.navigate('Test')}>
+                    <Text>
+                        Test
+                    </Text>
+                </Button> */}
                 <BarchartComponent/>
             </Container>
         );

@@ -6,12 +6,16 @@ import {
     Button,
     Body,
   } from "native-base";
-  import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Color } from '../../../../common/Color';
+import { ConfigWarehouseScreen } from '../../../../common/ScreenName';
 export default class ItemWarehouseComponent extends Component {
     constructor(props){
       super(props);
+    }
+    onEdit(){
+      this.props.navigation.navigate(ConfigWarehouseScreen);
     }
     render() {
       const btnActive = <Button success style={{ height: 20 }}>
@@ -21,8 +25,10 @@ export default class ItemWarehouseComponent extends Component {
                               <Text style={{ fontSize: 7 }}>Active </Text>
                            </Button>
         return (
-          <ListItem avatar>
-               <Button icon transparent primary onPress = {this.props.onChangeConfig}>
+          <ListItem avatar
+            onPress = {()=>this.props.navigation.navigate(ConfigWarehouseScreen)} 
+          >
+               <Button icon transparent primary onPress = { ()=>this.onEdit()}>
                 <Icon name='pencil' color={Color.smartlog} />
               </Button>
                 <Body>
@@ -36,7 +42,8 @@ export default class ItemWarehouseComponent extends Component {
     }
 }
 ItemWarehouseComponent.defaultProps = {
+  selected: false
 }
 ItemWarehouseComponent.propTypes  = {
-  item: PropTypes.object
+  item: PropTypes.object,
 }

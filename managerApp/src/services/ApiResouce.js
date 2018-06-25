@@ -4,4 +4,5 @@ export const APIRESOURCE = {
     LIST_SYSTEMMAIL: 'SysMails/find',
     LIST_USER: 'Users/find',
     LIST_WAREHOUSE: 'Warehouses/list',
+    LIST_OWNERS: 'Storers/find',
 }

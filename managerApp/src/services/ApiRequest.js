@@ -50,5 +50,19 @@ export const APIREQUEST = {
             })
         }
         return ApiService.post(APIRESOURCE.LIST_WAREHOUSE, data);
+    },
+    listOwners(skip,limit){
+        let data = {
+            filter: JSON.stringify({
+                "where": {
+                    "parentuser": Global.userInfo.user.username,
+                    "deleted": false
+                },
+                "skip": skip,
+                "limit": limit,
+                "order": null
+            })
+        }
+        return ApiService.post(APIRESOURCE.LIST_OWNERS, data);
     }
 }

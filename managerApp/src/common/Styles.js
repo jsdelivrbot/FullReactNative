@@ -43,14 +43,20 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerView: {
-        height: 40,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        // height: 40,
+        // flexDirection: 'row',
+        // justifyContent: 'flex-start',
+        // alignItems: 'center',
         backgroundColor: Color.smartlog
     },
-    iconMenu: {
-        fontSize: 40,
+    iconLeft: {
+        fontSize: 30,
+        marginLeft: -10,
+        color: Color.white
+    },
+    iconRight: {
+        fontSize: 25,
+        marginRight: -5,
         color: Color.white
     }
 });

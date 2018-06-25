@@ -15,12 +15,12 @@ export default class HeaderComponent extends Component {
             <Header style={styles.headerView}>
                 <Left>
                     <Button transparent onPress={() => this.props.navigation.dispatch(DrawerActions.openDrawer())}>
-                        <Icon ios='ios-menu' android="md-menu" style={styles.iconMenu}/>
+                        <Icon ios='ios-menu' android="md-menu" />
                     </Button>
                 </Left>
                 <Right>
                     <Button transparent >
-                        <Icon name='search' />
+                        <Icon name='search'/>
                     </Button>
                 </Right>
                 

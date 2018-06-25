@@ -13,7 +13,7 @@ import {
   Right,
   CardItem
 } from "native-base";
-import { MasterDataScreen, DashboardScreen, SystemMailScreen, SignInScreen, UserScreen, WarehouseScreen } from "../../common/ScreenName";
+import { MasterDataScreen, DashboardScreen, SystemMailScreen, SignInScreen, UserScreen, WarehouseScreen, OWnersScreen } from "../../common/ScreenName";
 import { sideMenuStyles } from "../../common/Styles";
 import { STRINGS } from "../../common/Language";
 import { Color } from "../../common/Color";
@@ -28,40 +28,43 @@ export default class SideMenuComponent extends Component {
           name: STRINGS.SIDEMENU.dashboard,
           route: DashboardScreen,
           icon: "phone-portrait",
-          bg: "#C5F442",
-          urlIcon: require("../../assets/icons/dashboard.png"),
           isShow: false
         },
         {
           name: STRINGS.SIDEMENU.masterData,
           icon: "grid",
-          bg: "#477EEA",
-          urlIcon: require("../../assets/icons/database.png"),
           isShow: true,
           dataChildren: [
             {
               name: STRINGS.SIDEMENU.systemMail,
               route: SystemMailScreen,
               icon: "mail",
-              bg: "#477EEA",
-              urlIcon: require("../../assets/icons/database.png")
             },
             {
               name: STRINGS.SIDEMENU.user,
               route: UserScreen,
               icon: "person",
-              bg: "#477EEA",
-              urlIcon: require("../../assets/icons/database.png")
             },
             {
               name: STRINGS.SIDEMENU.warehouse,
               route: WarehouseScreen,
               icon: "home",
-              bg: "#477EEA",
-              urlIcon: require("../../assets/icons/database.png")
+            },
+            {
+              name: STRINGS.SIDEMENU.owners,
+              route: OWnersScreen,
+              icon: "person",
             },
           ]
-        }
+        },
+        {
+          name: STRINGS.SIDEMENU.roles,
+          icon: "grid", 
+          isShow: true,
+          dataChildren: [
+            
+          ]
+        },
       ]
     };
   }

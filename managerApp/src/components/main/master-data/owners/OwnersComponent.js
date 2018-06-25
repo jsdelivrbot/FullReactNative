@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import { FlatList,View ,RefreshControl} from "react-native";
+import { FlatList, View ,RefreshControl,} from "react-native";
 import {
   Container,
   Spinner,
+  List,
   Fab,
   Icon,
 } from "native-base";
 import { APIREQUEST } from "../../../../services/ApiRequest";
 
-import ItemUserComponent from "./ItemUserComponent";
+import { ConfigWarehouseScreen } from "../../../../common/ScreenName";
 import { ColorsChart } from "../../../../common/Color";
 import HeaderComponent from "../../header/HeaderComponent";
-
-
-export default class UserComponent extends Component {
+import ItemOwnersComponent from "./ItemOwnersComponent";
+export default class OwnersComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,24 +24,32 @@ export default class UserComponent extends Component {
       limit: 12,
       total: 0,
     };
+    
   }
-  componentDidMount(){
+  static navigationOptions = {
+    header: null
+  };
+  componentWillMount(){
     this.handleRefresh();
   }
    handleRefresh(){
-    if(this.state.isLoading || this.state.isRefreshing) {
-      return
-    }
     this.setState({
       isRefreshing:  true,
       skip: 0
     },  () => {
        let {skip,limit } = this.state
-      APIREQUEST.listUser(skip,limit).then(data => {
+      APIREQUEST.listOwners(skip,limit).then(data => {
+        alert(JSON.stringify(data.res));
         if(data.res.length >0 ){
-          
+          let arr = data.map (item => {
+            return {
+              warehousecode: item.warehousecode,
+              storerkey: item.storerkey,
+              company: item.company
+            }
+          })
           this.setState({
-            data: data.res,
+            data: arr,
             total: data.total,
             isRefreshing:  false
           })
@@ -59,9 +67,6 @@ export default class UserComponent extends Component {
     });
   }
   handleLoadMore(info){
-    if(this.state.isLoading || this.state.isRefreshing) {
-      return
-    }
     if(this.state.data.length == this.state.total) {
         return
     }
@@ -70,10 +75,17 @@ export default class UserComponent extends Component {
       skip: this.state.skip + this.state.limit
     }, () => {
         let {skip,limit } = this.state
-       APIREQUEST.listUser(skip,limit).then(data => {
+       APIREQUEST.listOwners(skip,limit).then(data => {
         if(data.res.length > 0) {
+          let arr = data.map (item => {
+            return {
+              warehousecode: item.warehousecode,
+              storerkey: item.storerkey,
+              company: item.company
+            }
+          })
             this.setState({
-                data: this.state.data.concat(data.res),
+                data: this.state.data.concat(arr),
                 isLoading:false
               })
         } else {
@@ -102,14 +114,18 @@ export default class UserComponent extends Component {
         <FlatList
           data={this.state.data}
           keyExtractor = {(x,i) =>i.toString()}
-       
+
           ListFooterComponent = { () =>
             this.state.isLoading 
             ? <Spinner  color = {ColorsChart[0]}></Spinner> 
             : null
           }
           renderItem={({ item, index }) => {
-            return <ItemUserComponent item={item} index={index} />;
+            return <ItemOwnersComponent 
+                        item={item} 
+                        index={index} 
+                        {...this.props}
+                        />;
           }}
           refreshControl = {
             <RefreshControl   
@@ -127,12 +143,10 @@ export default class UserComponent extends Component {
             containerStyle={{ }}
             style={{ backgroundColor: '#5067FF' }}
             position="bottomRight"
-            onPress={() => alert('ok')}>
+            onPress={() => this.props.navigation.navigate(ConfigWarehouseScreen)}>
             <Icon name="add" />
         </Fab>
-      </Container>
-        
+      </Container>   
     );
   }
 }
-

@@ -1,7 +1,5 @@
 import {
     createStackNavigator,
-    createDrawerNavigator,
-    DrawerActions
 } from 'react-navigation';
 import React from 'react';
 import {
@@ -14,6 +12,8 @@ import SystemMailComponent from '../components/main/master-data/system-mail/Syst
 import UserComponent from '../components/main/master-data/user/UserComponent';
 import WarehouseComponent from '../components/main/master-data/warehouse/WarehouseComponent';
 import ConfigWarehouseComponent from '../components/main/master-data/warehouse/ConfigWarehouseComponent';
+import TestListComponent from '../components/main/test-component/TestListComponent';
+import OwnersComponent from '../components/main/master-data/owners/OwnersComponent';
 
 
 const WIDTH = Dimensions.get('screen').width / 100;
@@ -43,6 +43,12 @@ const routerStack = {
     },
     ConfigWarehouseScreen: {
         screen: ConfigWarehouseComponent
+    },
+    OWnersScreen: {
+        screen: OwnersComponent
+    },
+    Test: {
+        screen:  TestListComponent
     }
 };
 
