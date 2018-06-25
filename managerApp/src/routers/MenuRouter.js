@@ -13,6 +13,7 @@ import UserComponent from '../components/main/master-data/user/UserComponent';
 import WarehouseComponent from '../components/main/master-data/warehouse/WarehouseComponent';
 import { DashboardScreen } from '../common/ScreenName';
 import SideMenuComponent from '../components/main/SideMenuComponent';
+import OwnersComponent from '../components/main/master-data/owners/OwnersComponent';
 const WIDTH = Dimensions.get('screen').width / 100;
 const routerDrawer = {
     DashboardScreen: {
@@ -26,7 +27,10 @@ const routerDrawer = {
     },
     WarehouseScreen: {
         screen: WarehouseComponent
-    }
+    },
+    OWnersScreen: {
+        screen: OwnersComponent
+    },
 };
 const optionsDrawer = {
      initialRouteName: DashboardScreen ,

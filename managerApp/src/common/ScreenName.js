@@ -19,5 +19,5 @@ export  {
     WarehouseScreen,
     MenuScreen,
     ConfigWarehouseScreen,
-    OWnersScreen
+    OWnersScreen,
 };

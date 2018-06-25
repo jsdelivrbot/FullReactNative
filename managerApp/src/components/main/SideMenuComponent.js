@@ -59,7 +59,7 @@ export default class SideMenuComponent extends Component {
         },
         {
           name: STRINGS.SIDEMENU.roles,
-          icon: "grid", 
+          icon: "person", 
           isShow: true,
           dataChildren: [
             

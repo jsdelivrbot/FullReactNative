@@ -39,15 +39,16 @@ export default class OwnersComponent extends Component {
     },  () => {
        let {skip,limit } = this.state
       APIREQUEST.listOwners(skip,limit).then(data => {
-        alert(JSON.stringify(data.res));
+        
         if(data.res.length >0 ){
-          let arr = data.map (item => {
+          let arr = data.res.map (item => {
             return {
               warehousecode: item.warehousecode,
               storerkey: item.storerkey,
               company: item.company
             }
           })
+          // alert(JSON.stringify(arr));
           this.setState({
             data: arr,
             total: data.total,
@@ -77,7 +78,7 @@ export default class OwnersComponent extends Component {
         let {skip,limit } = this.state
        APIREQUEST.listOwners(skip,limit).then(data => {
         if(data.res.length > 0) {
-          let arr = data.map (item => {
+          let arr = data.res.map (item => {
             return {
               warehousecode: item.warehousecode,
               storerkey: item.storerkey,
