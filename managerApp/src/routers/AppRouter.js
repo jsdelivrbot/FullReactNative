@@ -24,7 +24,7 @@ const optionsStack = {
     initialRouteName: SignInScreen,
     navigationOptions: (props ) =>(
         {
-            header: null
+            header: null,        
         }
     )
 }

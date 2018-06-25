@@ -22,7 +22,6 @@ import { Notifiy } from "../../common/Notify";
 export default class SideMenuComponent extends Component {
   constructor(props) {
     super(props);
-    alert(JSON.stringify(this.props.navigation));
     this.state = {
       datas: [
         {

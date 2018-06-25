@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body } from 'native-base';
+import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body, Content } from 'native-base';
 import { Color } from '../../../../common/Color';
 import { STRINGS } from '../../../../common/Language';
-import HeaderComponent from '../../header/HeaderComponent';
-import { styles } from '../../../../common/Styles';
 import TestHeaderComponent from '../../test-component/TestHeaderComponent';
 
 
@@ -21,11 +19,11 @@ export default class ConfigWarehouseComponent extends Component {
   });
   render() {
     return (
-        <Container style={{ flex: 1 }} >
+        <Content style={{ flex: 1,margin:20 }} >
         <Form>
-          <Item floatingLabel last>
+          <Item floatingLabel last >
             <Label style={{color:Color.smartlog}}>{STRINGS.CONFIGWAREHOUSE.company}</Label>
-            <Input  />
+            <Input style/>
           </Item>
           <Item floatingLabel last>
             <Label style={{color:Color.smartlog}}>{STRINGS.CONFIGWAREHOUSE.warehouseCode}</Label>
@@ -54,8 +52,15 @@ export default class ConfigWarehouseComponent extends Component {
           <Item last style ={{height: 65}}>
             <CheckBox checked={false} />
           </Item>
-          </Form>
-      </Container>
+          <Item style={{alignItems:'center',justifyContent:'center'}}>
+            <Button full>
+              <Icon name='add' />
+              <Text> Add </Text>
+            </Button>
+          </Item>
+          
+        </Form>
+      </Content>
     )
   }
 }

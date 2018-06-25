@@ -39,6 +39,24 @@ class SignInComponent extends Component {
       })
     });
   }
+  onLogin(){
+    this.setState({
+      isLoading: true
+    })
+    const { username, password } = this.state;
+    authService.login(username,password).then(_ => {
+      alert('ok');
+      this.props.navigation.navigate(MainScreen);
+      this.setState({
+        isLoading: false
+      })
+    }).catch(err => {
+      Notifiy.warning(STRINGS.SIGNIN.messageLogin);
+      this.setState({
+        isLoading: false
+      })
+    })
+  }
    onSignIn() {
     this.setState({
       isLoading: true
