@@ -1,3 +1,4 @@
+// @flow
 import React, {
   Component
 } from 'react';
@@ -11,8 +12,8 @@ import {
 import getTheme from './assets/themes/components';
 import material from './assets/themes/variables/material';
 import { AppRouter } from './routers/AppRouter';
-import { Global } from './common/Global';
 export default class App extends Component {
+  
   constructor(props) {
     super(props);
     this.state = {
