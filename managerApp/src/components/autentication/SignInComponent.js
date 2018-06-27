@@ -45,7 +45,7 @@ class SignInComponent extends Component {
     })
     const { username, password } = this.state;
     authService.login(username,password).then(_ => {
-      alert('ok');
+      
       this.props.navigation.navigate(MainScreen);
       this.setState({
         isLoading: false

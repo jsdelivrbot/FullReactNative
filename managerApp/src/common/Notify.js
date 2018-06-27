@@ -28,4 +28,13 @@ export class Notifiy {
             duration: 1000,
         })
     }
+    static warningTop(messsage) {
+        Toast.show({
+            text: messsage,
+            type: 'warning',
+            buttonText: 'Warning',
+            position: 'top',
+            duration: 1000,
+        })
+    }
 }

@@ -5,4 +5,5 @@ export const APIRESOURCE = {
     LIST_USER: 'Users/find',
     LIST_WAREHOUSE: 'Warehouses/list',
     LIST_OWNERS: 'Storers/find',
+    TOTAL_BY_COMPANY: 'Statistics/totalbycompany',
 }

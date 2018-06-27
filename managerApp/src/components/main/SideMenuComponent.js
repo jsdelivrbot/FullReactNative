@@ -58,8 +58,8 @@ export default class SideMenuComponent extends Component {
           ]
         },
         {
-          name: STRINGS.SIDEMENU.roles,
-          icon: "person", 
+          name: STRINGS.SIDEMENU.security,
+          icon: "lock", 
           isShow: true,
           dataChildren: [
             

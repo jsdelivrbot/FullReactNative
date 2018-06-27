@@ -52,7 +52,7 @@ export default class SystemMailComponent extends Component {
             : null
           }
           renderItem={({ item, index }) => {
-            return <ItemWarehouseComponent item={item} index={index} />;
+            return <ItemWarehouseComponent {...this.props} item={item} index={index} />;
           }}
           refreshControl = {
             <RefreshControl   

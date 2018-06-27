@@ -3,9 +3,10 @@ import { View } from 'react-native';
 import { Form, Item, Label, Input,IconNB, Fab, Button, Icon, Text, Container, CheckBox, Header, Left, Right, Body, Content, StyleProvider } from 'native-base';
 import { Color } from '../../../../common/Color';
 import { STRINGS } from '../../../../common/Language';
-import getTheme from '../../../../assets/native-base-theme/components';
-import material from '../../../../assets/native-base-theme/variables/material';
+// import getTheme from '../../../../assets/themes/components';
+// import material from '../../../../assets/themes/material';
 import HeaderBackComponent from '../../header/HeaderBackComponent';
+import { Global } from '../../../../common/Global';
 
 
 export default class ConfigWarehouseComponent extends Component {
@@ -26,16 +27,16 @@ export default class ConfigWarehouseComponent extends Component {
        }
       STRINGS.setLanguage(keyLangue);
       this.setState({});
+   
   }
   static navigationOptions = ({navigation}) => ({
     header: null
   });
   render() {
     return (
-      <StyleProvider style={getTheme(material)}>
           <Content style={{ flex: 1 }} >
           <HeaderBackComponent title = {'Add'} navigation={this.props.navigation} onChangeLanguage = {this.onChangeLanguage.bind(this)}/>
-         <Form style={{margin: 20}}>
+         <Form style={{marginLeft:20,marginRight:20}}>
           <Item  floatingLabel last >
             <Label style={{color:Color.smartlog}}>{STRINGS.CONFIGWAREHOUSE.company}</Label>
             <Input style={{fontSize:12}}/>
@@ -71,7 +72,6 @@ export default class ConfigWarehouseComponent extends Component {
           
         </Form>
       </Content>
-      </StyleProvider>
     )
   }
 }

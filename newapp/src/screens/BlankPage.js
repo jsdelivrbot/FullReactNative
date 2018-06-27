@@ -1,12 +1,52 @@
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
-
+import React,{Component} from "react";
+import { AppRegistry, Image, TouchableOpacity } from "react-native";
+import {
+  Button,
+  Text,
+  Container,
+  List,
+  ListItem,
+  Content,
+  Icon
+} from "native-base";
 export default class BlankPage extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      list : []
+    }
+  }
+  static navigationOptions = {
+    header: null
+  };
+  componentDidMount (){
+    this.setState({
+      list : [
+        'a',
+        'b'
+      ]
+    })
+  }
   render() {
     return (
-      <View>
-        <Text> Blank page </Text>
-      </View>
+      <Container>
+        <Content>
+  
+          <List
+            dataArray={this.state.list}
+            renderRow={data => {
+              return (
+                <ListItem
+                  button
+                  onPress={() => this.props.navigation.navigate(data)}
+                >
+                  <Text>{data}</Text>
+                </ListItem>
+              );
+            }}
+          />
+        </Content>
+      </Container>
     )
   }
 }

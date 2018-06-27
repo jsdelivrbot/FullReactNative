@@ -64,5 +64,14 @@ export const APIREQUEST = {
             })
         }
         return ApiService.post(APIRESOURCE.LIST_OWNERS, data);
+    },
+    totalByCompany(){
+        let data = {
+            obj: JSON.stringify({
+                deleted:false,
+                parentuser:Global.userInfo.user.username,
+            })
+        }
+        return ApiService.post(APIRESOURCE.TOTAL_BY_COMPANY, data);
     }
 }

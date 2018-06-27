@@ -13,6 +13,8 @@ import { ConfigWarehouseScreen } from "../../../../common/ScreenName";
 import { ColorsChart } from "../../../../common/Color";
 import HeaderComponent from "../../header/HeaderComponent";
 import ItemOwnersComponent from "./ItemOwnersComponent";
+import { Notifiy } from "../../../../common/Notify";
+import { Global } from "../../../../common/Global";
 export default class OwnersComponent extends Component {
   constructor(props) {
     super(props);
@@ -60,6 +62,8 @@ export default class OwnersComponent extends Component {
               })
         }
       }).catch(err => {
+        // alert(JSON.stringify(err));
+        Global.handerError(err,this.props.navigation)
         this.setState({
           isRefreshing:  false
         });

@@ -24,19 +24,19 @@ export default class ItemOwnersComponent extends Component {
         const rdColor = Math.floor(Math.random()*100) % ColorsChart.length;
         return (
           <ListItem >
-               <Badge style={{backgroundColor:ColorsChart[rdColor]}}>
-                    <Text>{logoBadge}</Text>
+               <Badge style={{backgroundColor:ColorsChart[rdColor],alignSelf:'center'}}>
+                 <Text>{logoBadge}</Text>
                 </Badge>
               
               <Body style={{marginLeft:10}}>
-                <Text style={{ fontSize: 15, marginLeft: 10 }}>
+                <Text numberOfLines={1} style={{ fontSize: 15, marginLeft: 10 }}>
                     <Icon
                         style={{ fontSize: 15, color: Color.smartlog }}
                         name="compass"
                         />
                         {` ${this.props.item.company}`}
                 </Text>
-                <Text note style={{ fontSize: 10 }}>
+                <Text numberOfLines={1}  note style={{ fontSize: 10 }}>
                     <Icon 
                     style={{ fontSize: 10, color: Color.smartlog }} 
                     name="code-fork" 

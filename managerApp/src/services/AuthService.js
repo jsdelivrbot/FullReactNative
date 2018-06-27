@@ -76,7 +76,7 @@ export class AuthService {
                             warehousename: data2.warehouse[0].warehousename
                         };
                         ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(Global.user)),5000);
-                        resolve(true);
+                        resolve();
                     }
                 }).catch(err => {
                     reject(err);

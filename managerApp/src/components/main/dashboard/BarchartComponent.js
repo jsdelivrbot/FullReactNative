@@ -2,12 +2,13 @@ import React,{Component} from 'react';
 import {  } from 'react-native';
 import {
   StyleSheet,
-  Text,
-  View, processColor
+  Dimensions,
+  processColor
 } from 'react-native';
 
 import {BarChart} from 'react-native-charts-wrapper';
 import { ColorsChart } from '../../../common/Color';
+import { Container, Content, ListItem } from 'native-base';
 
 class BarchartComponent extends Component {
 
@@ -26,14 +27,14 @@ class BarchartComponent extends Component {
       },
       data: {
         dataSets: [{
-          values: [5, 40, 77, 81, 43],
+          values: [200],
           label: 'Company A',
           config: {
             drawValues: false,
             colors: [processColor(ColorsChart[0])],
           }
         }, {
-          values: [40, 5, 50, 23, 79],
+          values: [40],
           label: 'Company B',
           config: {
             drawValues: false,
@@ -51,10 +52,10 @@ class BarchartComponent extends Component {
         }
       },
       xAxis: {
-        valueFormatter: ['1990', '1991', '1992', '1993', '1994'],
+        valueFormatter: ['1990'],
         granularityEnabled: true,
         granularity: 1,
-        axisMaximum: 5,
+        axisMaximum: 1,
         axisMinimum: 0,
         centerAxisLabels: true
       },
@@ -87,8 +88,8 @@ class BarchartComponent extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
-        <View style={styles.container}>
+
+        <Container style={styles.container}>
           <BarChart
             style={styles.chart}
             xAxis={this.state.xAxis}
@@ -96,35 +97,20 @@ class BarchartComponent extends Component {
             legend={this.state.legend}
             drawValueAboveBar={false}
             animation={{ durationX: 2000 }}
-            onSelect={this.handleSelect.bind(this)}
+            // onSelect={this.handleSelect.bind(this)}
             onChange={(event) => console.log(event.nativeEvent)}
             highlights={this.state.highlights}
             marker={this.state.marker}
           />
-        </View>
-        <View style={styles.container}>
-          <BarChart
-            style={styles.chart}
-            xAxis={this.state.xAxis}
-            data={this.state.data}
-            legend={this.state.legend}
-            drawValueAboveBar={false}
-            animation={{ durationX: 2000 }}
-            onSelect={this.handleSelect.bind(this)}
-            onChange={(event) => console.log(event.nativeEvent)}
-            highlights={this.state.highlights}
-            marker={this.state.marker}
-          />
-        </View>
-      </View>
+        </Container>
+
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF'
+    height: Dimensions.get('screen').width
   },
   chart: {
     flex: 1

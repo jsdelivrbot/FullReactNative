@@ -6,7 +6,7 @@ export default class Login extends Component {
   render() {
     return (
       <Container style = {styles.container}>
-        <Button onPress = {()=>this.props.navigation.navigate('main')}>
+        <Button onPress = {()=>this.props.navigation.navigate('drawer')}>
           <Text> Go to Main</Text>
         </Button>
       </Container>
