@@ -1,16 +1,25 @@
-import React,{Component} from 'react';
-import {  } from 'react-native';
+import React, {
+  Component
+} from 'react';
+import {} from 'react-native';
 import {
   StyleSheet,
   Dimensions,
   processColor
 } from 'react-native';
 
-import {BarChart} from 'react-native-charts-wrapper';
-import { ColorsChart } from '../../../common/Color';
-import { Container, Content, ListItem } from 'native-base';
-
-class BarchartComponent extends Component {
+import {
+  BarChart
+} from 'react-native-charts-wrapper';
+import {
+  ColorsChart
+} from '../../../common/Color';
+import {
+  Container,
+  Content,
+  ListItem
+} from 'native-base';
+export default class BarchartComponent extends Component {
 
   constructor(props) {
     super(props);
@@ -40,8 +49,7 @@ class BarchartComponent extends Component {
             drawValues: false,
             colors: [processColor(ColorsChart[1])],
           }
-        },
-        ],
+        }, ],
         config: {
           barWidth: 0.2,
           group: {
@@ -59,7 +67,22 @@ class BarchartComponent extends Component {
         axisMinimum: 0,
         centerAxisLabels: true
       },
-
+      yAxis: {
+        left: {
+          drawLabels: true, //是否绘制左y轴数值
+          drawAxisLine: true,
+          drawGridLines: false,
+          zeroLine: {
+            enabled: true,
+            lineWidth: 2
+          },
+          granularity: 1 //左y轴步进值
+        },
+        right: {
+          enabled: true, //是否绘制右y轴数值
+          granularity: 1 //右y轴步进值
+        },
+      },
       marker: {
         enabled: true,
         markerColor: processColor('#F0C0FF8C'),
@@ -70,17 +93,29 @@ class BarchartComponent extends Component {
     };
   }
 
-    componentDidMount() {
+  componentDidMount() {
 
-    this.setState({...this.state, highlights: [{x: 1, y:40}, {x: 2, y:50}]})
+    this.setState({ ...this.state,
+      highlights: [{
+        x: 1,
+        y: 40
+      }, {
+        x: 2,
+        y: 50
+      }]
+    })
   }
 
   handleSelect(event) {
     let entry = event.nativeEvent
     if (entry == null) {
-      this.setState({...this.state, selectedEntry: null})
+      this.setState({ ...this.state,
+        selectedEntry: null
+      })
     } else {
-      this.setState({...this.state, selectedEntry: JSON.stringify(entry)})
+      this.setState({ ...this.state,
+        selectedEntry: JSON.stringify(entry)
+      })
     }
 
     console.log(event.nativeEvent)
@@ -88,19 +123,21 @@ class BarchartComponent extends Component {
 
   render() {
     return (
-
-        <Container style={styles.container}>
+      <Container style={styles.container}>
           <BarChart
+          
             style={styles.chart}
             xAxis={this.state.xAxis}
+            yAxis={this.state.yAxis}
             data={this.state.data}
             legend={this.state.legend}
             drawValueAboveBar={false}
             animation={{ durationX: 2000 }}
-            // onSelect={this.handleSelect.bind(this)}
+            onSelect={this.handleSelect.bind(this)}
             onChange={(event) => console.log(event.nativeEvent)}
             highlights={this.state.highlights}
             marker={this.state.marker}
+            chartDescription={{text: ''}}
           />
         </Container>
 
@@ -116,6 +153,3 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
-
-
-export default BarchartComponent;
