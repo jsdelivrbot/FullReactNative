@@ -15,7 +15,6 @@ export default class PieChartComponent extends React.Component {
 
   constructor() {
     super();
-
     this.state = {
       legend: {
         enabled: true,
@@ -63,6 +62,7 @@ export default class PieChartComponent extends React.Component {
   }
 
   render() {
+
     return (
         <Container style={styles.container}>
           <PieChart

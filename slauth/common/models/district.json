@@ -1,0 +1,121 @@
+{
+  "name": "district",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "districtcode": {
+      "type": "string",
+      "required": true
+    },
+    "districtname": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string"
+    },
+    "citycode": {
+      "type": "string",
+      "required": true
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "findDistrict": {
+      "accepts": [
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertDistrict": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insert",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateDistrict": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

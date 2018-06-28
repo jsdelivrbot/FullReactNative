@@ -1,0 +1,32 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-main-wms-signup',
+  templateUrl: './main-wms-signup.component.html',
+  styleUrls: ['./main-wms-signup.component.css']
+})
+export class MainWmsSignupComponent implements OnInit {
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+
+  ngOnInit() {
+  }
+
+  signup(data) {
+    data['appcode'] = 'wms';
+    data['type'] = 1;
+    data['status'] = 2;
+    data['deleted'] = false;
+    data['addwho'] = 'system';
+    this.appServices.signupUsers(data, this).then(function(obj){
+      obj.component.notifyService.show('Signup Success! <br> Please Check Mail '+data['email']+' to get Account');
+      obj.component.router.navigate(['mian/wms-login']);
+    }).catch(function(err){
+      err.component.authService.catchErr(err);
+    })
+  }
+
+}

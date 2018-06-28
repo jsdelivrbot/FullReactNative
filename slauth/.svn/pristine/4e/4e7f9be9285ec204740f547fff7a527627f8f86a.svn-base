@@ -1,0 +1,160 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="row">
+          <div class="col-12">
+            <ng2-map [options]="mapOptions" center="10.809463, 106.714643"  (mapReady$)="onMapReady($event)" style="height: 35vh" >
+              <marker *ngFor="let data of data_warehouse" [icon]="data.icon" [position]="[data.lat,data.lng]" (initialized$)="onMarkerInit($event)" (click)="markerClick($event, data)"></marker>
+            </ng2-map>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-4">
+            <div class="card border-shadow">
+              <div class="card-header bg-transparent border-none text-right">ACTIVITY IN YEAR</div>
+              <div id="total_div"></div>
+              <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card border-shadow">
+              <div class="card-header bg-transparent border-none text-right">TRACK DELETED</div>
+              <div id="totaldeleted_div"></div>
+              <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="card border-shadow mb-2">
+              <div class="card-header bg-transparent border-none text-right">ASN</div>
+              <div class="card border-shadow mt-3">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr  class="tr-default">
+                        <th>
+                          New
+                        </th>
+                        <th>
+                          In Receiving
+                        </th>
+                        <th>
+                          Receipted
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="bg-primary text-center">
+                          {{data_asn?data_asn.new:''}}
+                        </td>
+                        <td class="bg-secondary text-center">
+                          {{data_asn?data_asn.in_receiving:''}}
+                        </td>
+                        <td class="bg-success text-center">
+                          {{data_asn?data_asn.receipted:''}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent border-none text-muted">
+                <small>Last updated 3 mins ago</small></div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-8">
+              <div class="card border-shadow">
+                <div class="card-header bg-transparent border-none ">
+                  <div class="col-sm-4 pull-left">
+                    <div class="input-group ">
+                      <span class="input-group-addon">Company</span>
+                      <select (change)="loadWarehouseByCompanyData($event.target.value)" name="company" class="form-control">
+                        <option *ngFor="let user of data_company" [value]="user.username">{{user.fullname}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-4 pull-right">
+                    <p class="text-right">STATS</p>
+                  </div>
+                </div>
+                <div id="totalbycompany_div"></div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="card border-shadow">
+                <div class="card-header bg-transparent border-none text-right">SO</div>
+                <div class="card border-shadow mt-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                      <thead>
+                        <tr  class="tr-default">
+                          <th>
+                            Create Internally
+                          </th>
+                          <th>
+                            Part Allocate
+                          </th>
+                          <th>
+                            Allocated
+                          </th>
+                          <th>
+                            Part Picking
+                          </th>
+                          <th>
+                            Pick Completed
+                          </th>
+                          <th>
+                            Part Ship
+                          </th>
+                          <th>
+                            Ship Completed
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="bg-primary text-center">
+                            {{data_so?data_so.create_internally:''}}
+                          </td>
+                          <td class="bg-secondary text-center">
+                            {{data_so?data_so.part_allocate:''}}
+                          </td>
+                          <td class="bg-success text-center">
+                            {{data_so?data_so.allocated:''}}
+                          </td>
+                          <td class="bg-danger text-center">
+                            {{data_so?data_so.part_picking:''}}
+                          </td>
+                          <td class="bg-warning text-center">
+                            {{data_so?data_so.pick_completed:''}}
+                          </td>
+                          <td class="bg-info text-center">
+                            {{data_so?data_so.part_ship:''}}
+                          </td>
+                          <td class="bg-light text-center">
+                            {{data_so?data_so.ship_completed:''}}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer></app-footer>

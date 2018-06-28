@@ -1,0 +1,31 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+export class HeaderComponent implements OnInit {
+
+  constructor(private appServices: AppServices,  private notifyService: NotifyService, private router: Router) { }
+
+  ngOnInit() {
+  }
+
+  Signout(){
+    if (localStorage.getItem("currentUser") !== null) {
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      this.appServices.signoutUsers({'username': currentUser.user.username}, this).then( function(success){
+        localStorage.clear();
+        success.component.notifyService.show('Signout Success');
+        success.component.router.navigate(['admin/login']);
+      }).catch(function(errtoken){
+        errtoken.component.notifyService.show(errtoken, 'danger');
+      })
+    }
+  }
+
+}

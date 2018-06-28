@@ -1,0 +1,239 @@
+{
+  "name": "Warehouse",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "warehousecode": {
+      "type": "string",
+      "required": true
+    },
+    "warehousename": {
+      "type": "string",
+      "required": true
+    },
+    "parentuser": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "hide": {
+      "type": "boolean"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "listWarehouse": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertWarehouse": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousename",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "hide",
+          "type": "boolean",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insert",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateWarehouse": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousename",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "hide",
+          "type": "boolean",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    },
+    "findWarehouse": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

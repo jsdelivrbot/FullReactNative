@@ -1,0 +1,358 @@
+import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Router, ActivatedRoute, Params  } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { NgStyle } from '@angular/common';
+import * as md5 from "md5";
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-usersmanagement',
+  templateUrl: './usersmanagement.component.html',
+  styleUrls: ['./usersmanagement.component.css']
+})
+export class UsersmanagementComponent implements OnInit {
+  @ViewChild('myModal') el:ElementRef;
+  data_user; type = 1;
+   _id;
+  data_parentuser = [];
+  filter;
+  data_userlist = []; data_warehouselist = []; data_rolelist = []; data_ownerlist = [];
+  data_roles = []; data_userroles = []; collect_roles = []; collect_userroles = [];
+  data_apps = []; data_userapps = []; collect_apps = []; collect_userapps = [];
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private activatedRoute : ActivatedRoute) { }
+  ngOnInit() {
+    this.activatedRoute.params.subscribe((params: Params) => {
+      this._id = params['id'];
+      this.loadUsersData(this._id);
+    });
+
+  }
+  //Filter Data
+  filterRolesData(userroles, parentuser) {
+    this.appServices.listRoles({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': parentuser}, this).then(function(obj){
+      if(userroles.length > 0){
+        let data = obj.response.json().res;
+        obj.component.data_roles = data.filter(function(f){
+          if(userroles.findIndex(function(z){
+            if(f.rolecode === z.rolecode) return z;
+          }) < 0) {
+            return f;
+          }
+        })
+      } else {
+        obj.component.data_roles = obj.response.json().res;
+      }
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  filterAppsData(userapps, parentuser) {
+      this.appServices.listApps({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': parentuser}, this).then(function(obj){
+        if(userapps.length > 0){
+          let data = obj.response.json().res;
+          obj.component.data_apps = data.filter(function(f){
+            if(userapps.findIndex(function(z){
+              if(f.appcode === z.appcode) return z;
+            }) < 0) {
+              return f;
+            }
+          })
+        } else {
+            obj.component.data_apps = obj.response.json().res;
+        }
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+  }
+  //load data
+  loadParentUserData(username) {
+    this.appServices.listUsers({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': '', 'username': username}, this).then(function(obj){
+      obj.component.data_parentuser = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadUserxRoleData(username, parentuser) {
+    this.appServices.getRolesUserxRole({'token': this.appServices.session.token.id, 'username': username, 'deleted': false}, this).then(function(obj){
+      obj.component.data_userroles = obj.response.json().res;
+      obj.component.filterRolesData(obj.component.data_userroles, parentuser);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadUserxAppData(username, parentuser) {
+    this.appServices.getAppsUserxApp({'token': this.appServices.session.token.id, 'username': username, 'deleted': false}, this).then(function(obj){
+      obj.component.data_userapps = obj.response.json().res;
+      obj.component.filterAppsData(obj.component.data_userapps, parentuser);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadUserList(username){
+    this.appServices.findUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'parentuser': username, 'deleted': false}})}, this).then(function(obj){
+      obj.component.data_userlist = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadOwnerList(username, type){
+    if(type === 1){
+      this.appServices.findStorer({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'parentuser': username, 'deleted': false}})}, this).then(function(obj){
+        obj.component.data_ownerlist = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    } else {
+      this.appServices.listStorer({'token': this.appServices.session.token.id, 'type': '1', 'deleted': false, 'username': username, }, this).then(function(obj){
+        obj.component.data_ownerlist = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+  }
+  loadRoleList(username){
+    this.appServices.findRoles({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'parentuser': username, 'deleted': false}})}, this).then(function(obj){
+      obj.component.data_rolelist = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadWarehouseList(username, type){
+    if(type === 1){
+      this.appServices.findWarehouse({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'parentuser': username, 'deleted': false}})}, this).then(function(obj){
+        obj.component.data_warehouselist = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    } else {
+      this.appServices.listRolexWarehouse({'token': this.appServices.session.token.id, 'username': username, 'deleted': false}, this).then(function(obj){
+        obj.component.data_warehouselist = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+  }
+  loadUsersData(id){
+    this.appServices.findUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'id': id}})}, this).then(function(success){
+        let _rs = success.response.json().res[0];
+        success.component.data_user = _rs;
+        success.component.type = _rs.type;
+        success.component.loadUserxRoleData(_rs.username, _rs.parentuser);
+        success.component.loadUserxAppData(_rs.username, _rs.parentuser);
+        success.component.loadParentUserData(_rs.username);
+        success.component.loadUserList(_rs.username);
+        success.component.loadOwnerList(_rs.username, _rs.type);
+        success.component.loadRoleList(_rs.username);
+        success.component.loadWarehouseList(_rs.username, _rs.type);
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+    updateUsersData(data) {
+      this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        data['deleted'] = false;
+        data['editwho'] = _rs.uid;
+        data['type'] = parseInt(data['type']);
+        data['token'] = _rs.id;
+        data['parentuser'] = data['parentuser']?data['parentuser']:(success.component.appServices.session.isAdmin?'':success.component.appServices.session.token.uid);
+        success.component.appServices.updateUsers(data, this).then(function(obj){
+          let res = obj.response.json().res;
+          //UserxRole
+          success.component.appServices.deleteUserxRole({'token': _rs.id,'username': data.username, 'deleted': true, 'notes': 'deleted', 'editwho': _rs.uid}, this).then(function(del){
+            success.component.data_userroles.forEach((value, index, arr)=>{
+              success.component.appServices.saveUserxRole({ 'token': _rs.id, 'username': data.username, 'rolecode': value.rolecode, 'notes': '', 'addwho': _rs.uid, 'editwho': _rs.uid  }, this).then(function(save){
+              }).catch(function(err_save){
+                err_save.component.notifyService.show(err_save.err.json().error.message, 'danger');
+              })
+            })
+          }).catch(function(err_del){
+            err_del.component.notifyService.show(err_del.err.json().error.message, 'danger');
+          })
+          //UserxApp
+          success.component.appServices.deleteUserxApp({'token': _rs.id,'username': data.username, 'deleted': true, 'notes': 'deleted', 'editwho': _rs.uid}, this).then(function(del){
+            success.component.data_userapps.forEach((value, index, arr)=>{
+              success.component.appServices.saveUserxApp({ 'token': _rs.id, 'username': data.username, 'appcode': value.appcode, 'notes': '', 'addwho': _rs.uid, 'editwho': _rs.uid  }, this).then(function(save){
+              }).catch(function(err_save){
+                err_save.component.notifyService.show(err_save.err.json().error.message, 'danger');
+              })
+            })
+          }).catch(function(err_del){
+            err_del.component.notifyService.show(err_del.err.json().error.message, 'danger');
+          })
+          success.component.notifyService.show('Process Done');
+        }).catch(function(err){
+          err.component.notifyService.show( err.err.json().error.message, 'danger');
+        });
+      }).catch(function(errtoken){
+        console.log('Invalid');
+      })
+    }
+
+    deleteUsersData(value){
+      this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['token'] =_rs.id;
+        success.component.appServices.updateUsers(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.el.nativeElement.click();
+          success.component.router.navigate(['users']);
+          success.component.notifyService.show('Process Done');
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      }).catch(function(errtoken){
+        console.log('Invalid');
+      })
+    }
+    resetPasswordUsersData(){
+      this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        success.component.appServices.findUsers({'token': _rs.id, 'filter': JSON.stringify({'where': {'username': success.component.data_user.username}})}, this).then(function(exist){
+          let json = exist.response.json();
+          if(json.res.length > 0) {
+            console.log(_rs.id);
+            console.log(_rs.uid);
+            console.log(success.component.data_user.username);
+            success.component.appServices.resetPasswordUsers({'token': _rs.id, 'username': success.component.data_user.username, 'editwho': _rs.uid}, this).then(function(obj){
+              let res = obj.response.json().res;
+              success.component.notifyService.show('Process Done');
+            }).catch(function(err){
+              err.component.notifyService.show(err.err.json().error.message, 'danger');
+            });
+          }
+          else {
+            success.component.notifyService.show('User not found!', 'danger');
+          }
+        }).catch(function(err){
+          err.component.notifyService.show( err.err.json().error.message, 'danger');
+        })
+      }).catch(function(errtoken){
+        console.log('Invalid');
+      })
+    }
+
+
+    // changePasswordUsersData(data){
+    //   if(data.password === data.confirmpassword){
+    //     this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+    //       let _rs = success.response.json().res;
+    //       success.component.appServices.findUsers({'token': _rs.id, 'filter': JSON.stringify({'where': {'username': success.component.data_user.username, 'password': md5(data.passwordold)}})}, this).then(function(exist){
+    //         let json = exist.response.json();
+    //         if(json.res.length > 0) {
+    //           data['deleted'] = false;
+    //           data['username'] = success.component.data_user.username;
+    //           data['editwho'] = _rs.uid;
+    //           data['token'] = _rs.id;
+    //           success.component.appServices.changePasswordUsers(data, this).then(function(obj){
+    //             let res = obj.response.json().res;
+    //             success.component.notifyService.show('Process Done');
+    //           }).catch(function(err){
+    //             err.component.notifyService.show(err.err.json().error.message, 'danger');
+    //           });
+    //         }
+    //         else {
+    //           success.component.notifyService.show('User not found!', 'danger');
+    //         }
+    //       }).catch(function(err){
+    //         err.component.notifyService.show( err.err.json().error.message, 'danger');
+    //       })
+    //     }).catch(function(errtoken){
+    //       console.log('Invalid');
+    //     })
+    //   } else {
+    //     this.notifyService.show('Password comfirm not corrrect', 'danger');
+    //   }
+    // }
+
+    addAllRoles(){
+      this.appServices.listRoles({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': this.data_user.parentuser}, this).then(function(obj){
+        obj.component.collect_roles = obj.component.collect_userroles  = [];
+        obj.component.data_roles = [];
+        obj.component.data_userroles = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+    removeAllRoles(){
+      this.appServices.listRoles({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': this.data_user.parentuser}, this).then(function(obj){
+        obj.component.collect_roles = obj.component.collect_userroles  = [];
+        obj.component.data_userroles = [];
+        obj.component.data_roles = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+    addRoles(data){
+      if(!this.data_userroles.includes(data)){
+        this.data_userroles.unshift(data);
+        let i = this.data_roles.indexOf(data);
+        this.data_roles.splice(i,1);
+      }
+    }
+
+    removeRoles(data){
+      if(!this.data_roles.includes(data)){
+        this.data_roles.unshift(data);
+        let i = this.data_userroles.indexOf(data);
+        this.data_userroles.splice(i, 1);
+      }
+    }
+
+    addAllApps(){
+      this.appServices.listApps({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(obj){
+        obj.component.collect_apps = obj.component.collect_userapps  = [];
+        obj.component.data_apps = [];
+        obj.component.data_userapps = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+    removeAllApps(){
+      this.appServices.listApps({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(obj){
+        obj.component.collect_roles = obj.component.collect_userroles  = [];
+        obj.component.data_userapps = [];
+        obj.component.data_apps = obj.response.json().res;
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+
+    addApps(data){
+        if(!this.data_userapps.includes(data)){
+          this.data_userapps.unshift(data);
+          let i = this.data_apps.indexOf(data);
+          this.data_apps.splice(i,1);
+        }
+    }
+
+    removeApps(data){
+        if(!this.data_apps.includes(data)){
+          this.data_apps.unshift(data);
+          let i = this.data_userapps.indexOf(data);
+          this.data_userapps.splice(i, 1);
+        }
+    }
+
+    changeStatus(data){
+      this.data_user['status'] = data['status'] === 1 ? 0 : 1;
+    }
+
+    BacktoListusers(){
+      this.router.navigate(['/users']);
+    }
+
+    refreshUsersData(){
+      this.data_user = '';
+      this.loadUsersData(this._id);
+    }
+
+  }

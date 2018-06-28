@@ -1,0 +1,121 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+@Component({
+  selector: 'app-admin-menu',
+  templateUrl: './admin-menu.component.html',
+  styleUrls: ['./admin-menu.component.css']
+})
+export class AdminMenuComponent implements OnInit {
+  data_menu = []; ; selected_menu; delete_menu = []; currentPage_menu = 1; itemsPerPage_menu = 5; total_menu = 0; data_itemsPerPage = [];
+  filter;
+  data_app = [];
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) { }
+  ngOnInit() {
+    this.loadItemsPerPage();
+    this.loadAppData();
+  }
+  loadItemsPerPage(){
+    this.appServices.findCodelkup({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'listname': 'Paginate', 'deleted': false}})}, this)
+    .then(function(__){
+      let response = __.response.json().res;
+      __.component.data_itemsPerPage = response;
+      __.component.itemsPerPage_menu = response[0].short;
+      __.component.loadMenuData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadMenuData(param = '') {
+    let skip = (this.currentPage_menu-1)*this.itemsPerPage_menu;
+    let limit = this.itemsPerPage_menu;
+    this.delete_menu = [];
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    this.appServices.findMenu({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip, 'limit': limit})}, this)
+    .then(function(__){
+      let json = __.response.json();
+      __.component.data_menu = json.res;
+      __.component.total_menu = json.total;
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadAppData(){
+    this.appServices.listApps({'obj': JSON.stringify({'token': this.appServices.session.token.id, 'parentuser': '', 'deleted': false})}, this).then(function(__){
+      __.component.data_app = __.response.json().res;
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  insertMenuData(data) {
+      data['addwho'] = this.appServices.session.token.uid;
+      data['token'] = this.appServices.session.token.id;
+      this.appServices.insertMenu({'obj': JSON.stringify(data)}, this).then(function(__){
+        __.component.notifyService.show('Process Done');
+        __.component.loadMenuData();
+      }).catch((err)=>{
+        this.authService.catchErr(err);
+      })
+  }
+  updateMenuData(data) {
+      data['deleted'] = false;
+      data['editwho'] = this.appServices.session.token.uid;
+      data['token'] = this.appServices.session.token.id;
+      this.appServices.updateMenu({'obj': JSON.stringify(data)}, this).then(function(__){
+        __.component.notifyService.show('Process Done');
+        __.component.loadMenuData();
+      }).catch((err)=>{
+        this.authService.catchErr(err);
+      })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_menu.push(data);
+    }
+    else {
+      let index = this.delete_menu.indexOf(data);
+      this.delete_menu.splice(index, 1);
+    }
+  }
+  findMenuData(data){
+    this.selected_menu = Object.assign({}, data);;
+  }
+  deleteMenuData(){
+      this.delete_menu.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = this.appServices.session.token.uid;
+        value['token'] = this.appServices.session.token.id;
+        this.appServices.updateMenu({'obj': JSON.stringify(value)}, this).then(function(success){
+          success.component.notifyService.show('Info', 'Process Done');
+          success.component.loadMenuData();
+        }).catch((err)=>{
+          this.authService.catchErr(err);
+        })
+      })
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_menu.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_menu.includes(curr_data)){
+          this.delete_menu.push(curr_data);
+        }
+      })
+    } else {
+      this.data_menu.forEach(x=>x.state = e.target.checked);
+      this.delete_menu = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_menu.every(_ => _.state);
+  }
+}

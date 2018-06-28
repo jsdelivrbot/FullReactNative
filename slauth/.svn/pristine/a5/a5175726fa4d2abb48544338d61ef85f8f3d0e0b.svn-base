@@ -1,0 +1,155 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+module.exports = function(Storer) {
+  Storer.validatesUniquenessOf({scopedTo: ['warehousecode', 'storerkey']});
+  Storer.afterRemote('**', function(ctx, result, next) {
+    if(result.res['count']){
+      _.extend(ctx.result, {'total': result.res['count']});
+      next();
+    } else {
+      var where = ctx.args;
+      if(ctx.args.filter) {
+        where = JSON.parse(ctx.args.filter).where;
+      }
+      Storer.count(where, function (err, count) {
+        _.extend(ctx.result, {'total': count});
+        next();
+      })
+    }
+  });
+
+  Storer.listStorer = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      let strSQL = 'SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable from storer '
+      +'where storer.type = ? and storer.deleted = ? and storer.parentuser = ?';
+      Storer.dataSource.connector.execute(strSQL, [data.type, data.deleted, data.parentuser], function(err, res){
+        if(err) callback(err);
+        callback(null, res);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.getAllByWarehouseStorer = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Storer.dataSource.connector.execute('SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.lottable from storer WHERE storer.warehousecode in ('+ data.strwarehousecode +') and storer.parentuser = ? and storer.type = ? and storer.deleted = ?', [data.parentuser, data.type, data.deleted], function(err, res){
+        if(err) callback(err);
+        callback(null, res);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.getByOneWarehouseStorer = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Storer.dataSource.connector.execute('SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable from storer WHERE storer.warehousecode = ? and storer.type = ? and storer.deleted = ?', [data.warehousecode, data.type, data.deleted], function(err, res){
+        if(err) callback(err);
+        callback(null, res);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+
+  // new version
+  Storer.findStorer = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.insertStorer = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Storer.findOne({where: {'warehousecode': data.warehousecode, 'storerkey': data.storerkey,'type': data.type}}).then(function(object){
+        if(object){
+          if(object.deleted){
+            Storer.updateAll({'warehousecode': data.warehousecode, 'storerkey': data.storerkey,'type': data.type},{
+              'parentuser': data.parentuser,
+              'deleted': false,
+              'company': data.company,
+              'address1': data.address1,
+              'lottable': JSON.stringify(data.lottable),
+              'stockinfo': data.stockinfo,
+              'freeday': data.freeday,
+              'ageindays': data.ageindays,
+              'notes1': data.notes1,
+              'adddate': new Date().toISOString(),
+              'addwho': data.addwho,
+              'editdate': new Date().toISOString(),
+              'editwho': data.addwho
+            }).then(function(res){
+              data['id'] = object.id;
+              callback(null, data);
+            }).catch(function(err){
+              callback(err);
+            })
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.message = 'Data is not existed';
+            callback(err);
+          }
+        } else {
+          Storer.create({
+            'deleted': false,
+            'warehousecode': data.warehousecode,
+            'storerkey': data.storerkey,
+            'type': data.type,
+            'parentuser': data.parentuser,
+            'company': data.company,
+            'address1': data.address1,
+            'lottable': JSON.stringify(data.lottable),
+            'stockinfo': data.stockinfo,
+            'freeday': data.freeday,
+            'ageindays': data.ageindays,
+            'notes1': data.notes1,
+            'adddate': new Date().toISOString(),
+            'addwho': data.addwho
+          }).then(function(res){
+            callback(null, res);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.updateStorer = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Storer.updateAll({'warehousecode': data.warehousecode, 'storerkey': data.storerkey,'type': data.type},{
+        'parentuser': data.parentuser,
+        'deleted': data.deleted,
+        'company': data.company,
+        'address1': data.address1,
+        'lottable': JSON.stringify(data.lottable),
+        'stockinfo': data.stockinfo,
+        'freeday': data.freeday,
+        'ageindays': data.ageindays,
+        'notes1': data.notes1,
+        'editdate': new Date().toISOString(),
+        'editwho': data.editwho
+      }).then(function(res){
+        callback(null, data);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+};

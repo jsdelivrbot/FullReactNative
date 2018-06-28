@@ -1,0 +1,10 @@
+{
+  "ids": {
+    "token": 435
+  },
+  "models": {
+    "token": {
+      "1Dw6xNiJ6YKpLP8sHxHxMtzJxDDS8tAILXyDso3mgYSdGBJ4CRpGONYXAHc78Nv9": "{\"uid\":\"admin\",\"ttl\":3600,\"id\":\"1Dw6xNiJ6YKpLP8sHxHxMtzJxDDS8tAILXyDso3mgYSdGBJ4CRpGONYXAHc78Nv9\",\"created\":\"2017-10-20T17:25:12.535Z\"}"
+    }
+  }
+}

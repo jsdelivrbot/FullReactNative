@@ -1,0 +1,168 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-admin-mail',
+  templateUrl: './admin-mail.component.html',
+  styleUrls: ['./admin-mail.component.css']
+})
+export class AdminMailComponent implements OnInit {
+  data_sysmail; total_sysmail; selected_sysmail; count_sysmail = 0; delete_sysmail = [];
+  filter;
+  data_apps = [];
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+
+  ngOnInit() {
+    this.loadSysMailData();
+    this.loadAppsData();
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Info', 'Load more');
+          this.loadSysMailData('', this.count_sysmail);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadSysMailData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_sysmail = [];
+      this.count_sysmail = skip;
+      this.delete_sysmail = [];
+    }
+    this.appServices.findSysMail({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip})}, this).then((obj)=>{
+      let json = obj.response.json();
+      if(this.data_sysmail) {
+        this.data_sysmail = this.data_sysmail.concat(json.res);
+      }
+      else {
+        this.data_sysmail = json.res;
+      }
+      this.count_sysmail += json.res.length;
+      this.total_sysmail = json.total;
+      Waypoint.refreshAll();
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadAppsData() {
+    this.appServices.listApps({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': ''}, this).then(function(obj){
+      obj.component.data_apps = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  insertSysMailData(data) {
+    if(data.password === data.comfirmpassword){
+      this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        data['addwho'] = _rs.uid;
+        data['token'] = _rs.id;
+        data['status'] = typeof data['status'] === 'undefined'?true:data['status'];
+        data['secure'] = typeof data['secure'] === 'undefined'?true:data['secure'];
+        success.component.appServices.insertSysMail(data, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadSysMailData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+        localStorage.clear();
+        err.component.appServices.session = {};
+        err.component.router.navigate(['/admin/login']);
+      })
+    } else {
+      this.notifyService.show('Comfirm password not correct!', 'danger');
+    }
+  }
+  updateSysMailData(data) {
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['editwho'] = _rs.uid;
+      data['token'] = _rs.id;
+      data['deleted'] = false;
+      success.component.appServices.updateSysMail(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadSysMailData();
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      });
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      localStorage.clear();
+      err.component.appServices.session = {};
+      err.component.router.navigate(['/admin/login']);
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_sysmail.push(data);
+    }
+    else {
+      let index = this.delete_sysmail.indexOf(data);
+      this.delete_sysmail.splice(index, 1);
+    }
+  }
+  findSysMailData(data){
+    this.selected_sysmail = data;
+  }
+  deleteSysMailData(){
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      success.component.delete_sysmail.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['token'] = _rs.id;
+        success.component.appServices.updateSysMail(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadSysMailData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      });
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      localStorage.clear();
+      err.component.appServices.session = {};
+      err.component.router.navigate(['/admin/login']);
+    })
+  }
+  changeStatus(value, data){
+    data['status'] = value;
+  }
+  changeSecure(value, data){
+    data['secure'] = value;
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_sysmail.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_sysmail.includes(curr_data)){
+          this.delete_sysmail.push(curr_data);
+        }
+      })
+    } else {
+      this.data_sysmail.forEach(x=>x.state = e.target.checked);
+      this.delete_sysmail = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_sysmail.every(_ => _.state);
+  }
+}

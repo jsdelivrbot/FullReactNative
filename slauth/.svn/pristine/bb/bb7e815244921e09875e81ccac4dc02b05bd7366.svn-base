@@ -1,0 +1,194 @@
+<app-header></app-header>
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2 sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3">
+        <h2><i class="fa fa-signal"></i> Roles Management</h2>
+        <hr/>
+        <button type="button" class="btn btn-sm btn-primary" (click)="BacktoListRoles()" >
+          <i class="fa fa-reply"></i> Back to List Roles
+        </button>
+
+        <button class="btn btn-sm btn-outline-danger pull-right" data-toggle="modal" data-target="#modalDeleteRoles" >
+          <i class="fa fa-trash"></i> Delete
+        </button>
+        <button type="submit" [disabled]="!frmEdit.form.valid" (click)="updateRolesData(frmEdit.value)" class="btn btn-sm btn-outline-success pull-right">
+          <i class="fa fa-floppy-o"></i> Save
+        </button>
+        <button type="button" (click)="refreshRolesData()" class="btn btn-sm btn-outline-secondary pull-right">
+          <i class="fa fa-times"></i> Cancel
+        </button>
+        <div class="mt-3">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tabRoleDetail" role="tab">Role Detail</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabRolexWarehouse" role="tab">Role Warehouse</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabRolexStorer" role="tab">Role Storer</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabRolexMenu" role="tab">Role Menu</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="tabRoleDetail">
+              <form #frmEdit="ngForm" autocomplete="off" >
+                <div class="row mt-3">
+                  <div class="col-sm-12" *ngIf="data_roles">
+                    <div class="row" *ngIf="this.appServices.session.isAdmin">
+                      <div class="col-sm-12">
+                        <div class="input-group ">
+                          <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Parent User</span>
+                          <select  [(ngModel)]="data_roles.parentuser" required name="parentuser" class="form-control">
+                            <option disabled  *ngFor="let item of data_parentuser" [ngValue]="item.username">{{item.username}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="input-group">
+                          <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Code</span>
+                          <input type="text" required class="form-control" name="rolecode" [(ngModel)]="data_roles.rolecode" required  readonly/>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="input-group">
+                          <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Name</span>
+                          <input type="text" required class="form-control" name="rolename" [(ngModel)]="data_roles.rolename" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="input-group">
+                          <span class="input-group-addon">Notes</span>
+                          <input type="text"  class="form-control" name="notes" [(ngModel)]="data_roles.notes" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane fade" id="tabRolexWarehouse">
+              <div class="row mt-3">
+                <div class="col-sm-12">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <div class="input-group">
+                        <select multiple size="0" class="form-control">
+                          <option *ngFor="let whs of data_warehouse" (click)="addWarehouse(whs)" [ngValue]="whs.warehousecode" >{{whs.warehousename}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                      <div class="btn-group-vertical">
+                        <button type="button" (click)="removeAllWarehouse()" class="btn btn-danger">&lt;&lt;</button>
+                        <button type="button" (click)="addAllWarehouse()" class="btn btn-success">&gt;&gt;</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="input-group">
+                        <select multiple size="0" class="form-control">
+                          <option *ngFor="let rolexws of data_rolexwarehouse" (click)="removeWarehouse(rolexws)" [ngValue]="rolexws.warehousecode">{{rolexws.warehousename}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabRolexStorer">
+              <div class="row mt-3">
+                <div class="col-sm-12">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <div class="input-group">
+                        <select multiple size="0" class="form-control">
+                          <option *ngFor="let storer of data_storer" (click)="addStorer(storer)" [ngValue]="storer.storerkey" >{{storer.company}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                      <div class="btn-group-vertical">
+                        <button type="button" (click)="removeAllStorer()" class="btn btn-danger">&lt;&lt;</button>
+                        <button type="button" (click)="addAllStorer()" class="btn btn-success">&gt;&gt;</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="input-group">
+                        <select multiple size="0" class="form-control">
+                          <option *ngFor="let rolexstorer of data_rolexstorer" (click)="removeStorer(rolexstorer)" [ngValue]="rolexstorer.storerkey">{{rolexstorer.company}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabRolexMenu">
+              <div class="row mt-3">
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead class="thead-default">
+                        <tr>
+                          <th>Menu Name</th>
+                          <th>ReadOnly</th>
+                          <th>Edit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let rxm of data_rolexmenu">
+                          <td data-toggle="modal" class="align-middle">{{rxm.menuname}}</td>
+                          <td data-toggle="modal" class="text-center">
+                            <label class="custom-control custom-checkbox">
+                              <input type="checkbox" class="custom-control-input" name="{{rxm.menucode}}" [(ngModel)]="rxm.readonly">
+                              <span class="custom-control-indicator"></span>
+                            </label>
+                          </td>
+                          <td data-toggle="modal" class="text-center">
+                            <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" name="{{rxm.menucode}}" [(ngModel)]="rxm.edit">
+                              <span class="custom-control-indicator"></span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr id="pagination"></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" #myModal id="modalDeleteRoles" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Role</h5>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete this role?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteRolesData(data_roles)" ><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="data-layout" data-layout="footer.html"></div>

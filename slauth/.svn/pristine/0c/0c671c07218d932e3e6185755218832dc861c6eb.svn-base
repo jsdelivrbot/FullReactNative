@@ -1,0 +1,62 @@
+'use strict';
+
+var loopback = require('loopback');
+var boot = require('loopback-boot');
+var bunyan = require('bunyan');
+
+var app = module.exports = loopback();
+var rootLogger = bunyan.createLogger({
+  name: 'slauthLog',
+  streams: [{
+    type: 'rotating-file',
+    path: './log/track.log',
+    period: '1d',
+    count: 2
+  }]
+});
+var logger = require('loopback-component-logger')(rootLogger);
+
+app.start = function() {
+  // start the web server
+  return app.listen(function() {
+    app.emit('started');
+    var baseUrl = app.get('url').replace(/\/$/, '');
+    console.log('Web server listening at: %s', baseUrl);
+    if (app.get('loopback-component-explorer')) {
+      var explorerPath = app.get('loopback-component-explorer').mountPath;
+      console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
+    }
+  });
+};
+
+let speedTest = require('speedtest-net');
+app.use(function(req, res, next) {
+  app.models.Stats.bytesRead = req.socket.bytesRead;
+  app.models.Stats.bytesWritten = req.socket.bytesWritten;
+  app.models.Stats.connections = req.connection.server.connections;
+  let speed = speedTest({maxTime: 1000});
+  speed.on('data', data => {
+    app.models.Stats.ping = data.server.ping;
+    // console.log('Download:', data.speeds.download, 'MBit/s');
+    // console.log('Upload:', data.speeds.upload, 'MBit/s');
+    // console.log('Download:', (data.speeds.originalDownload / 1000000).toFixed(2), 'MB/s');
+    // console.log('Upload:', (data.speeds.originalUpload / 1000000).toFixed(2), 'MB/s');
+  });
+  speed.on('downloadspeed', speed => {
+    app.models.Stats.downloadspeed = Number((speed * 125).toFixed(2));
+  });
+  speed.on('uploadspeed', speed => {
+    app.models.Stats.uploadspeed = Number((speed * 125).toFixed(2));
+  });
+  next();
+});
+
+// Bootstrap the application, configure models, datasources and middleware.
+// Sub-apps like REST API are mounted via boot scripts.
+boot(app, __dirname, function(err) {
+  if (err) throw err;
+
+  // start the server if `$ node server.js`
+  if (require.main === module)
+  app.start();
+});

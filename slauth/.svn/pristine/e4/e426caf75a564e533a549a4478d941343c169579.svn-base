@@ -1,0 +1,213 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-user"></i> Users</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" disabled><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>UserName</th>
+                  <th>FullName</th>
+                  <th>Email</th>
+                  <th>Tel</th>
+                  <th *ngIf="this.appServices.session.isAdmin">Type</th>
+                  <th *ngIf="this.appServices.session.isAdmin">Company</th>
+                  <th>Status</th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'username':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'fullname':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'email':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'tel':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th *ngIf="this.appServices.session.isAdmin">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'type':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th *ngIf="this.appServices.session.isAdmin">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'parentuser':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadUsersData({'status':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_users | paginate: { id: 'id_users', itemsPerPage: this.itemsPerPage_users, currentPage: this.currentPage_users, totalItems: this.total_users };" >
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.username}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.fullname}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.email}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.tel}}</td>
+                  <td *ngIf="this.appServices.session.isAdmin" data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.type===1?'Company':(data.type===3 ? 'Customer': 'Staff')}}</td>
+                  <td *ngIf="this.appServices.session.isAdmin" data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle">{{data.parentuser}}</td>
+                  <td  data-toggle="modal" data-target="#modalEdit" (click)="findUsersData(data)" class="align-middle" >
+                    <span *ngIf="data.status == 1" class="badge badge-pill badge-success">Active</span>
+                    <span *ngIf="data.status == 0" class="badge badge-pill badge-danger">InActive</span>
+                    <span *ngIf="data.status == 2" class="badge badge-pill badge-warning">Wait Active</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_users" [(ngModel)]="this.itemsPerPage_users" (change)="this.itemsPerPage_users = $event.target.value; this.loadUsersData()">
+                <option *ngFor="let data of data_itemsPerPage" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_users" (pageChange)="this.currentPage_users = $event; this.loadUsersData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New User</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_users">
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Type</span>
+                    <select [(ngModel)]="data_users.type" name="type" class="form-control" required>
+                      <option [value]="1" *ngIf="this.appServices.session.isAdmin">Company</option>
+                      <option [value]="2">Staff</option>
+                      <option [value]="3">Customer</option>
+                    </select>
+                  </div>
+                  <div class="input-group " *ngIf="(this.appServices.session.isAdmin && data_users.type == 2) || (this.appServices.session.isAdmin && data_users.type == 3) ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Company</span>
+                    <select  [(ngModel)]="data_users.parentuser" required name="parentuser" class="form-control">
+                      <option  *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>FullName</span>
+                    <input type="text" class="form-control" name="fullname" [(ngModel)]="data_users.fullname" required autofocus />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Email</span>
+                    <input type="email" class="form-control" name="email" [(ngModel)]="data_users.email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Tel</span>
+                    <input type="tel"  class="form-control" name="tel" [(ngModel)]="data_users.tel" required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>UserName</span>
+                    <input type="text" class="form-control" name="username" [(ngModel)]="data_users.username"required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Password</span>
+                    <input type="password" class="form-control" name="password" ngModel required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><i class="text-danger">&nbsp;*</i>Comfirm Password</span>
+                    <input type="password" class="form-control" name="comfirmpassword" ngModel required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_users.notes' name='notes' ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <div class="btn-group btn-group-circle" data-toggle="buttons" >
+                      <label class="btn green btn-sm btn-outline active" (click)="changeStatus(1, data_users)">
+                        <input type="radio" name="status" value="1" [(ngModel)]='data_users.status' class="toggle"> Active
+                      </label>
+                      <label class="btn red btn-sm btn-outline"  (click)="changeStatus(0, data_users)">
+                        <input type="radio" name="status" value="0" [(ngModel)]='data_users.status' class="toggle"> InActive
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" [disabled]="!frmAdd.form.valid" (click)="insertUsersData(frmAdd.value)"><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Users</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteUsersData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

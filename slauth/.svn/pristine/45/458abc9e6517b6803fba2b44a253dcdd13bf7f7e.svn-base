@@ -1,0 +1,17 @@
+<div class="collapse" id="navbarToggleExternalContentWMS">
+  <div class="bg-dark p-4">
+    <h4 class="text-center text-white">SMARTLOG</h4>
+    <p class="text-center text-muted">An unique solutions in global logistic</p>
+    <ul class="nav nav-pills justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/home">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/wms-login">Signin</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/wms-signup">Trial</a>
+      </li>
+    </ul>
+  </div>
+</div>

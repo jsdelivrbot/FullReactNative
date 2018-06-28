@@ -1,0 +1,23 @@
+<div class="container-fluid p-0">
+  <app-header-wms></app-header-wms>
+  <app-top-menu-wms></app-top-menu-wms>
+  <div class="page-inner">
+    <section>
+      <h2>About us</h2>
+      <p>Lorem ipsum dolor sit amet, graece possit erroribus te qui. Ad eam impetus ullamcorper, eu eam nihil facete equidem. Usu phaedrum maluisset an, ex saepe tincidunt nec. Sed ad utinam accusam, ex vel odio prima pericula, sea an ipsum nullam admodum.</p>
+    </section>
+    <section>
+      <h2>Our Leaders</h2>
+      <p>Eu nec justo maluisset, no mucius ridens consectetuer mel. Vix gubergren intellegat inciderint ei. Ne dicit laoreet cum. Vis et erant admodum, ius sumo referrentur ad, nam in atomorum constituto sententiae.</p>
+    </section>
+    <section>
+      <h2>Our Team</h2>
+      <p>Eu expetenda vituperata vix, tempor accusam luptatum quo ei. Percipit urbanitas voluptaria no vis. Unum nonumy intellegam an vix. Te aperiri malorum recteque has. Doming reprimique liberavisse sit et, id eum quas dictas, his prompta labores tincidunt ne.</p>
+    </section>
+    <section>
+      <h2>Our Works</h2>
+      <p>Falli inimicus his et, legere fastidii nec ex. Cum primis iisque maiorum an. Per virtute petentium in. Vim elitr electram quaerendum cu, cum at luptatum referrentur.</p>
+    </section>
+  </div>
+  <app-footer-wms></app-footer-wms>
+</div>

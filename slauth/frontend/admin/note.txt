@@ -1,0 +1,3 @@
+Chạy Chrome với command sau để view được frontend
+--allow-file-access-from-files
+Hoặc dùng Firefox

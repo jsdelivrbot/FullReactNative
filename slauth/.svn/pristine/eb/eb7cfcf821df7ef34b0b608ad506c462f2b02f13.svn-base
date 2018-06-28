@@ -1,0 +1,209 @@
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { JsonPipe } from '@angular/common';
+import { NgForm } from '@angular/forms';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-admin-owner',
+  templateUrl: './admin-owner.component.html',
+  styleUrls: ['./admin-owner.component.css']
+})
+export class AdminOwnerComponent implements OnInit {
+  @ViewChild('frmEdit') frmEdit:NgForm;
+  data_owner; selected_owner; total_owner;
+  count_owner = 0; delete_owner = [];
+  data_parentuser = [];
+  filter;
+  data_warehouse;
+  selected_lottable;
+  data_lottable = JSON.parse(`{"lottable01":{"datatype": "string","label": "lottable01", "active": true},"lottable02":{"datatype": "string","label": "lottable02", "active": true},"lottable03":{"datatype": "string","label": "lottable03", "active": true},"lottable04":{"datatype": "date","label": "lottable04", "active": true},"lottable05":{"datatype": "date","label": "lottable05", "active": true},"lottable06":{"datatype": "string","label": "lottable06", "active": true},"lottable07":{"datatype": "string","label": "lottable07", "active": true},"lottable08":{"datatype": "string","label": "lottable08", "active": true},"lottable09":{"datatype": "string","label": "lottable09", "active": true},"lottable10":{"datatype": "string","label": "lottable10", "active": true},"lottable11":{"datatype": "date","label": "lottable11", "active": true},"lottable12":{"datatype": "date","label": "lottable12", "active": true}}`);
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) { }
+  ngOnInit() {
+    this.loadOwnerData();
+    if(!this.appServices.session.isAdmin){
+      this.loadWarehouseData(this.appServices.session.token.uid);
+    } else {
+      this.loadParentUserData();
+    }
+
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Info', 'Load more');
+          this.loadOwnerData('', this.count_owner);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadParentUserData() {
+    this.appServices.listUsers({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': ''}, this).then(function(obj){
+      obj.component.data_parentuser = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      if(err.err.json().error.message === 'INVALID_ACCESS'){
+        err.component.authService.logout();
+      }
+    })
+  }
+  loadWarehouseData(parentuser) {
+    this.appServices.listWarehouse({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': parentuser}, this).then(function(obj){
+      obj.component.data_warehouse = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      if(err.err.json().error.message === 'INVALID_ACCESS'){
+        err.component.authService.logout();
+      }
+    })
+  }
+  loadOwnerData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_owner = [];
+      this.count_owner = skip;
+      this.delete_owner = [];
+    }
+    let _filter = {};
+    if(this.appServices.session.isAdmin){
+      _filter = {'deleted': false, 'type': '1'};
+    } else {
+      _filter = {'deleted': false, 'type': '1', 'parentuser': this.appServices.session.token.uid};
+    }
+    this.appServices.findStorer({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend(_filter, this.filter), 'skip': skip})}, this).then(function(obj){
+        let json = obj.response.json();
+        if(obj.component.data_owner) {
+          obj.component.data_owner = obj.component.data_owner.concat(json.res);
+        }
+        else {
+          obj.component.data_owner = json.res;
+        }
+        obj.component.count_owner += json.res.length;
+        obj.component.total_owner = json.total;
+        Waypoint.refreshAll();
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+        if(err.err.json().error.message === 'INVALID_ACCESS'){
+          err.component.authService.logout();
+        }
+      })
+  }
+  insertOwnerData(data) {
+    this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res
+      data['deleted'] = false;
+      data['addwho'] = _rs.uid;
+      data['type'] = '1';
+      data['lottable'] = JSON.stringify(data.lottable);
+      data['token'] = _rs.id;
+      data['parentuser'] = data['parentuser']?data['parentuser']:(success.component.appServices.session.isAdmin?'':success.component.appServices.session.token.uid);
+      success.component.appServices.insertStorer(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadOwnerData();
+      }).catch(function(err){
+        success.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      err.component.authService.logout();
+    })
+  }
+
+  updateOwnerData(data) {
+    this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['deleted'] = false;
+      data['editwho'] = _rs.uid;
+      data['type'] = '1';
+      data['lottable'] = JSON.stringify(data.lottable);
+      data['token'] = _rs.id;
+      data['parentuser'] = data['parentuser']?data['parentuser']:(success.component.appServices.session.isAdmin?'':success.component.appServices.session.token.uid);
+      success.component.appServices.updateStorer(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadOwnerData();
+        success.component.selected_lottable = JSON.parse(data.lottable);
+      }).catch(function(err){
+        success.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      err.component.authService.logout();
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_owner.push(data);
+    }
+    else {
+      let index = this.delete_owner.indexOf(data);
+      this.delete_owner.splice(index, 1);
+    }
+  }
+   findOwnerData(data){
+    // await this.frmEdit.resetForm();
+    this.loadWarehouseData(data['parentuser']);
+
+    this.selected_owner = data;
+    this.selected_lottable = JSON.parse(data.lottable);
+    // console.log(this.labellot.nativeElement.value);
+  }
+  deleteOwnerData(){
+    this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      success.component.delete_owner.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['token'] = _rs.id;
+        success.component.appServices.updateStorer(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadOwnerData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        })
+      })
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      err.component.authService.logout();
+    })
+  }
+
+  // changeLabelLottable(e, lot){
+  //   this.appServices.checkToken(this.appServices.session.token.id, this).then(function(success){
+  //     success.component.data_lottable[lot].label = e.srcElement.value;
+  //     e.srcElement.value = '';
+  //   }).catch(function(errtocken){
+  //     console.log('Token Invalid');
+  //   })
+  // }
+
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_owner.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_owner.includes(curr_data)){
+          this.delete_owner.push(curr_data);
+        }
+      })
+    } else {
+      this.data_owner.forEach(x=>x.state = e.target.checked);
+      this.delete_owner = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_owner.every(_ => _.state);
+  }
+
+}

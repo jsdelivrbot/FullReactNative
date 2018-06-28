@@ -1,0 +1,255 @@
+{
+  "name": "RolexStorer",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "rolecode": {
+      "type": "string",
+      "required": true
+    },
+    "storerkey": {
+      "type": "string",
+      "required": true
+    },
+    "warehousecode": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "notes": {
+      "type": "string",
+      "default": "adddate"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "storers": {
+      "type": "hasMany",
+      "model": "Storer",
+      "foreignKey": ""
+    },
+    "roles": {
+      "type": "hasMany",
+      "model": "Roles",
+      "foreignKey": ""
+    },
+    "warehouses": {
+      "type": "hasMany",
+      "model": "Warehouse",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {
+    "listRolexStorer": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "saveRolexStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "rolecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "storerkey",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/save",
+          "verb": "post"
+        }
+      ]
+    },
+    "findRolexStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "getStorerRolexStorer": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getstorer",
+          "verb": "post"
+        }
+      ]
+    },
+    "deleteRolexStorer": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/delete",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateRolexStorer": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

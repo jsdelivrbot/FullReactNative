@@ -1,0 +1,188 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $: any;
+declare var google: any;
+@Component({
+  selector: 'app-admin-home',
+  templateUrl: './admin-home.component.html',
+  styleUrls: ['./admin-home.component.css']
+})
+export class AdminHomeComponent implements OnInit {
+  data_company = [];
+  data_so; data_asn;
+  map; mapOptions; marker = null; place;
+  positions = []; data_warehouse = [];
+  infowindow;
+
+  constructor(public router: Router, public appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) {  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.mapOptions = {
+        zoom: 13,
+        disableDefaultUI: true,
+        fullscreenControl: true,
+        zoomControl: true
+      };
+
+      this.loadCompanyData();
+      google.charts.setOnLoadCallback(this.loadTotalChart());
+      google.charts.setOnLoadCallback(this.loadTotalDeletedChart());
+    }, 1000)
+
+  }
+
+  onMapReady(map) {
+    this.map = map;
+  }
+
+  markerClick(e, data) {
+    this.place = data;
+    this.map.panTo(e.latLng);
+    if(this.infowindow) this.infowindow.close();
+    this.infowindow = new google.maps.InfoWindow({
+      content:  data.warehousename
+    });
+    this.infowindow.setPosition(e.latLng);
+    this.infowindow.open(this.map);
+  }
+
+  // loadWarehouseData(){
+  //   this.appServices.isSysUsers({'obj': JSON.stringify({'where': {'username': this.appServices.session.token.uid,'deleted': false}})}, this)
+  //   .then(function(__){
+  //     let response = __.response.json();
+  //     let where = response.res > 0 ? {'deleted': false, 'hide': false} : {'parentuser': __.component.appServices.session.token.uid, 'deleted': false, 'hide': false};
+  //     __.component.appServices.findWarehouse({'filter': JSON.stringify({'where': $.extend(where, __.component.filter)})}, this)
+  //     .then(function(obj){
+  //       let json = obj.response.json();
+  //       __.component.data_warehouse = json.res;
+  //     }).catch(function(err){
+  //       __.component.authService.catchErr(err);
+  //     })
+  //   }).catch((err)=>{
+  //     this.authService.catchErr(err);
+  //   })
+  // }
+
+  loadWarehouseByCompanyData(parentuser){
+    this.appServices.findWarehouse({'filter': JSON.stringify({'where': {'parentuser': parentuser, 'deleted': false, 'hide': false}})}, this)
+    .then(function(__){
+      let json = __.response.json();
+      let str_whseid = "''";
+      __.component.data_warehouse = json.res;
+      __.component.data_warehouse.forEach((value, index, arr)=>{
+        str_whseid += "," + "'" + value.warehousecode + "'";
+      });
+      __.component.loadTotalByCompanyChart(parentuser);
+      __.component.loadSO(parentuser, str_whseid);
+      __.component.loadASN(parentuser, str_whseid);
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadCompanyData() {
+    let where = this.appServices.session.isAdmin ? { 'where': { 'deleted': false, 'type': 1 } } : { 'where': { 'deleted': false, 'type': 1, 'username': this.appServices.session.token.uid } };
+    this.appServices.findUsers({ 'filter': JSON.stringify(where) }, this).then(function (__) {
+      __.component.data_company = __.response.json().res;
+      if(__.component.data_company.length > 0){
+        __.component.loadWarehouseByCompanyData(__.component.data_company[0].username);
+      }
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadTotalChart() {
+    this.appServices.totalStatistics({ 'obj': JSON.stringify({ 'deleted': false }) }, this).then(function (__) {
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      if (__.component.appServices.session.isAdmin) {
+        data.addColumn('number', 'Total Company');
+        _rs.forEach((value, index, arr) => {
+          data.addRow([value.year.toString(), value.totalcompany, value.totaluser, value.totalwarehouse, value.totalowner]);
+        });
+      } else {
+        _rs.forEach((value, index, arr) => {
+          data.addRow([value.year.toString(), value.totaluser, value.totalwarehouse, value.totalowner]);
+        });
+      }
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('total_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadTotalDeletedChart() {
+    this.appServices.totalStatistics({ 'obj': JSON.stringify({ 'deleted': true }) }, this).then(function (__) {
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total Company');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      _rs.forEach((value, index, arr) => {
+        data.addRow([value.year.toString(), value.totalcompany, value.totaluser, value.totalwarehouse, value.totalowner]);
+      });
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('totaldeleted_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadTotalByCompanyChart(parentuser) {
+    this.appServices.totalByCompanyStatistics({ 'obj': JSON.stringify({ 'deleted': false, 'parentuser': parentuser }) }, this).then(function (__) {
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      _rs.forEach((value, index, arr) => {
+        data.addRow([value.year.toString(), value.totaluser, value.totalwarehouse, value.totalowner]);
+      });
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('totalbycompany_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadSO(parentuser, str_whseid){
+    this.appServices.SO_Statistics({ 'obj': JSON.stringify({ 'deleted': false, 'str_whseid': str_whseid }) }, this).then(function (__) {
+      let _rs = __.response.json().res;
+      __.component.data_so = _rs[0];
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+  loadASN(parentuser, str_whseid){
+    this.appServices.ASN_Statistics({ 'obj': JSON.stringify({ 'deleted': false, 'str_whseid': str_whseid }) }, this).then(function (__) {
+      let _rs = __.response.json().res;
+      __.component.data_asn = _rs[0];
+    }).catch((err) => {
+      this.authService.catchErr(err);
+    })
+  }
+
+}

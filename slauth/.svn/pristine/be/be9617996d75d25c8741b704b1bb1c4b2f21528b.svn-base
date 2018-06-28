@@ -1,0 +1,209 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-industry"></i> Warehouse</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" disabled><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox" *ngIf="data_warehouse.length > 0">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th  *ngIf="this.appServices.session.isAdmin">Code</th>
+                  <th>Name</th>
+                  <th  *ngIf="this.appServices.session.isAdmin">Company</th>
+                  <th colspan="2">Status</th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th *ngIf="this.appServices.session.isAdmin">
+                    <div class="input-group" >
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadWarehouseData({'warehousecode':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadWarehouseData({'warehousename':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th *ngIf="this.appServices.session.isAdmin">
+                    <div class="input-group" >
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadWarehouseData({'parentuser':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th colspan="2">
+                    <div class="input-group" >
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadWarehouseData({'hide':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_warehouse | paginate: { id: 'id_warehouse', itemsPerPage: this.itemsPerPage_warehouse, currentPage: this.currentPage_warehouse, totalItems: this.total_warehouse };">
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" class="align-middle" (click)="findWarehouseData(data)" *ngIf="this.appServices.session.isAdmin">{{data.warehousecode}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findWarehouseData(data)" >
+                    {{data.warehousename}}
+                  </td>
+                  <td *ngIf="this.appServices.session.isAdmin" data-toggle="modal" data-target="#modalEdit" (click)="findWarehouseData(data)" >
+                    {{data.parentuser}}
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findWarehouseData(data)">
+                    <span *ngIf="!data.hide" class="badge badge-pill badge-success">Active</span>
+                    <span *ngIf="data.hide" class="badge badge-pill badge-danger">Inactive</span>
+                  </td>
+                  <td *ngIf="this.appServices.session.isAdmin && !data.hide" class="cursor-pointer" (click)="go(data)">
+                    <i class="fa fa-arrow-circle-right"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_warehouse" [(ngModel)]="this.itemsPerPage_warehouse" (change)="this.itemsPerPage_warehouse = $event.target.value; this.loadWarehouseData()">
+                <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_warehouse" (pageChange)="this.currentPage_warehouse = $event; this.loadWarehouseData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" (ngSubmit)="insertWarehouseData(frmAdd.value)" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New Warehouse</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_warehouse">
+                  <div class="input-group " *ngIf="this.appServices.session.isAdmin">
+                    <span class="input-group-addon">Company</span>
+                    <select  [(ngModel)]="data_warehouse.parentuser" name="parentuser" class="form-control" required>
+                      <option *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Warehouse Code</span>
+                    <input type="text" class="form-control" name="warehousecode" [(ngModel)]="data_warehouse.warehousecode" required/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Warehouse Name</span>
+                    <input type="text" class="form-control" name="warehousename" [(ngModel)]="data_warehouse.warehousename" required/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_warehouse.notes' name='notes'></textarea>
+                  </div>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="hide" [(ngModel)]="data_warehouse.hide">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Not Use</span>
+                  </label>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmAdd.form.valid"><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <div class="modal-dialog">
+            <form #frmEdit="ngForm" (ngSubmit)="updateWarehouseData(frmEdit.value)" autocomplete="off">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Warehouse</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_warehouse">
+                  <div class="input-group" *ngIf="this.appServices.session.isAdmin">
+                    <span class="input-group-addon">Company</span>
+                    <select  [(ngModel)]="selected_warehouse.parentuser" required name="parentuser" class="form-control">
+                      <option disabled *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Code</span>
+                    <input type="text" class="form-control" name="warehousecode" [(ngModel)]="selected_warehouse.warehousecode"  required readonly/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text" required class="form-control" name="warehousename" [(ngModel)]="selected_warehouse.warehousename" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='selected_warehouse.notes' name='notes'></textarea>
+                  </div>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="hide" [(ngModel)]="selected_warehouse.hide">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Not use</span>
+                  </label>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid"><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Warehouse</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteWarehouseData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

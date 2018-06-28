@@ -1,0 +1,223 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-user"></i> System Users</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" [disabled]="this.delete_sysusers.length === 0"><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead >
+                <tr class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>UserName</th>
+                  <th>Email</th>
+                  <th>Tel</th>
+                  <th>Status</th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadSysUsersData({'username':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadSysUsersData({'email':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadSysUsersData({'tel':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_sysusers| paginate: { id: 'id_sysusers', itemsPerPage: this.itemsPerPage_sysusers, currentPage: this.currentPage_sysusers, totalItems: this.total_sysusers };" >
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findSysUsersData(data)" class="align-middle">{{data.username}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findSysUsersData(data)" class="align-middle">{{data.email}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findSysUsersData(data)" class="align-middle">{{data.tel}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findSysUsersData(data)" class="align-middle">
+                    <span *ngIf="data.status" class="badge badge-pill badge-success">Active</span>
+                    <span *ngIf="!data.status" class="badge badge-pill badge-danger">Inactive</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_sysusers" [(ngModel)]="this.itemsPerPage_sysusers" (change)="this.itemsPerPage_sysusers = $event.target.value; this.loadSysUsersData()">
+                <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_sysusers" (pageChange)="this.currentPage_sysusers = $event; this.loadSysUsersData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New System User</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_sysusers">
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Full Name</span>
+                    <input type="text" required class="form-control" name="fullname" [(ngModel)]="data_sysusers.fullname" required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Email</span>
+                    <input type="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="form-control" name="email" [(ngModel)]="data_sysusers.email" />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Tel</span>
+                    <input type="tel" required  class="form-control" name="tel" [(ngModel)]="data_sysusers.tel" />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>UserName</span>
+                    <input type="text" required class="form-control" name="username" [(ngModel)]="data_sysusers.username" required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Password</span>
+                    <input type="password" required class="form-control" name="password" ngModel/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Comfirm Password</span>
+                    <input type="password" required class="form-control" name="comfirmpassword" ngModel/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_sysusers.notes' name='notes' ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <p class="m-0 text-muted">Status</p>
+                    <div class="btn-group btn-group-circle" data-toggle="buttons" >
+                      <label class="btn green btn-sm btn-outline active"  (click)="changeStatus(1, data_sysusers)">
+                        <input type="radio" name="status" [value]="1" [(ngModel)]='data_sysusers.status' class="toggle"> Active
+                      </label>
+                      <label class="btn red btn-sm btn-outline" (click)="changeStatus(0, data_sysusers)">
+                        <input type="radio" name="status" [value]="0" [(ngModel)]='data_sysusers.status'  class="toggle"> Inactive
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" [disabled]="!frmAdd.form.valid" (click)="insertSysUsersData(frmAdd.value)" #modal ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Users</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteSysUsersData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <div class="modal-dialog">
+            <form #frmEdit="ngForm" (ngSubmit)="updateSysUsersData(frmEdit.value)" autocomplete="off">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit System User</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_sysusers">
+                  <button type="button" class="btn btn-danger float-right mb-2" (click)="resetPasswordSysUsersData(selected_sysusers.username)"> <i class="fa-retweet"></i> Reset Password</button>
+
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>UserName</span>
+                    <input type="text" class="form-control" name="username" [(ngModel)]="selected_sysusers.username" required readonly />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Full Name</span>
+                    <input type="text" class="form-control" name="fullname" [(ngModel)]="selected_sysusers.fullname" required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Email</span>
+                    <input type="email" class="form-control" name="email" [(ngModel)]="selected_sysusers.email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Tel</span>
+                    <input type="tel" required  class="form-control" name="tel" [(ngModel)]="selected_sysusers.tel" />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='selected_sysusers.notes' name='notes' ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <p class="m-0 text-muted">Status</p>
+                    <div class="btn-group btn-group-circle" data-toggle="buttons" >
+                      <label [ngClass]="{'btn green btn-sm btn-outline': true, 'active': selected_sysusers.status===1}" (click)="changeStatus(1, selected_sysusers)">
+                        <input type="radio" name="status" [value]="1" [(ngModel)]='selected_sysusers.status' class="toggle"> Active
+                      </label>
+                      <label [ngClass]="{'btn red btn-sm btn-outline': true, 'active': selected_sysusers.status===0}"  (click)="changeStatus(0, selected_sysusers)">
+                        <input type="radio" name="status" [value]="0" [(ngModel)]='selected_sysusers.status' class="toggle"> Inactive
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

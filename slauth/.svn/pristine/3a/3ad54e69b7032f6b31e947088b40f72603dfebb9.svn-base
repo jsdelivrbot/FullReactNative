@@ -1,0 +1,108 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+@Component({
+  selector: 'app-admin-apps',
+  templateUrl: './admin-apps.component.html',
+  styleUrls: ['./admin-apps.component.css']
+})
+export class AdminAppsComponent implements OnInit {
+  data_app = []; ; selected_app; delete_app = []; currentPage_app = 1; itemsPerPage_app = 5; total_app = 0; data_itemsPerPage = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) { }
+  ngOnInit() {
+    this.loadItemsPerPage();
+  }
+  loadItemsPerPage(){
+    this.appServices.findCodelkup({'filter': JSON.stringify({'where': {'listname': 'Paginate', 'deleted': false}, 'order': 'woflag'})}, this)
+    .then(function(__){
+      let response = __.response.json().res;
+      __.component.data_itemsPerPage = response;
+      __.component.itemsPerPage_warehouse = response[0].short;
+      __.component.loadAppsData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadAppsData(param = '') {
+    let skip = (this.currentPage_app-1)*this.itemsPerPage_app;
+    let limit = this.itemsPerPage_app;
+    this.delete_app = [];
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    this.appServices.findApps({'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip, 'limit': limit})}, this)
+    .then(function(__){
+      let json = __.response.json();
+      __.component.data_app = json.res;
+      __.component.total_app = json.total;
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  insertAppsData(data) {
+    data['deleted'] = false;
+    this.appServices.insertApps({ "obj": JSON.stringify(data) }, this).then(function(__){
+      __.component.notifyService.show('Process Done');
+      __.component.loadAppsData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  updateAppsData(data) {
+    data['deleted'] = false;
+    this.appServices.updateApps({ "obj": JSON.stringify(data) }, this).then(function(__){
+      __.component.notifyService.show('Process Done');
+      __.component.loadAppsData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_app.push(data);
+    }
+    else {
+      let index = this.delete_app.indexOf(data);
+      this.delete_app.splice(index, 1);
+    }
+  }
+  findAppsData(data){
+    this.selected_app = Object.assign({}, data);;
+  }
+  deleteAppsData(){
+    this.delete_app.forEach((value, index, arr) => {
+      value['deleted'] = true;
+      this.appServices.updateApps({ "obj": JSON.stringify(value) }, this).then(function(__){
+        __.component.notifyService.show('Process Done');
+        __.component.loadAppsData();
+        $('#modalDelete').modal('hide');
+      }).catch((err)=>{
+        this.authService.catchErr(err);
+      })
+    })
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_app.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_app.includes(curr_data)){
+          this.delete_app.push(curr_data);
+        }
+      })
+    } else {
+      this.data_app.forEach(x=>x.state = e.target.checked);
+      this.delete_app = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_app.every(_ => _.state);
+  }
+};

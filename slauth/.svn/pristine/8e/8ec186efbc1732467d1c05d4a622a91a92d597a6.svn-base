@@ -1,0 +1,18 @@
+import { Component, OnInit } from '@angular/core';
+
+declare var $:any;
+
+@Component({
+  selector: 'app-main-tms-login',
+  templateUrl: './main-tms-login.component.html',
+  styleUrls: ['./main-tms-login.component.css']
+})
+export class MainTmsLoginComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+    $('body').css('background-color', '#16759b');
+  }
+
+}

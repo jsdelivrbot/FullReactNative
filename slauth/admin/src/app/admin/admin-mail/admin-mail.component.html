@@ -1,0 +1,297 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-envelope"></i> System Mail Management</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" [disabled]="this.delete_sysmail.length === 0"><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'appcode'; this.loadSysMailData({}) " >
+                      App
+                      <i *ngIf="this.propertyName == 'appcode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'appcode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'user'; this.loadSysMailData({}) " >
+                      Mail
+                      <i *ngIf="this.propertyName == 'user' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'user' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'type'; this.loadSysMailData({}) " >
+                      Type
+                      <i *ngIf="this.propertyName == 'type' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'type' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'host'; this.loadSysMailData({}) " >
+                      Host
+                      <i *ngIf="this.propertyName == 'host' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'host' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'port'; this.loadSysMailData({}) " >
+                      Port
+                      <i *ngIf="this.propertyName == 'port' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'port' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'secure'; this.loadSysMailData({}) " >
+                      Secure
+                      <i *ngIf="this.propertyName == 'secure' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'secure' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_appcode" (keyup.enter)="loadSysMailData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_user" (keyup.enter)="loadSysMailData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_type" (keyup.enter)="loadSysMailData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_host" (keyup.enter)="loadSysMailData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_port" (keyup.enter)="loadSysMailData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group" >
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <select class="form-control" [(ngModel)]="f_secure" (change)="this.f_secure = $event.target.value; this.loadSysMailData({})">
+                        <option value=""> All</option>
+                        <option value="1"> Yes</option>
+                        <option value="0"> No</option>
+                      </select>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_sysmail | paginate: { id: 'id_sysmail', itemsPerPage: this.itemsPerPage_sysmail, currentPage: this.currentPage_sysmail, totalItems: this.total_sysmail };" [ngClass]="{'badge-warning': data.isdefault, '': !data.isdefault}" >
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                    <label  data-toggle="modal" data-target="#modalEdit" (click)="findSysMailData(data)" class="cursor-pointer">
+                      <i class="fa fa-pencil"></i>
+                    </label>
+                  </td>
+                  <td class="align-middle">{{data.appcode}}</td>
+                  <td class="align-middle">{{data.user}}</td>
+                  <td class="align-middle">{{data.type}}</td>
+                  <td class="align-middle">{{data.host}}</td>
+                  <td class="align-middle">{{data.port}}</td>
+                  <td class="align-middle">
+                    <span *ngIf="data.secure" class="btn btn-sm btn-success">Yes</span>
+                    <span *ngIf="!data.secure" class="btn btn-sm btn-danger">No</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_sysmail" [(ngModel)]="this.itemsPerPage_sysmail" (change)="this.itemsPerPage_sysmail = $event.target.value; this.loadSysMailData()">
+                <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_sysmail" (pageChange)="this.currentPage_sysmail = $event; this.loadSysMailData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New System Mail</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_sysmail">
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>App</span>
+                    <select  [(ngModel)]="data_sysmail.appcode" name="appcode" class="form-control" required>
+                      <option  *ngFor="let item of data_apps" [value]="item.appcode">{{item.appname}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Mail</span>
+                    <input type="text" class="form-control" name="user" [(ngModel)]="data_sysmail.user" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"  required />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Pass</span>
+                    <input type="password" class="form-control" name="pass" [(ngModel)]="data_sysmail.pass" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Type</span>
+                    <input type="text" class="form-control" name="type" [(ngModel)]="data_sysmail.type" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Host</span>
+                    <input type="text" class="form-control" name="host" [(ngModel)]="data_sysmail.host" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Port</span>
+                    <input type="number" class="form-control" name="port" [(ngModel)]="data_sysmail.port" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_sysmail.notes' name='notes' ></textarea>
+                  </div>
+                  <div class="pl-0">
+                    <label class="custom-control custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" name="isdefault" [(ngModel)]="data_sysmail.isdefault">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">Default</span>
+                    </label>
+                    <label class="custom-control custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" name="secure" [(ngModel)]="data_sysmail.secure">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">Secure</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" [disabled]="!frmAdd.form.valid" (click)="insertSysMailData(frmAdd.value)" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete System Mail</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteSysMailData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <div class="modal-dialog">
+            <form #frmEdit="ngForm" (ngSubmit)="updateSysMailData(frmEdit.value)" autocomplete="off">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit System Mail</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_sysmail">
+                  <button  type="button" class="btn btn-warning float-right mb-2" *ngIf="selected_sysmail.isdefault">Default</button>
+                  <button type="button" class="btn btn-primary float-right cursor-pointer mb-2" (click)="setDefault(selected_sysmail)" *ngIf="!selected_sysmail.isdefault">Set Default</button>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>App</span>
+                    <select  [(ngModel)]="selected_sysmail.appcode" name="appcode" class="form-control" required>
+                      <option disabled  *ngFor="let item of data_apps" [value]="item.appcode">{{item.appname}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Mail</span>
+                    <input type="text" class="form-control" name="user" [(ngModel)]="selected_sysmail.user" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"  required readonly />
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Pass</span>
+                    <input type="password" class="form-control" name="pass" [(ngModel)]="selected_sysmail.pass" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Type</span>
+                    <input type="text" class="form-control" name="type" [(ngModel)]="selected_sysmail.type" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Host</span>
+                    <input type="text" class="form-control" name="host" [(ngModel)]="selected_sysmail.host" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Port</span>
+                    <input type="number" class="form-control" name="port" [(ngModel)]="selected_sysmail.port" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='selected_sysmail.notes' name='notes' ></textarea>
+                  </div>
+                  <div class="pl-0">
+
+                    <label class="custom-control custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" name="secure" [(ngModel)]="selected_sysmail.secure">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">Secure</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

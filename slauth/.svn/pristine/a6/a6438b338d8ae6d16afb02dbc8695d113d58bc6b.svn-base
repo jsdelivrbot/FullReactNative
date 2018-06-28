@@ -1,0 +1,141 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+var limit = 12;
+module.exports = function(Storer) {
+  Storer.validatesUniquenessOf();
+  Storer.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+
+  Storer.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Storer.count(ctx.args, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': (count) / limit});
+      next();
+    })
+  });
+
+  Storer.listStorerbyUsers = function(token, deleted, type, username, skip, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.find({'deleted': deleted, 'skip': skip, 'type': type, 'username': username}).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+
+    // Storer.dataSource.connector.execute('SELECT swmaut.users.username, swmaut.storer.whseid, swmaut.storer.storerkey, swmaut.storer.company, swmaut.storer.address1, swmaut.storer.stockinfo, swmaut.storer.freeday, swmaut.storer.ageindays, swmaut.storer.lottable FROM swmaut.users '
+    //   +'left join swmaut.userxrole on swmaut.users.username = swmaut.userxrole.USERNAME '
+    //   +'left join swmaut.roles on swmaut.userxrole.rolecode = swmaut.roles.rolecode '
+    //   +'left join swmaut.rolexwarehouse on swmaut.roles.rolecode = swmaut.rolexwarehouse.rolecode '
+    //   +'left join swmaut.warehouse on swmaut.rolexwarehouse.warehousecode = swmaut.warehouse.warehousecode '
+    //   +'left join swmaut.rolexstorer on swmaut.roles.rolecode = swmaut.rolexstorer.rolecode '
+    //   +'left join swmaut.storer on swmaut.rolexstorer.storerkey = swmaut.storer.storerkey and swmaut.warehouse.warehousecode = swmaut.storer.whseid where swmaut.storer.deleted =? and swmaut.storer.type = ? and swmaut.users.username = ? LIMIT ?, ?', [deleted, type, username, skip, skip + limit], function(err, obj){
+    //   if(err) console.log(err);
+    //   callback(null, obj);
+    // })
+  };
+
+  Storer.listStorer = function(token, deleted, type, skip, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.find({'deleted': deleted, 'skip': skip, 'type': type,}).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+    // Storer.dataSource.connector.execute('SELECT swmaut.users.username, swmaut.storer.whseid, swmaut.storer.storerkey, swmaut.storer.company, swmaut.storer.address1, swmaut.storer.stockinfo, swmaut.storer.freeday, swmaut.storer.ageindays, swmaut.storer.lottable FROM swmaut.users '
+    //   +'left join swmaut.userxrole on swmaut.users.username = swmaut.userxrole.USERNAME '
+    //   +'left join swmaut.roles on swmaut.userxrole.rolecode = swmaut.roles.rolecode '
+    //   +'left join swmaut.rolexwarehouse on swmaut.roles.rolecode = swmaut.rolexwarehouse.rolecode '
+    //   +'left join swmaut.warehouse on swmaut.rolexwarehouse.warehousecode = swmaut.warehouse.warehousecode '
+    //   +'left join swmaut.rolexstorer on swmaut.roles.rolecode = swmaut.rolexstorer.rolecode '
+    //   +'left join swmaut.storer on swmaut.rolexstorer.storerkey = swmaut.storer.storerkey and swmaut.warehouse.warehousecode = swmaut.storer.whseid where swmaut.storer.deleted =? and swmaut.storer.type = ? LIMIT ?, ?', [deleted, type, skip, skip + limit], function(err, obj){
+    //   if(err) console.log(err);
+    //   callback(null, obj);
+    // })
+  };
+
+  Storer.findStorer = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Storer.insertStorer = function(token, deleted, whseid, storerkey, type, company, address1, lottable, stockinfo, freeday, ageindays, notes1, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.create({
+        'deleted': deleted,
+        'whseid':whseid,
+        'storerkey': storerkey,
+        'type': type,
+        'company': company,
+        'address1': address1,
+        'lottable': lottable,
+        'stockinfo': stockinfo,
+        'freeday': freeday,
+        'ageindays': ageindays,
+        'notes1': notes1,
+        'adddate': new Date().toISOString(),
+        'addwho': addwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Storer.updateStorer = function(token, deleted, whseid, storerkey, type, company, address1, lottable, stockinfo, freeday, ageindays, notes1, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.findOne({where: {'whseid': whseid, 'storerkey': storerkey,'type':type}}).then(function(obj){
+        if(obj) {
+          Storer.updateAll({'whseid': whseid, 'storerkey': storerkey,'type':type},{
+            'deleted': deleted,
+            'company': company,
+            'address1': address1,
+            'lottable': lottable,
+            'stockinfo': stockinfo,
+            'freeday': freeday,
+            'ageindays': ageindays,
+            'notes1': notes1,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          });
+        }
+        else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'Data is not existed';
+          callback(err);
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

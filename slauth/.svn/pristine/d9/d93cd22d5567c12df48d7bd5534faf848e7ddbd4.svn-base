@@ -1,0 +1,9 @@
+<nav class="navbar navbar-light bg-white justify-content-between box-shadow">
+  <button class="btn btn-outline-primary d-lg-none" data-toggle="offcanvas" data-target="#bootstrap-offcanvas">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <span class="d-md"></span>
+  <a class="nav-link dropdown-toggle" data-toggle="collapse" data-target="#navbarToggleExternalContent">
+    Welcome {{this.appServices.session !== undefined?this.appServices.session.token.uid:''}}
+  </a>
+</nav>

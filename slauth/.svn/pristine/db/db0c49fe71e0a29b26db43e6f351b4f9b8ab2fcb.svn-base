@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Smartlog - Authenticate</title>
+  <meta name="description" content="One System For Multiple Purpose - Smartlog VN">
+  <base href="/">
+
+  <meta name="author" content="jasonsmith2812@gmail.com">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="/assets/img/logo.png">
+
+  <link href="assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/offcanvas.css" rel="stylesheet">
+
+  <link href="assets/css/index.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <app-root>
+    <div class="splash-screen">
+      <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+    </div>
+  </app-root>
+
+  <script type="text/javascript" src="assets/vendor/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="assets/vendor/holder/holder.min.js"></script>
+  <script type="text/javascript" src="assets/vendor/popper/popper.min.js"></script>
+  <script type="text/javascript" src="assets/vendor/tether/tether.min.js"></script>
+  <script type="text/javascript" src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="assets/vendor/bootstrap/js/offcanvas.js"></script> -->
+  <script type="text/javascript" src="assets/vendor/google-chart/loader.js"></script>
+  <script type="text/javascript" src="assets/vendor/google-chart/init.js"></script>
+
+  <script type="text/javascript" src="assets/js/index.js"></script>
+</body>
+</html>

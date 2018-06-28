@@ -1,0 +1,77 @@
+.splash-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  position: fixed;
+  z-index: 10000;
+  background-image:linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0, #A7A7A7),color-stop(0.51, #E4E4E4));
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  background: #222;
+  color: #fff;
+}
+.loading {
+  position: fixed;
+  z-index: 999;
+  right: 2vw;
+  bottom: 2vh;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 3px solid #42A948!important; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 3px solid #a94442!important; /* red */
+}
+
+/* MODAL STYLES
+-------------------------------*/
+custom-modal {
+/* modals are hidden by default */
+display: none;
+}
+custom-modal .custom-modal{
+ /* modal container fixed across whole screen */
+ position: fixed;
+ top: 0;
+ right: 0;
+ bottom: 0;
+ left: 0;
+ /* z-index must be higher than .modal-background */
+ z-index: 1000;
+
+ /* enables scrolling for tall modals */
+ overflow: auto;
+}
+
+custom-modal .custom-modal .custom-modal-body {
+padding: 20px;
+background: #fff;
+/* margin exposes part of the modal background */
+margin: 40px;
+}
+custom-modal .custom-modal-background {
+   /* modal background fixed across whole screen */
+   position: fixed;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   /* semi-transparent black  */
+   background-color: #000;
+   opacity: 0.75;
+
+   /* z-index must be below .modal and above everything else  */
+   z-index: 900;
+/* body overflow is hidden to hide main scrollbar when modal window is open */
+overflow: hidden;
+}

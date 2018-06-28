@@ -1,0 +1,98 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var md5 = require('md5');
+var limit = 12;
+
+module.exports = function(Users) {
+  Users.validatesUniquenessOf('username');
+  Users.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+
+  Users.listUsers = function(token, skip = 0, callback) {
+    app.models.Token._validToken(token).then(function(obj){
+      Users.find({'skip': skip}).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+
+  Users.saveUsers = function(token, username, tel, email, status, notes, addwho, editwho, callback) {
+    app.models.Token._validToken(token).then(function(obj){
+      Users.updateAll({'username': username},{
+        'tel': tel,
+        'email': email,
+        'status': status,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+
+  Users.signupUsers = function(username, password, tel, email, status, notes, addwho, editwho, callback) {
+    Users.create({
+      'username': username,
+      'password': md5(password),
+      'tel': tel,
+      'email': email,
+      'status': status,
+      'notes': notes,
+      'adddate': new Date().toISOString(),
+      'addwho': addwho,
+      'editdate': new Date().toISOString(),
+      'editwho': editwho
+    }).then(function(obj){
+      callback(null, obj);
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+
+  Users.signinUsers = function(username, password, callback) {
+    Users.find({where: {'username': username, 'password': md5(password), 'status': true}}).then(function(obj){
+      if(obj[0]) {
+        app.models.Token._regisToken(obj[0].username).then(function(token){
+          callback(null, {
+            'user': obj,
+            'token': token
+          });
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.code = 'USER_NOT_EXIST';
+        callback(err);
+      }
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Users.findUsers = function(filter, callback) {
+    app.models.Token._validToken(token).then(function(obj){
+      Users.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+};

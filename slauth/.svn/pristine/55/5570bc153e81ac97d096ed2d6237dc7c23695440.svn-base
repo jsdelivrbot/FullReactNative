@@ -1,0 +1,89 @@
+<div class="collapse" id="navbarToggleExternalContent">
+  <div class="bg-dark p-4">
+    <h4 class="text-white">SMARTLOG</h4>
+    <span class="text-muted">An unique solutions in global logistic</span>
+    <div class="d-flex justify-content-between">
+      <span></span>
+      <ul class="nav nav-pills justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="modal" (click)="LoadProfileData()" data-target="#profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="Signout()">Signout</a>
+        </li>
+      </ul>
+      <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarToggleExternalContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- #myModal -->
+<div class="modal fade" id="profile" tabindex="-1">
+  <form #frmProfile="ngForm" (ngSubmit)="updateProfileData(frmProfile.value)" autocomplete="off">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Profile</h5>
+          <button class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" *ngIf="data_currentuser">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <span class="text-danger">&nbsp;*</span> UserName</span>
+              <input type="text" class="form-control" name="username" [(ngModel)]="data_currentuser.username" required readonly/>
+            </div>
+            <small class="text-primary " (click)="OnChangePassword()">Change password <i class="fa fa-chevron-right" aria-hidden="true" *ngIf="!isChangePassword"></i> <i class="fa fa-chevron-down" aria-hidden="true" *ngIf="isChangePassword"></i> </small>
+            <p class="clearfix"></p>
+            <div class="input-group" *ngIf="isChangePassword">
+              <span class="input-group-addon">
+                <span class="text-danger">&nbsp;*</span> Current Password</span>
+                <input type="password" class="form-control" name="currentpassword" ngModel required/>
+              </div>
+              <div class="input-group" *ngIf="isChangePassword">
+                <span class="input-group-addon">
+                  <span class="text-danger">&nbsp;*</span> Password</span>
+                  <input type="password" class="form-control" name="password" ngModel required/>
+                </div>
+                <div class="input-group" *ngIf="isChangePassword">
+                  <span class="input-group-addon">
+                    <span class="text-danger">&nbsp;*</span> Comfirm Password</span>
+                    <input type="password" class="form-control" name="comfirmpassword" ngModel required/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <span class="text-danger">&nbsp;*</span> FullName</span>
+                      <input type="text" class="form-control" name="fullname" [(ngModel)]="data_currentuser.fullname" autofocus required/>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <span class="text-danger">&nbsp;*</span> Email</span>
+                        <input type="text" class="form-control" name="email" [(ngModel)]="data_currentuser.email" required/>
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="text-danger">&nbsp;*</span> Tel</span>
+                          <input type="tel" class="form-control" name="tel" [(ngModel)]="data_currentuser.tel" required/>
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon">Notes</span>
+                          <textarea class="form-control" rows="2" [(ngModel)]='data_currentuser.notes' name='notes'></textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-primary" [disabled]="!frmProfile.form.valid">
+                          <i class="fa fa-save"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" data-dismiss="modal">
+                          <i class="fa fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>

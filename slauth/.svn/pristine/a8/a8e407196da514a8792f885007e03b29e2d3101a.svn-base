@@ -1,0 +1,77 @@
+<div class="container-fluid p-0">
+  <app-header-sem></app-header-sem>
+  <app-top-menu-sem></app-top-menu-sem>
+  <div class="page-inner">
+    <section>
+      <h2>Contact Us</h2>
+      <p>Quý khách hàng muốn hiểu thêm về giải pháp, demo hệ thống hay cần hỗ trợ về dịch vụ, hãy để lại thông tin, Smartlog sẽ liên hệ sớm nhất có thể.</p>
+    </section>
+    <div class="row">
+      <div class="col-6">
+        <div class="col-12">
+          <div class="input-group">
+            <span class="input-group-addon">Fullname</span>
+            <input type="text" name="fullname" class="form-control">
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="input-group">
+            <span class="input-group-addon">Email</span>
+            <input type="text" name="email" class="form-control">
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="input-group">
+            <span class="input-group-addon">Phone</span>
+            <input type="text" name="phone" class="form-control">
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="input-group">
+            <span class="input-group-addon">How can I help you ?</span>
+            <textarea name="notes" class="form-control" rows="6"></textarea>
+          </div>
+        </div>
+        <div class="col-12 text-right">
+          <button class="btn btn-primary p-3"><i class="fa fa-envelope-o"></i> Request</button>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="row">
+          <div class="col-1 my-auto mx-auto">
+            <p><i class="fa fa-2x fa-map-marker"></i></p>
+          </div>
+          <div class="col-11">
+            <ul class="list-unstyled">
+              <li>Công ty cổ phần giải pháp chuỗi cung ứng Smartlog</li>
+              <li>207 đường D1, phường 25, quận Bình Thạnh, TPHCM, Việt Nam</li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-1 my-auto mx-auto">
+            <p><i class="fa fa-2x fa fa-paper-plane-o"></i></p>
+          </div>
+          <div class="col-11">
+            <ul class="list-unstyled">
+              <li>info@gosmartlog.com</li>
+              <li>huong.nguyen@gosmartlog.com</li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-1 my-auto mx-auto">
+            <p><i class="fa fa-2x fa fa-phone"></i></p>
+          </div>
+          <div class="col-11">
+            (+84) 966 297 345 (Ms. Huong)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-right">
+      <button class="btn btn-primary p-3"><i class="fa fa-envelope-o"></i> Request</button>
+    </div>
+  </div>
+  <app-footer-sem></app-footer-sem>
+</div>

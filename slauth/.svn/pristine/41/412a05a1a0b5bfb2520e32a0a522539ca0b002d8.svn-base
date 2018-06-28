@@ -1,0 +1,29 @@
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './app.services';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  loopPage = 0;
+
+  constructor(private appServices: AppServices, private router: Router) {
+    // router.navigate(['admin/login']);
+  }
+
+  ngAfterViewChecked() {
+  if(this.loopPage == 1) {
+    if(this.appServices.session !== null) {
+      this.router.navigate(['/admin/home']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+    this.loopPage++;
+  } else if(this.loopPage < 1) {
+    this.loopPage++;
+  }
+}
+}

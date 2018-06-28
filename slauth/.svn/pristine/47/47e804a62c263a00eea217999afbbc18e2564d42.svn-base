@@ -1,0 +1,34 @@
+.splash-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  position: fixed;
+  z-index: 10000;
+  background-image:linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0, #A7A7A7),color-stop(0.51, #E4E4E4));
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  background: #222;
+  color: #fff;
+}
+.loading {
+  position: fixed;
+  z-index: 999;
+  right: 2vw;
+  bottom: 2vh;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 3px solid #42A948!important; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 3px solid #a94442!important; /* red */
+}

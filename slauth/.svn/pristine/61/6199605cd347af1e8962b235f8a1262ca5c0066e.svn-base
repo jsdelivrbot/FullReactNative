@@ -1,0 +1,139 @@
+{
+  "name": "city",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "citycode": {
+      "type": "string",
+      "required": true
+    },
+    "cityname": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "adddate": {
+      "type": "date",
+      "required": true
+    },
+    "addwho": {
+      "type": "string",
+      "required": true
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "findCity": {
+      "accepts": [
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/findCity",
+          "verb": "post"
+        }
+      ]
+    },
+    "listCity": {
+      "accepts": [
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/listCity",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertCity": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insertCity",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateCity": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/updateCity",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

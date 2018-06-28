@@ -1,0 +1,112 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+module.exports = function(Codelkup) {
+  Codelkup.validatesUniquenessOf('parentuser', {scopedTo: ['listname', 'code']});
+  Codelkup.afterRemote('**', function(ctx, result, next) {
+    if(result.res['count']){
+      _.extend(ctx.result, {'total': result.res['count']});
+      next();
+    } else {
+      var where = ctx.args;
+      if(ctx.args.filter) {
+        where = JSON.parse(ctx.args.filter).where;
+      }
+      Codelkup.count(where, function (err, count) {
+        _.extend(ctx.result, {'total': count});
+        next();
+      })
+    }
+  });
+  Codelkup.findCodelkup = function(token, filter, callback) {
+    var data = JSON.parse(filter);
+    app.models.Token._validToken(token).then(function(result){
+      Codelkup.find(data).then(function(res){
+        callback(null, res);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Codelkup.insertCodelkup = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Codelkup.findOne({where: {'parentuser': data.parentuser, 'listname': data.listname,'code': data.code}}).then(function(object){
+        if(object) {
+          if(object.deleted){
+            Codelkup.updateAll({'parentuser': data.parentuser, 'listname': data.listname,'code': data.code},{
+              'description': data.description,
+              'short': data.short,
+              'long_value': data.long_value,
+              'notes': data.notes,
+              'woflag': data.woflag,
+              'lot1': data.lot1,
+              'deleted': false,
+              'adddate': new Date().toISOString(),
+              'addwho': data.addwho,
+              'editdate': new Date().toISOString(),
+              'editwho': data.addwho
+            }).then(function(res){
+              data['id'] = object.id;
+              callback(null, dara);
+            }).catch(function(err){
+              callback(err);
+            });
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.message = 'Data is existed';
+            callback(err);
+          }
+        } else {
+          Codelkup.create({
+            'parentuser': data.parentuser,
+            'listname': data.listname,
+            'code': data.code,
+            'description':  data.description,
+            'short':  data.short,
+            'long_value': data.long_value,
+            'notes': data.notes,
+            'woflag': data.woflag,
+            'lot1': data.lot1,
+            'deleted':false,
+            'adddate': new Date().toISOString(),
+            'addwho': data.addwho
+          }).then(function(res){
+            callback(null, res);
+          }).catch(function(err){
+            callback(err);
+          });
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Codelkup.updateCodelkup = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Codelkup.updateAll({'parentuser': data.parentuser, 'listname': data.listname,'code': data.code},{
+        'description': data.description,
+        'short': data.short,
+        'long_value': data.long_value,
+        'notes': data.notes,
+        'woflag': data.woflag,
+        'lot1': data.lot1,
+        'deleted': data.deleted,
+        'editdate': new Date().toISOString(),
+        'editwho': data.editwho
+      }).then(function(res){
+        callback(null, data);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

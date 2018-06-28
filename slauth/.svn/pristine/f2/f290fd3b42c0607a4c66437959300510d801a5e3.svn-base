@@ -1,0 +1,296 @@
+import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Router, ActivatedRoute, Params  } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { NgStyle } from '@angular/common';
+declare var $:any;
+declare var Waypoint:any;
+
+@Component({
+  selector: 'app-rolesmanagement',
+  templateUrl: './rolesmanagement.component.html',
+  styleUrls: ['./rolesmanagement.component.css']
+})
+export class RolesmanagementComponent implements OnInit {
+  @ViewChild('myModal') el:ElementRef;
+  data_roles; _id;
+  data_warehouse = []; data_rolexwarehouse = [];
+  data_storer = []; data_rolexstorer = []; data_strwarehousecode = ''; data_arrwarehousecode = [];
+  data_rolexmenu = [];
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private activatedRoute : ActivatedRoute) { }
+
+  ngOnInit() {
+    this.activatedRoute.params.subscribe((params: Params) => {
+      this._id = params['id'];
+    });
+    this.loadRolesData();
+  }
+  //Filter Data
+  filterWarehouseData(rolexwarehouse) {
+    this.appServices.listAllWarehouse({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(obj){
+      if(rolexwarehouse.length > 0){
+        let data = obj.response.json().res;
+        obj.component.data_warehouse = data.filter(function(f){
+          if(rolexwarehouse.findIndex(function(z){
+            if(f.warehousecode === z.warehousecode) return z;
+          }) < 0) {
+            return f;
+          }
+        })
+      } else {
+        obj.component.data_warehouse = obj.response.json().res;
+      }
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  filterStorerData(rolexstorer, arrwarehousecode) {
+    this.appServices.getAllByWarehouseStorer({'token': this.appServices.session.token.id, 'arrwarehousecode': arrwarehousecode, 'type': '1', 'deleted': false}, this).then(function(obj){
+      if(rolexstorer.length > 0){
+        let data = obj.response.json().res;
+        obj.component.data_storer = data.filter(function(f){
+          if(rolexstorer.findIndex(function(z){
+            if(f.storerkey === z.storerkey && f.warehousecode === z.warehousecode ) return z;
+          }) < 0) {
+            return f;
+          }
+        })
+      } else {
+        obj.component.data_storer = obj.response.json().res;
+      }
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+    //load data
+  loadWarehouseCode(warehousecode){
+    if(this.data_arrwarehousecode.includes(warehousecode)){
+      let i = this.data_arrwarehousecode.indexOf(warehousecode);
+      this.data_arrwarehousecode.splice(i, 1);
+      this.data_rolexstorer = this.data_rolexstorer.filter(function(z){
+        if(z.warehousecode !== warehousecode){
+          return z;
+        }
+      })
+      let temp = "''";
+      this.data_arrwarehousecode.forEach((val, index, arr)=>{
+        temp += "," + "'" + val + "'";
+      })
+      this.data_strwarehousecode = temp;
+      this.filterStorerData(this.data_rolexstorer, this.data_strwarehousecode);
+    } else {
+      this.data_arrwarehousecode.push(warehousecode);
+      let temp = "''";
+      this.data_arrwarehousecode.forEach((val, index, arr)=>{
+        temp += "," + "'" + val + "'";
+      })
+      this.data_strwarehousecode = temp;
+      this.filterStorerData(this.data_rolexstorer, this.data_strwarehousecode);
+    }
+  }
+  loadRolexWarehouseData(rolecode) {
+    this.appServices.getWarehouseRolexWarehouse({'token': this.appServices.session.token.id, 'rolecode': rolecode, 'deleted': false}, this).then(async function(obj){
+      obj.component.data_rolexwarehouse = obj.response.json().res;
+      obj.component.filterWarehouseData(obj.component.data_rolexwarehouse);
+      let temp = "''";
+      obj.component.data_rolexwarehouse.forEach((val, index, arr)=>{
+        obj.component.data_arrwarehousecode.push(val.warehousecode);
+        temp += "," + "'" + val.warehousecode + "'";
+      })
+      obj.component.data_strwarehousecode = temp;
+      obj.component.loadRolexStorerData(rolecode, obj.component.data_strwarehousecode);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadRolexStorerData(rolecode, arrwarehousecode) {
+    this.appServices.getStorerRolexStorer({'token': this.appServices.session.token.id, 'rolecode': rolecode, 'arrwarehousecode': arrwarehousecode, 'deleted': false}, this).then(function(obj){
+      obj.component.data_rolexstorer = obj.response.json().res;
+      obj.component.filterStorerData(obj.component.data_rolexstorer, arrwarehousecode);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadRolexMenuData(rolecode) {
+    this.appServices.getMenuRolexMenu({'token': this.appServices.session.token.id, 'rolecode': rolecode, 'deleted': false}, this).then(function(obj){
+      if(obj.response.json().res.length > 0){
+        obj.component.data_rolexmenu = obj.response.json().res;
+      } else {
+        obj.component.appServices.listAllMenu({'token': obj.component.appServices.session.token.id, 'deleted': false}, this).then(function(_obj){
+          obj.component.data_rolexmenu = _obj.response.json().res;
+        }).catch(function(_err){
+          _err.component.notifyService.show(_err.err.json().error.message, 'danger');
+        })
+      }
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadRolesData(){
+    this.appServices.findRoles({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'id': this._id}})}, this).then(
+      (success)=>{
+        let json = success.response.json();
+        this.data_roles = json.res[0];
+        this.loadRolexWarehouseData(json.res[0].rolecode);
+        this.loadRolexMenuData(json.res[0].rolecode);
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }
+  updateRolesData(data) {
+    this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['deleted'] = false;
+      data['editwho'] = _rs.uid;
+      data['token'] = _rs.id;
+      success.component.appServices.updateRoles(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        //RolexWarehouse
+        success.component.appServices.deleteRolexWarehouse({'token': _rs.id,'rolecode': data.rolecode, 'deleted': true, 'notes': 'deleted', 'editwho': _rs.uid}, this).then(function(del){
+          success.component.data_rolexwarehouse.forEach((value, index, arr)=>{
+            success.component.appServices.saveRolexWarehouse({ 'token': _rs.id, 'rolecode': data.rolecode, 'warehousecode': value.warehousecode, 'notes': '', 'addwho': _rs.uid, 'editwho': _rs.uid  }, this).then(function(save){
+            }).catch(function(err_save){
+              err_save.component.notifyService.show(err_save.err.json().error.message, 'danger');
+            })
+          })
+        }).catch(function(err_del){
+          err_del.component.notifyService.show(err_del.err.json().error.message, 'danger');
+        })
+        //RolexMenu
+        success.component.data_rolexmenu.forEach((val, index, arr)=>{
+          success.component.appServices.saveRolexMenu({'token': _rs.id, 'rolecode': data.rolecode, 'menucode':val.menucode, 'readonly': Boolean(val.readonly), 'edit': Boolean(val.edit), 'notes': '', 'addwho': _rs.uid, 'editwho': _rs.uid }, this).then(function(_obj){
+          }).catch(function(_err){
+            _err.component.notifyService.show(_err.err.json().error.message, 'danger');
+          })
+        })
+        //ROlexStorer
+        success.component.appServices.deleteRolexStorer({'token': _rs.id,'rolecode': data.rolecode, 'deleted': true, 'notes': 'deleted', 'editwho': _rs.uid}, this).then(function(del){
+          success.component.data_rolexstorer.forEach((value, index, arr)=>{
+            success.component.appServices.saveRolexStorer({ 'token': _rs.id, 'rolecode': data.rolecode, 'storerkey': value.storerkey, 'warehousecode': value.warehousecode, 'notes': '', 'addwho': _rs.uid, 'editwho': _rs.uid  }, this).then(function(save){
+            }).catch(function(err_save){
+              err_save.component.notifyService.show(err_save.err.json().error.message, 'danger');
+            })
+          })
+        }).catch(function(err_del){
+          err_del.component.notifyService.show(err_del.err.json().error.message, 'danger');
+        })
+        success.component.notifyService.show('Process Done');
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }).catch(function(errtocken){
+      console.log('Tocken Invalid');
+    })
+  }
+  deleteRolesData(value){
+    this.appServices.checkToken({'token': this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      value['deleted'] = true;
+      value['editwho'] = _rs.uid;
+      value['token'] = _rs.id;
+      success.component.appServices.updateRoles(value, this).then((obj)=>{
+        let res = obj.response.json().res;
+        success.component.el.nativeElement.click();
+        success.component.router.navigate(['roles']);
+        success.component.notifyService.show('Process Done');
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      });
+    }).catch(function(errtoken){
+      console.log('Invalid');
+    })
+  }
+
+  addAllWarehouse(){
+    this.appServices.listAllWarehouse({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(obj){
+      obj.component.data_warehouse = [];
+      obj.component.data_rolexwarehouse = obj.response.json().res;
+      obj.component.data_arrwarehousecode = [];
+      let temp = "''";
+      obj.component.data_rolexwarehouse.forEach((val, index, arr)=>{
+        obj.component.data_arrwarehousecode.push(val.warehousecode);
+        temp += "," + "'" + val.warehousecode + "'";
+      })
+
+      obj.component.data_strwarehousecode = temp;
+      obj.component.filterStorerData(obj.component.data_rolexstorer, obj.component.data_strwarehousecode);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+  removeAllWarehouse(){
+    this.appServices.listAllWarehouse({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(obj){
+      obj.component.data_rolexwarehouse = [];
+      obj.component.data_warehouse = obj.response.json().res;
+      obj.component.data_arrwarehousecode = [];
+      let temp = "''";
+      obj.component.data_strwarehousecode  = temp;
+      obj.component.loadRolexStorerData(obj.component.data_roles.rolecode, obj.component.data_strwarehousecode);
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+  addWarehouse(data){
+    if(!this.data_rolexwarehouse.includes(data)){
+      this.data_rolexwarehouse.unshift(data);
+      let i = this.data_warehouse.indexOf(data);
+      this.data_warehouse.splice(i,1);
+      this.loadWarehouseCode(data.warehousecode);
+    }
+  }
+
+  removeWarehouse(data){
+    if(!this.data_warehouse.includes(data)){
+      this.data_warehouse.unshift(data);
+      let i = this.data_rolexwarehouse.indexOf(data);
+      this.data_rolexwarehouse.splice(i, 1);
+      this.loadWarehouseCode(data.warehousecode);
+    }
+  }
+
+  addAllStorer(){
+    this.appServices.getAllByWarehouseStorer({'token': this.appServices.session.token.id, 'arrwarehousecode': this.data_strwarehousecode, 'type': '1', 'deleted': false}, this).then(function(obj){
+      obj.component.data_storer = [];
+      obj.component.data_rolexstorer = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+  removeAllStorer(){
+    this.appServices.getAllByWarehouseStorer({'token': this.appServices.session.token.id, 'arrwarehousecode': this.data_strwarehousecode, 'type': '1', 'deleted': false}, this).then(function(obj){
+      obj.component.data_rolexstorer = [];
+      obj.component.data_storer = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+  addStorer(data){
+    if(!this.data_rolexstorer.includes(data)){
+      this.data_rolexstorer.unshift(data);
+      let i = this.data_storer.indexOf(data);
+      this.data_storer.splice(i,1);
+    }
+  }
+
+  removeStorer(data){
+    if(!this.data_storer.includes(data)){
+      this.data_storer.unshift(data);
+      let i = this.data_rolexstorer.indexOf(data);
+      this.data_rolexstorer.splice(i, 1);
+    }
+  }
+
+  BacktoListRoles(){
+    this.router.navigate(['/roles']);
+  }
+
+  refreshRolesData(){
+    this.data_roles = '';
+    this.loadRolesData();
+  }
+
+}

@@ -1,0 +1,239 @@
+{
+  "name": "UserxApp",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "username": {
+      "type": "string",
+      "required": true
+    },
+    "appcode": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "listUserxApp": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "saveUserxApp": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "appcode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/save",
+          "verb": "post"
+        }
+      ]
+    },
+    "findUserxApp": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "getAppsUserxApp": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getapps",
+          "verb": "post"
+        }
+      ]
+    },
+    "deleteUserxApp": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/delete",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

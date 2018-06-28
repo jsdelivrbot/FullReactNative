@@ -40,11 +40,11 @@ export class AuthService {
     }
     login(username,password) {
         return new Promise((resolve, reject) => {
-            ApiService.post(APIRESOURCE.SIGNIN, {
+            ApiService.postNoTimeOut('Users/signin', {
                 obj: JSON.stringify({ username, password })
             }).then(response => {
                 
-                let data1 = response.res;
+                let data1 = response.json().res;
                 alert(JSON.stringify(data1))
                 ApiService.post('Users/aftersignin', {
                     obj: JSON.stringify({
@@ -55,7 +55,7 @@ export class AuthService {
                     })
                 }).then(response => {
                     alert(JSON.stringify(response))
-                    let data2 = response.res;
+                    let data2 = response.json().res;
                     if (!data2.owner || data2.owner.length === 0) {
                         throw 'NO_OWNER';
                     } else if (!data2.warehouse || data2.warehouse.length === 0) {
@@ -75,7 +75,7 @@ export class AuthService {
                             whseid: data2.warehouse[0].warehousecode,
                             warehousename: data2.warehouse[0].warehousename
                         };
-                        ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(Global.user)),5000);
+                        //ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(Global.user)),5000);
                         resolve();
                     }
                 }).catch(err => {

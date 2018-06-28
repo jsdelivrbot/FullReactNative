@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "token": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Users": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "SysUsers": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Menu": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Roles": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Warehouse": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Storer": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "UserxRole": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Apps": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "UserxApp": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "RolexStorer": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "RolexWarehouse": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "RolexMenu": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "Push": {
+    "dataSource": null,
+    "public": true
+  }
+}

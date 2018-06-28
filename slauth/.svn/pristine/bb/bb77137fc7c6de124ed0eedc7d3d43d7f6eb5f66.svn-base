@@ -1,0 +1,22 @@
+<div class="collapse" id="navbarToggleExternalContent">
+  <div class="bg-dark p-4">
+    <h4 class="text-white">SMARTLOG</h4>
+    <span class="text-muted">An unique solutions in global logistic</span>
+    <div class="d-flex justify-content-between">
+      <span></span>
+      <ul class="nav nav-pills justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link" href="profile.html">My Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="Signout()">Signout</a>
+        </li>
+      </ul>
+      <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarToggleExternalContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+    </div>
+  </div>
+</div>

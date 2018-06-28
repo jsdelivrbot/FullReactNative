@@ -1,0 +1,89 @@
+'use strict';
+var app = require('../../server/server');
+var Promise = require('bluebird');
+
+var DEFAULT_TTL = 3600; // seconds
+
+module.exports = function(Token) {
+  Token.validatesUniquenessOf('uid');
+
+  Token._regisToken = function(uid) {
+    return new Promise(function(resolve, reject) {
+      Token.findOne({where: {'uid': uid}}).then(function(obj){
+        if(obj) {
+          Token.deleteById(obj.id);
+        }
+        Token.create({ttl: DEFAULT_TTL, 'uid': uid}).then(function(token){
+          resolve(token);
+        })
+      })
+    })
+  };
+
+  Token._deleteToken = function(uid) {
+    return new Promise(function(resolve, reject) {
+      Token.findOne({where: {'uid': uid}}).then(function(obj){
+        if(obj) {
+          Token.deleteById(obj.id).then(function(_obj){
+            resolve(_obj);
+          });
+        } else {
+          var err = new Error();
+          err.statusCode = err.status = 200;
+          err.code = err.message = 'INVALID_ACCESS';
+          reject(err);
+        }
+      })
+    })
+  };
+
+  Token._validToken = function(token) {
+    return new Promise(function(resolve, reject) {
+      Token.findOne({where: {'id': token}}).then(function(obj){
+        if(obj) {
+          obj.validate(function(err, isValid){
+            if (err) {
+              reject(err);
+            } else if (!isValid) {
+              Token.deleteById(obj.id).then(function(obj){
+                var err = new Error();
+                err.statusCode = err.status = 404;
+                err.code = err.message = 'TOKEN_EXPIRED';
+                reject(err);
+              });
+            }
+            else {
+              Token.updateAll({'id': obj.id}, {'created': new Date()}).then(function(_obj){
+                resolve(obj);
+              })
+            }
+          })
+        }
+        else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.code = err.message = 'INVALID_ACCESS';
+          reject(err);
+        }
+      })
+    })
+  };
+
+  Token._extendToken = function(id){
+    return new Promise(function(resolve, reject) {
+      Token.findOne({where: {'id': id}}).then(function(obj){
+        if(obj) {
+          Token.updateAll({'id': obj.id}, {'created': new Date()}).then(function(_obj){
+            resolve(obj);
+          })
+        } else {
+          var err = new Error();
+          err.statusCode = err.status = 200;
+          err.code = err.message = 'INVALID_ACCESS';
+          reject(err);
+        }
+      })
+    })
+  }
+
+};

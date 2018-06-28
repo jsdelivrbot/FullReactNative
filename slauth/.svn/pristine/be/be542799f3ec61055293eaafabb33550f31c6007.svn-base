@@ -1,0 +1,347 @@
+{
+  "name": "SysMail",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "appcode": {
+      "type": "string",
+      "required": true
+    },
+    "user": {
+      "type": "string",
+      "required": true
+    },
+    "pass": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "isdefault": {
+      "type": "boolean",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "host": {
+      "type": "string",
+      "required": true
+    },
+    "secure": {
+      "type": "boolean",
+      "required": true
+    },
+    "port": {
+      "type": "number",
+      "required": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "findSysMail": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "listSysMail": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertSysMail": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "appcode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "user",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "pass",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "isdefault",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "host",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "secure",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "port",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insert",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateSysMail": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "appcode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "user",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "pass",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "isdefault",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "host",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "secure",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "port",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    },
+    "sendSysMail": {
+      "accepts": [
+        {
+          "arg": "appcode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "to",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "subject",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "body",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/send",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

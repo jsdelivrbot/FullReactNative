@@ -1,0 +1,68 @@
+<custom-modal id="modal-ward">
+  <div class="custom-modal">
+    <div class="custom-modal-body">
+        <div class=" text-right  mb-3">
+          <button class="btn btn-default" (click)="closeModal();">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      <div class="table-responsive fixed-tablenotab">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th rowspan="2" class="align-bottom table-small">
+              </th>
+              <th rowspan="2" >
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'districtcode'; this.loadWardData({}) ">
+                  District Code
+                  <i *ngIf="this.propertyName == 'districtcode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'districtcode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_wardcode" (keyup.enter)="this.loadWardData({})" >
+              </th>
+              <th rowspan="2">
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'wardcode'; this.loadWardData({}) ">
+                  Ward Code
+                  <i *ngIf="this.propertyName == 'wardcode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'wardcode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_wardcode" (keyup.enter)="this.loadWardData({})">
+              </th>
+              <th rowspan="2">
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'wardname'; this.loadWardData({}) ">
+                  Ward Name
+                  <i *ngIf="this.propertyName == 'wardname' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'wardname' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_wardname" (keyup.enter)="this.loadWardData({})">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of data_ward | paginate: { id: 'id_ward', itemsPerPage: this.itemsPerPage_ward, currentPage: this.currentPage_ward, totalItems: this.total_ward };">
+              <td class="align-bottom table-small">
+                <button type="button" class="btn btn-link cursor-pointer" (click)="select(data)">
+                  <i class="fa fa-check text-success" aria-hidden="true"></i>
+                </button>
+              </td>
+              <td class="align-middle">{{data.districtcode}}</td>
+              <td class="align-middle">{{data.wardcode}}</td>
+              <td class="align-middle">{{data.wardname}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="navbar navbar-light bg-light px-0 px-2" id="footer">
+        <div class="show-entries">
+          <span class="show">Show &nbsp;</span>
+          <select name="itemsPerPage_ward" [(ngModel)]="this.itemsPerPage_ward" (change)="this.itemsPerPage_ward = $event.target.value; this.loadWardData({})">
+            <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+          </select>
+          <span>&nbsp;entries</span>
+        </div>
+        <pagination-controls id="id_ward" (pageChange)="this.currentPage_ward = $event; this.loadWardData({})"></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="custom-modal-background"></div>
+</custom-modal>

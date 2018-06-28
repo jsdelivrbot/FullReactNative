@@ -1,0 +1,115 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+var limit = 12;
+module.exports = function(Storer) {
+  Storer.validatesUniquenessOf({scopedTo: ['warehousecode', 'storerkey', 'type']});
+  Storer.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  Storer.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Storer.count(ctx.args, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': (count) / limit});
+      next();
+    })
+  });
+  Storer.listStorer = function(token, type, deleted, parentuser, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = 'SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable, storer.deleted, storer.adddate, storer.addwho, storer.editdate, storer.editwho from storer '
+                +'where storer.deleted = false and storer.type = ? and storer.parentuser = ?';
+      Storer.dataSource.connector.execute(strSQL, [type, deleted, parentuser], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.getAllByWarehouseStorer = function(token, arrwarehousecode, type, parentuser, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.dataSource.connector.execute('SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable, storer.deleted, storer.adddate, storer.addwho, storer.editdate, storer.editwho from storer WHERE storer.warehousecode in ('+ arrwarehousecode +') and storer.parentuser = ? and storer.type = ? and storer.deleted = ?', [parentuser, type, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.findStorer = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.insertStorer = function(token, warehousecode, storerkey, type, parentuser, company, address1, lottable, stockinfo, freeday, ageindays, notes1, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.create({
+        'deleted': false,
+        'warehousecode':warehousecode,
+        'storerkey': storerkey,
+        'type': type,
+        'parentuser': parentuser,
+        'company': company,
+        'address1': address1,
+        'lottable': lottable,
+        'stockinfo': stockinfo,
+        'freeday': freeday,
+        'ageindays': ageindays,
+        'notes1': notes1,
+        'adddate': new Date().toISOString(),
+        'addwho': addwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Storer.updateStorer = function(token, deleted, warehousecode, storerkey, type, parentuser, company, address1, lottable, stockinfo, freeday, ageindays, notes1, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Storer.findOne({where: {'warehousecode': warehousecode, 'storerkey': storerkey,'type':type}}).then(function(obj){
+        if(obj) {
+          Storer.updateAll({'warehousecode': warehousecode, 'storerkey': storerkey,'type':type},{
+            'parentuser': parentuser,
+            'deleted': deleted,
+            'company': company,
+            'address1': address1,
+            'lottable': lottable,
+            'stockinfo': stockinfo,
+            'freeday': freeday,
+            'ageindays': ageindays,
+            'notes1': notes1,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          });
+        }
+        else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'Data is not existed';
+          callback(err);
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+};

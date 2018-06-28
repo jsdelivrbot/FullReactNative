@@ -1,0 +1,128 @@
+{
+  "name": "RolexWarehouse",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "rolecode": {
+      "type": "string",
+      "required": true
+    },
+    "warehousecode": {
+      "type": "string",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "warehouses": {
+      "type": "hasMany",
+      "model": "Warehouse",
+      "foreignKey": ""
+    },
+    "roles": {
+      "type": "hasMany",
+      "model": "Roles",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {
+    "findRolexWarehouse": {
+      "accepts": [
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "deleteRolexWarehouse": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/delete",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateRolexWarehouse": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

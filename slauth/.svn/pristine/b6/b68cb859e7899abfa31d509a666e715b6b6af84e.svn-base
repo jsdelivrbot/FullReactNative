@@ -1,0 +1,193 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-wrench"></i> Apps</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" disabled><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr  class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox" *ngIf="data_app.length > 0">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>URL</th>
+                  <th>Signout URL</th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadAppsData({'appcode':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadAppsData({'appname':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadAppsData({'url':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadAppsData({'signout_url':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_app | paginate: { id: 'id_app', itemsPerPage: this.itemsPerPage_app, currentPage: this.currentPage_app, totalItems: this.total_app };">
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" class="align-middle" (click)="findAppsData(data)">{{data.appcode}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findAppsData(data)">{{data.appname}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findAppsData(data)">{{data.url}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findAppsData(data)">{{data.signout_url}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_app" [(ngModel)]="this.itemsPerPage_app" (change)="this.itemsPerPage_app = $event.target.value; this.loadAppsData()">
+                <option *ngFor="let data of data_itemsPerPage" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_app" (pageChange)="this.currentPage_app = $event; this.loadAppsData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" (ngSubmit)="insertAppsData(frmAdd.value)" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New Apps</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_app">
+                  <div class="input-group">
+                    <span class="input-group-addon">Code</span>
+                    <input type="text"  class="form-control" name="appcode" [(ngModel)]="data_app.appcode"  required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text"  class="form-control" name="appname" [(ngModel)]="data_app.appname" required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">URL</span>
+                    <input type="text"  class="form-control" name="url" [(ngModel)]="data_app.url" required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">SignOut URL</span>
+                    <input type="text"  class="form-control" name="signout_url" [(ngModel)]="data_app.signout_url" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_app.notes' name='notes'></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmAdd.form.valid"><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Apps</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteAppsData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <form #frmEdit="ngForm" (ngSubmit)="updateAppsData(this.selected_app)" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Apps</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_app">
+                  <div class="input-group">
+                    <span class="input-group-addon">Code</span>
+                    <input type="text"  class="form-control" name="appcode" [(ngModel)]="selected_app.appcode" readonly required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text"  class="form-control" name="appname" [(ngModel)]="selected_app.appname" required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">URL</span>
+                    <input type="text"  class="form-control" name="url" [(ngModel)]="selected_app.url" required />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">SignOut URL</span>
+                    <input type="text"  class="form-control" name="signout_url" [(ngModel)]="selected_app.signout_url" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='selected_app.notes' name='notes'></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

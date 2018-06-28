@@ -1,0 +1,146 @@
+import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Router, ActivatedRoute, Params  } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { NgStyle } from '@angular/common';
+import * as md5 from "md5";
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-usersmanagement',
+  templateUrl: './usersmanagement.component.html',
+  styleUrls: ['./usersmanagement.component.css']
+})
+export class UsersmanagementComponent implements OnInit {
+  @ViewChild('myModal') el:ElementRef;
+  data_users; total_users; selected_users; _id;
+  count_users = 0; delete_users = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private activatedRoute : ActivatedRoute) {
+  }
+
+  ngOnInit() {
+    this.activatedRoute.params.subscribe((params: Params) => {
+      this._id = params['id'];
+    });
+    this.loadUsersData();
+  }
+
+  loadUsersData(){
+    this.appServices.findUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': {'id': this._id}})}, this).then(
+      (success)=>{
+        let json = success.response.json();
+        if(this.data_users) {
+          this.data_users = this.data_users.concat(json.res[0]);
+        }
+        else {
+          this.data_users = json.res[0];
+        }
+        // this.selected_users = this.data_users;
+        // console.log(obj.component.data_users[0]);
+      }).catch(function(err){
+        //err.component.notifyService.show('Error', err.err.json().error.message, 'danger');
+      })
+    }
+
+    updateUsersData(data) {
+      this.appServices.getUsers(this.appServices.session.token.id, this).then(function(success){
+        data['deleted'] = false;
+        data['editwho'] = success.response.json().res.uid;
+        data['type'] = parseInt(data['type']);
+        data['token'] = success.response.json().res.id;
+        success.component.appServices.updateUsers(data, this).then(function(obj){
+          let res = obj.response.json().res;
+          // obj.component.notifyService.show('Info', 'Process Done');
+          console.log('update success');
+        }).catch(function(err){
+          // err.component.notifyService.show('Error', err.err.json().error.message, 'danger');
+          console.log('Insert false');
+        });
+      }).catch(function(errtoken){
+        console.log('Invalid');
+      })
+    }
+
+    deleteUsersData(value){
+      this.appServices.getUsers(this.appServices.session.token.id, this).then(function(success){
+        value['deleted'] = true;
+        value['editwho'] = success.response.json().res.uid;
+        value['token'] = success.response.json().res.id;
+        success.component.appServices.updateUsers(value, this).then((obj)=>{
+          let res = obj.response.json().res;
+
+          success.component.el.nativeElement.click();
+
+          success.component.router.navigate(['users']);
+          console.log('delete success');
+          // obj.component.notifyService.show('Info', 'Process Done');
+          // obj.component.loadUsersData();
+        }).catch(function(err){
+          console.log('delete fail');
+          // err.component.notifyService.show('Error', err.err.json().error.message, 'danger');
+        });
+      }).catch(function(errtoken){
+        console.log('Invalid');
+      })
+    }
+
+    changePasswordUsersData(data){
+      if(data.password === data.confirmpassword){
+        this.appServices.getUsers(this.appServices.session.token.id, this).then(function(success){
+          success.component.appServices.findUsers({'token': success.component.appServices.session.token.id, 'filter': JSON.stringify({'where': {'username': data.username, 'password': md5(data.passwordold)}})}, this).then(function(exist){
+            let json = exist.response.json();
+            if(json.res.length > 0) {
+              data['deleted'] = false;
+              data['editwho'] = success.response.json().res.uid;
+              data['token'] = success.response.json().res.id;
+              success.component.appServices.changePasswordUsers(data, this).then(function(obj){
+                let res = obj.response.json().res;
+                // obj.component.notifyService.show('Info', 'Process Done');
+                console.log('changepass success');
+              }).catch(function(err){
+                // err.component.notifyService.show('Error', err.err.json().error.message, 'danger');
+                console.log('changepass false');
+              });
+            }
+            else {
+              console.log('User not found !');
+            }
+          }).catch(function(err){
+            console.log('catch User not found !');
+            //err.component.notifyService.show('Error', err.err.json().error.message, 'danger');
+          })
+        }).catch(function(errtoken){
+          console.log('Invalid');
+        })
+      } else {
+        console.log('Password comfirm not corrrect! ');
+      }
+
+    }
+
+    changeStatus(data){
+      console.log(data.status);
+      this.data_users['status'] = data['status'] === 1 ? 0 : 1;
+    }
+
+    BacktoListusers(){
+      this.router.navigate(['/users']);
+    }
+
+    refreshUsersData(){
+      this.data_users = '';
+      this.loadUsersData();
+    }
+
+    // Input
+    _keyPress(event: any) {
+      const pattern = /[0-9\+\-\ ]/;
+      let inputChar = String.fromCharCode(event.charCode);
+      if (!pattern.test(inputChar)) {
+        // invalid character, prevent input
+        event.preventDefault();
+      }
+    }
+
+  }

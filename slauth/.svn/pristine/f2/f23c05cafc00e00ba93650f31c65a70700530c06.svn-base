@@ -1,0 +1,122 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-admin-apps',
+  templateUrl: './admin-apps.component.html',
+  styleUrls: ['./admin-apps.component.css']
+})
+export class AdminAppsComponent implements OnInit {
+  data_apps = []; ; selected_apps; total_apps;
+  count_apps = 0; delete_apps = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) { }
+  ngOnInit() {
+    this.loadAppsData();
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Load more');
+          this.loadAppsData('', this.count_apps);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadAppsData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_apps = [];
+      this.count_apps = skip;
+      this.delete_apps = [];
+    }
+    this.appServices.findApps({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip})}, this).then(function(obj){
+      let json = obj.response.json();
+      if(obj.component.data_apps) {
+        obj.component.data_apps = obj.component.data_apps.concat(json.res);
+      }
+      else {
+        obj.component.data_apps = json.res;
+      }
+      obj.component.count_apps += json.res.length;
+      obj.component.total_apps = json.total;
+      Waypoint.refreshAll();
+    }).catch(function(err){
+      err.component.authService.catchErr(err);
+    })
+  }
+  insertAppsData(data) {
+    data['deleted'] = false;
+    data['addwho'] = this.appServices.session.token.uid;
+    data['token'] = this.appServices.session.token.id;
+    this.appServices.insertApps({ "obj": JSON.stringify(data) }, this).then(function(success){
+      success.component.notifyService.show('Process Done');
+      success.component.loadAppsData();
+    }).catch(function(err){
+      err.component.authService.catchErr(err);
+    })
+  }
+  updateAppsData(data) {
+    data['deleted'] = false;
+    data['editwho'] = this.appServices.session.token.uid;
+    data['token'] = this.appServices.session.token.id;
+    this.appServices.updateApps({ "obj": JSON.stringify(data) }, this).then(function(success){
+      success.component.notifyService.show('Process Done');
+      success.component.loadAppsData();
+    }).catch(function(err){
+      err.component.authService.catchErr(err);
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_apps.push(data);
+    }
+    else {
+      let index = this.delete_apps.indexOf(data);
+      this.delete_apps.splice(index, 1);
+    }
+  }
+  findAppsData(data){
+    this.selected_apps = Object.assign({}, data);;
+  }
+  deleteAppsData(){
+    this.delete_apps.forEach((value, index, arr) => {
+      value['deleted'] = true;
+      value['editwho'] = this.appServices.session.token.uid;
+      value['token'] = this.appServices.session.token.id;
+      this.appServices.updateApps({ "obj": JSON.stringify(value) }, this).then(function(success){
+        success.component.notifyService.show('Process Done');
+        success.component.loadAppsData();
+      }).catch(function(err){
+        err.component.authService.catchErr(err);
+      })
+    })
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_apps.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_apps.includes(curr_data)){
+          this.delete_apps.push(curr_data);
+        }
+      })
+    } else {
+      this.data_apps.forEach(x=>x.state = e.target.checked);
+      this.delete_apps = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_apps.every(_ => _.state);
+  }
+};

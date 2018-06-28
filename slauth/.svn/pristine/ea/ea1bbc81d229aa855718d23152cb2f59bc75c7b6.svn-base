@@ -1,0 +1,288 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <h2><i class="fa fa-signal"></i> Users Management</h2>
+        <hr/>
+        <button type="button" class="btn btn-sm btn-outline-info" (click)="this.router.navigate(['admin/users']);" >
+          <i class="fa fa-reply"></i> Back
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger pull-right" data-toggle="modal" data-target="#modalDelete" disabled >
+          <i class="fa fa-trash"></i> Delete
+        </button>
+        <button type="submit" [disabled]="!frmEdit.form.valid" (click)="updateUsersData(data_user)" class="btn btn-sm btn-outline-success pull-right">
+          <i class="fa fa-floppy-o"></i> Save
+        </button>
+        <button type="button" (click)="this.data_user = ''; this.loadUsersData(this._id);" class="btn btn-sm btn-outline-secondary pull-right">
+          <i class="fa fa-times"></i> Cancel
+        </button>
+        <div class="mt-3">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tabInfo" role="tab">Info</a>
+            </li>
+            <li class="nav-item" *ngIf="type===1">
+              <a class="nav-link" data-toggle="tab" href="#tabUsers" role="tab" >Users</a>
+            </li>
+            <li class="nav-item" *ngIf="type===1">
+              <a class="nav-link" data-toggle="tab" href="#tabRoles" role="tab" >Roles</a>
+            </li>
+            <li class="nav-item" *ngIf="type===2">
+              <a class="nav-link" data-toggle="tab" href="#tabUserxRole" role="tab" >User Roles</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabWarehouses" role="tab">Warehouses</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabOwners" role="tab">Owners</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabApps" role="tab">Apps</a>
+            </li>
+          </ul>
+          <div class="card border-shadow tab-content">
+            <div class="tab-pane fade show active" id="tabInfo">
+              <form #frmEdit="ngForm" autocomplete="off" class="container-fluid">
+                <div class="row mt-3">
+                  <div class="col-sm-12" *ngIf="data_user">
+                    <button type="button" class="btn btn-warning float-right mb-2" *ngIf="this.data_user.status===2" (click)="activeAccount(this.data_user)"> Active Account</button>
+                    <div class="form-group float-right" *ngIf="this.data_user.status!==2">
+                      <button type="button" [ngClass]="{'btn btn-success': this.data_user.status === 1, 'btn btn-outline-success':this.data_user.status === 0 }" (click)="this.data_user.status = 1"> Active</button>
+                      <button type="button" [ngClass]="{'btn btn-danger': this.data_user.status === 0, 'btn btn-outline-danger':this.data_user.status === 1}" (click)="this.data_user.status = 0"> InActive</button>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">Type</span>
+                      <select [(ngModel)]="data_user.type"  name="type" class="form-control" disabled>
+                        <option  [value]="1" >Company</option>
+                        <option  [value]="2" >Staff</option>
+                        <option  [value]="3" >Customer</option>
+                      </select>
+                    </div>
+                    <div class="input-group " *ngIf="(this.appServices.session.isAdmin && data_user.type == 2) || (this.appServices.session.isAdmin && data_user.type == 3)">
+                      <span class="input-group-addon">Parent User</span>
+                      <select  [(ngModel)]="data_user.parentuser" required name="parentuser" class="form-control" disabled>
+                        <option *ngFor="let item of data_parentuser" [ngValue]="item.username">{{item.username}}</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">UserName</span>
+                      <input type="text" class="form-control" name="username" [(ngModel)]="data_user.username"  readonly/>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">FullName</span>
+                      <input type="text"  class="form-control" name="fullname" [(ngModel)]="data_user.fullname" required />
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">Email</span>
+                      <input type="email" class="form-control" name="email" [(ngModel)]="data_user.email" required/>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">Tel</span>
+                      <input type="tel" class="form-control" name="tel" [(ngModel)]="data_user.tel" required/>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">Notes</span>
+                      <textarea class="form-control" rows="2" [(ngModel)]='data_user.notes' name='notes'></textarea>
+                    </div>
+                    <div class="form-group">
+                      <button  type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modalResetPasswordUsers" >
+                        <i class="fa fa-refresh"></i> Reset Password
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane fade" id="tabUsers" *ngIf="type===1">
+              <div class="mt-3 container-fluid">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>UserName</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let user of data_userlist">
+                        <td data-toggle="modal" class="align-middle">{{user.username}}</td>
+                        <td  data-toggle="modal" data-target="#modalEdit" class="align-middle" >
+                          <span *ngIf="user.status" class="badge badge-pill badge-success">Active</span>
+                          <span *ngIf="!user.status" class="badge badge-pill badge-danger">InActive</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabRoles" *ngIf="type===1">
+              <div class="mt-3 container-fluid">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let role of data_rolelist">
+                        <td data-toggle="modal" class="align-middle">{{role.rolecode}}</td>
+                        <td data-toggle="modal" class="align-middle">{{role.rolename}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabUserxRole" *ngIf="type===2">
+              <div class="mt-3 container-fluid">
+                <div class="row">
+                  <div class="col-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">List Roles</span>
+                      <select multiple [size]="this.data_roles.length?this.data_roles.length:1" class="form-control m-1" >
+                        <option *ngFor="let role of data_roles" (click)="addRoles(role)" [ngValue]="role.rolecode" >{{role.rolename}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-2 text-center">
+                    <div class="btn-group-vertical">
+                      <button type="button" (click)="addAllRoles()" class="btn btn-success">&gt;&gt;</button>
+                      <button type="button" (click)="removeAllRoles()" class="btn btn-danger">&lt;&lt;</button>
+                    </div>
+                  </div>
+                  <div class="col-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">List User Roles</span>
+                      <select multiple [size]="this.data_userroles.length?this.data_userroles.length:1" class="form-control m-1">
+                        <option *ngFor="let userrole of data_userroles" (click)="removeRoles(userrole)" [ngValue]="userrole.rolecode">{{userrole.rolename}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabWarehouses">
+              <div class="mt-3 container-fluid">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let wsh of data_warehouselist">
+                        <td data-toggle="modal" class="align-middle">{{wsh.warehousecode}}</td>
+                        <td data-toggle="modal" class="align-middle">{{wsh.warehousename}}</td>
+                        <td>
+                          <span *ngIf="!wsh.hide" class="badge badge-pill badge-success">Active</span>
+                          <span *ngIf="wsh.hide" class="badge badge-pill badge-danger">Inactive</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabOwners">
+              <div class="mt-3 container-fluid">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr >
+                        <th>Warehouse</th>
+                        <th>Code</th>
+                        <th>Company</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let owner of data_ownerlist">
+                        <td data-toggle="modal" class="align-middle">{{owner.warehousecode}}</td>
+                        <td data-toggle="modal" class="align-middle">{{owner.storerkey}}</td>
+                        <td data-toggle="modal" class="align-middle">{{owner.company}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tabApps">
+              <div class="mt-3 container-fluid">
+                <div class="row">
+                  <div class="col-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">List Apps</span>
+                      <select multiple="multiple" [size]="this.data_apps.length?this.data_apps.length:1" class="form-control m-1">
+                        <option *ngFor="let app of data_apps" [ngValue]="app.appcode" (click)="addApps(app)" >{{app.appname}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-2 text-center">
+                    <button type="button" (click)="addAllApps()" class="btn btn-success">&gt;&gt;</button>
+                    <br>
+                    <button type="button" (click)="removeAllApps()" class="btn btn-danger">&lt;&lt;</button>
+                    <br>
+                  </div>
+                  <div class="col-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">List User Apps</span>
+                      <select multiple="multiple" [size]="this.data_userapps.length?this.data_userapps.length:1" class="form-control m-1">
+                        <option *ngFor="let userapp of data_userapps" [ngValue]="userapp.appcode" (click)="removeApps(userapp)" >{{userapp.appname}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Users</h5>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete <b> {{this.data_user !== undefined ? this.data_user.username : ''}} </b>?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteUsersData(data_user)" ><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalResetPasswordUsers" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Reset Password</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to reset password <b> {{this.data_user !== undefined ? this.data_user.username : ''}} </b>?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="resetPasswordUsersData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

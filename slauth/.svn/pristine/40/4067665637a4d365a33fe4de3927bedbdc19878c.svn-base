@@ -1,0 +1,45 @@
+'use strict';
+var os = require('os');
+var fs = require('fs');
+var rll = require('read-last-lines')
+
+module.exports = function(Stats) {
+  Stats.HardwareStats = function(callback) {
+    let hardware = {
+      'arch': os.arch(),
+      'hostname': os.hostname(),
+      'platform': os.platform(),
+      'type': os.type(),
+      'cpus': os.cpus(),
+      'networkInterfaces': os.networkInterfaces(),
+      'totalmem': os.totalmem(),
+      'usedmem': os.totalmem() - os.freemem(),
+      'freemem': os.freemem(),
+      'uptime': os.uptime()
+    }
+    Stats._LogStats(1, function(res){
+      let log = {
+        'url': res['req.url'],
+        'APIResponseTime': res.APIResponseTime,
+        'OverallResponseTime': res.OverallResponseTime,
+        'logtime': res.time
+      }
+      hardware['log'] = log;
+      callback(null, hardware);
+    })
+  };
+
+  Stats._LogStats = function(position, callback) {
+    rll.read('./log/track.log', position).then(function(lines){
+      let line = lines.split(/\n/)[0];
+      let res = JSON.parse(line);
+      if(res['req.url'].toLowerCase().indexOf('/explorer') >= 0
+      || res['req.url'].toLowerCase().indexOf('/api/stats') >= 0
+      || res['req.url'].toLowerCase().indexOf('/visualize') >= 0) {
+        Stats._LogStats(position + 1, callback);
+      } else {
+        callback(res);
+      }
+    });
+  };
+};

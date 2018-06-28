@@ -1,0 +1,69 @@
+{
+  "_from": "loopback-component-visualizer",
+  "_id": "loopback-component-visualizer@1.2.1",
+  "_inBundle": false,
+  "_integrity": "sha1-45hAfSeKkic6bYI7KNhlJDy5ew0=",
+  "_location": "/loopback-component-visualizer",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "loopback-component-visualizer",
+    "name": "loopback-component-visualizer",
+    "escapedName": "loopback-component-visualizer",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/loopback-component-visualizer/-/loopback-component-visualizer-1.2.1.tgz",
+  "_shasum": "e398407d278a92273a6d823b28d865243cb97b0d",
+  "_spec": "loopback-component-visualizer",
+  "_where": "D:\\Working\\Authenticate",
+  "author": {
+    "name": "prashantbaid, pbhadauria2000"
+  },
+  "bugs": {
+    "url": "https://github.com/yantrashala/loopback-component-visualizer/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "prashantbaid"
+    },
+    {
+      "name": "pbhadauria2000"
+    },
+    {
+      "name": "mennu"
+    }
+  ],
+  "dependencies": {
+    "lodash": "^4.12.0"
+  },
+  "deprecated": false,
+  "description": "Loopback component to visualize models and their relationships",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "loopback": "^2.28.0",
+    "loopback-datasource-juggler": "^2.46.0",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
+  },
+  "homepage": "https://github.com/yantrashala/loopback-component-visualizer#readme",
+  "license": "MIT",
+  "main": "./index.js",
+  "name": "loopback-component-visualizer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yantrashala/loopback-component-visualizer.git"
+  },
+  "scripts": {
+    "coverage": "istanbul cover _mocha",
+    "test": "mocha"
+  },
+  "version": "1.2.1"
+}

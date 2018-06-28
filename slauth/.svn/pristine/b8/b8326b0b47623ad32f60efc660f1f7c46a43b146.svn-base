@@ -1,0 +1,341 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var md5 = require('md5');
+var limit = 12;
+var _ = require("underscore");
+var uuid = require('uuid');
+
+module.exports = function(SysUsers) {
+  SysUsers.validatesUniquenessOf('username');
+  SysUsers.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  SysUsers.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    SysUsers.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  SysUsers.listSysUsers = function(token, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.dataSource.connector.execute('SELECT sysusers.id, sysusers.username, sysusers.password, sysusers.deleted, sysusers.tel, sysusers.fullname, sysusers.email, sysusers.status, sysusers.notes, sysusers.adddate, sysusers.addwho, sysusers.editdate, sysusers.editwho FROM sysusers WHERE sysusers.deleted = ?', [deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysUsers.insertSysUsers = function(token, username, password, tel, fullname, email, status, notes, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.create({
+        'username': username,
+        'password': md5(password),
+        'deleted': false,
+        'tel': tel,
+        'fullname': fullname,
+        'email': email,
+        'status': status,
+        'notes': notes,
+        'adddate': new Date().toISOString(),
+        'addwho': addwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  SysUsers.updateSysUsers = function(token, username, deleted, tel, fullname, email, status, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.updateAll({'username': username},{
+        'deleted': deleted,
+        'tel': tel,
+        'fullname': fullname,
+        'email': email,
+        'status': status,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  SysUsers.updateAdmin = function(token, username, deleted, tel, fullname, email, status, notes, editwho, isadmin, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      if(isadmin){
+        SysUsers.findOne({where: {'username': username}}).then(function(res){
+          if(res){
+            SysUsers.updateAll({'username': username},{
+              'deleted': deleted,
+              'tel': tel,
+              'fullname': fullname,
+              'email': email,
+              'status': status,
+              'notes': notes,
+              'editdate': new Date().toISOString(),
+              'editwho': editwho
+            }).then(function(obj){
+              callback(null, {
+                'user': res,
+                'isAdmin': true
+              });
+            }).catch(function(err){
+              callback(err);
+            })
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.message = 'Data is not existed';
+            callback(err);
+          }
+        }).catch(function(err){
+          callback(err);
+        })
+      } else {
+        app.models.Users.findOne({where: {'username': username}}).then(function(res){
+          if(res){
+            app.models.Users.updateAll({'username': username},{
+              'deleted': deleted,
+              'tel': tel,
+              'fullname': fullname,
+              'email': email,
+              'status': status,
+              'notes': notes,
+              'editdate': new Date().toISOString(),
+              'editwho': editwho
+            }).then(function(obj){
+              callback(null, {
+                'user': res,
+                'isAdmin': false
+              });
+            }).catch(function(err){
+              callback(err);
+            })
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.message = 'Data is not existed';
+            callback(err);
+          }
+        }).catch(function(err){
+          callback(err);
+        })
+      }
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  SysUsers.changePasswordAdmin = function(token, username, password, editwho, isadmin, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      if(isadmin){
+        SysUsers.updateAll({'username': username},{
+          'password': md5(password),
+          'editdate': new Date().toISOString(),
+          'editwho': editwho
+        }).then(function(obj){
+          callback(null, obj);
+        }).catch(function(err){
+          callback(err);
+        })
+      } else {
+        app.models.Users.updateAll({'username': username},{
+          'password': md5(password),
+          'editdate': new Date().toISOString(),
+          'editwho': editwho
+        }).then(function(obj){
+          callback(null, obj);
+        }).catch(function(err){
+          callback(err);
+        })
+      }
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  SysUsers.forgotPasswordAdmin = function(username, email, editwho, callback) {
+    SysUsers.findOne({where: {'username': username, 'email': email, 'status': 1, 'deleted': false}}).then(function(res){
+      if(res) {
+        var password = uuid.v4().substr(0, 8);
+        SysUsers.updateAll({'username': username},{
+          'password': md5(password),
+          'editdate': new Date().toISOString(),
+          'editwho': editwho
+        }).then(function(obj){
+          app.models.SysMail.sendSysMail('wms', res.email, 'Forgot Password', 'Your new password is: <b>'+password+'</b>', (err, res) => {
+            if(err) {
+              callback(err);
+            } else {
+              callback(null, obj);
+            }
+          })
+        }).catch(function(err){
+          callback(err);
+        })
+      } else {
+        app.models.Users.findOne({where: {'username': username, 'email': email, 'type': 1, 'status': 1, 'deleted': false}}).then(function(_res){
+          if(_res){
+            var password = uuid.v4().substr(0, 8);
+            app.models.Users.updateAll({'username': username},{
+              'password': md5(password),
+              'editdate': new Date().toISOString(),
+              'editwho': editwho
+            }).then(function(obj){
+              app.models.SysMail.sendSysMail('wms', _res.email, 'Forgot Password', 'Your new password is: <b>'+password+'</b>', (err, res) => {
+                if(err) {
+                  callback(err);
+                } else {
+                  callback(null, obj);
+                }
+              })
+            }).catch(function(err){
+              callback(err);
+            })
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.code = err.message = 'USER_NOT_EXIST';
+            callback(err);
+          }
+        }).catch(function(err){
+          callback(err);
+        })
+      }
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysUsers.signinAdmin = function(username, password, callback) {
+    SysUsers.findOne({where: {'username': username, 'password': md5(password), 'status': 1, 'deleted': false}}).then(function(obj){
+      if(obj) {
+        app.models.Token._regisToken(obj.username).then(function(token){
+          callback(null, {
+            'user': obj,
+            'token': token,
+            'isAdmin': true
+          });
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      else {
+        app.models.Users.findOne({where: {'username': username, 'password': md5(password), 'type': 1, 'status': 1, 'deleted': false}}).then(function(_obj){
+          if(_obj){
+            app.models.Token._regisToken(_obj.username).then(function(token){
+              callback(null, {
+                'user': _obj,
+                'token': token,
+                'isAdmin': false
+              });
+            }).catch(function(err){
+              callback(err);
+            });
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.code = err.message = 'USER_NOT_EXIST';
+            callback(err);
+          }
+        }).catch(function(err){
+          callback(err);
+        })
+      }
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysUsers.findAdmin = function(token, username, status, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.findOne({where: {'username': username,'status': status, 'deleted': deleted}}).then(function(obj){
+        if(obj) {
+          callback(null, {
+            'user': obj,
+            'token': result,
+            'isAdmin': true
+          });
+        }
+        else {
+          app.models.Users.findOne({where: {'username': username, 'type': 1, 'status': status, 'deleted': deleted}}).then(function(_obj){
+            if(_obj){
+              callback(null, {
+                'user': _obj,
+                'token': result,
+                'isAdmin': false
+              });
+            } else {
+              var err = new Error();
+              err.statusCode = err.status = 404;
+              err.code = err.message = 'USER_NOT_EXIST';
+              callback(err);
+            }
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysUsers.findSysUsers = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysUsers.resetPasswordSysUsers = function(token, username, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysUsers.findOne({where: {'username': username, 'status': 1, 'deleted': false}}).then(function(_rs){
+        if(_rs){
+          var password = uuid.v4().substr(0, 8);
+          SysUsers.updateAll({'username': username},{
+            'password': md5(password),
+            'editdate': new Date().toISOString(),
+            'editwho': editwho
+          }).then(function(obj){
+            app.models.SysMail.sendSysMail('wms', _rs.email, 'Reset Password', 'Your new password is: <b>'+password+'</b>', (err, res) => {
+              if(err) {
+                callback(err);
+              } else {
+                callback(null, obj);
+              }
+            })
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'User is not active!';
+          callback(err);
+        }
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

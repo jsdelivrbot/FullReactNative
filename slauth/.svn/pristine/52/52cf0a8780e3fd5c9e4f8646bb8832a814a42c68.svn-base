@@ -1,0 +1,68 @@
+<nav class="navbar bg-primary">
+  <img class="img-fluid mx-auto" style="height:40px" src="assets/img/favicon.png" />
+</nav>
+<nav class="nav flex-column bg-dark box-shadow-right pt-3">
+  <a class="nav-link mb-3" routerLink="/admin/home">
+    <div class="d-flex justify-content-between">
+      <p class="m-0">Dashboard</p> <i class="fa fa-dashboard my-auto"></i>
+    </div>
+  </a>
+  <div id="menu-accordion" class="left-menu" data-children=".item">
+    <div class="item">
+      <a class="text-muted collapsed" data-toggle="collapse" data-parent="#menu-accordion" href="#accMaster" routerLinkActive="collapsed">
+        <p class="pl-3 pr-3">MASTER DATA</p>
+      </a>
+      <div id="accMaster" class="collapse" routerLinkActive="show">
+        <a class="nav-link" *ngIf="this.appServices.session.isAdmin" routerLink="/admin/mail" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">System Mail</p> <i class="fa fa-envelope my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" *ngIf="this.appServices.session.isAdmin" routerLink="/admin/systemusers" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">System Users</p> <i class="fa fa-user my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Users</p> <i class="fa fa-user my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" routerLink="/admin/warehouse" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Warehouses</p> <i class="fa fa-industry my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" routerLink="/admin/owner" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Owners</p> <i class="fa fa-user-circle-o my-auto"></i>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="item">
+      <a class="text-muted collapsed" data-toggle="collapse" data-parent="#menu-accordion"  href="#accSecurity" routerLinkActive="collapsed">
+        <p class="pl-3 pr-3">SECURITY</p>
+      </a>
+      <div id="accSecurity" class="collapse" routerLinkActive="show">
+        <a class="nav-link" routerLink="/admin/roles" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Roles</p> <i class="fa fa-check-circle-o my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" *ngIf="this.appServices.session.isAdmin" routerLink="/admin/menu" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Menus</p> <i class="fa fa-th-list my-auto"></i>
+          </div>
+        </a>
+        <a class="nav-link" *ngIf="this.appServices.session.isAdmin" routerLink="/admin/apps" routerLinkActive="active">
+          <div class="d-flex justify-content-between">
+            <p class="m-0">Apps</p> <i class="fa fa-wrench my-auto"></i>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script type="text/javascript" src="vendor/holder/holder.min.js"></script>

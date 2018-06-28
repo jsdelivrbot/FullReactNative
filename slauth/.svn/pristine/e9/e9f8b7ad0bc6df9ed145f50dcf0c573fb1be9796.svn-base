@@ -1,0 +1,5 @@
+<footer class="bg-dark text-white">
+  <div class="container-fluid">
+    <p class="m-0">&copy; Smartlog</p>
+  </div>
+</footer>

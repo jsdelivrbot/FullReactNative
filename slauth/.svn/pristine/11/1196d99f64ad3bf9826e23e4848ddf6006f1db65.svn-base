@@ -1,0 +1,68 @@
+<custom-modal id="modal-district">
+  <div class="custom-modal">
+    <div class="custom-modal-body">
+        <div class=" text-right  mb-3">
+          <button class="btn btn-default" (click)="closeModal();">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      <div class="table-responsive fixed-tablenotab">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th rowspan="2" class="align-bottom table-small">
+              </th>
+              <th rowspan="2" >
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'citycode'; this.loadDistrictData({}) ">
+                  City Code
+                  <i *ngIf="this.propertyName == 'citycode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'citycode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_districtcode" (keyup.enter)="this.loadDistrictData({})" >
+              </th>
+              <th rowspan="2">
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'districtcode'; this.loadDistrictData({}) ">
+                  District Code
+                  <i *ngIf="this.propertyName == 'districtcode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'districtcode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_districtcode" (keyup.enter)="this.loadDistrictData({})">
+              </th>
+              <th rowspan="2">
+                <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'districtname'; this.loadDistrictData({}) ">
+                  District Name
+                  <i *ngIf="this.propertyName == 'districtname' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                  <i *ngIf="this.propertyName == 'districtname' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                </span>
+                <input type="text" class="form-control search-table form-control-sm my-1" [(ngModel)]="f_districtname" (keyup.enter)="this.loadDistrictData({})">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of data_district | paginate: { id: 'id_district', itemsPerPage: this.itemsPerPage_district, currentPage: this.currentPage_district, totalItems: this.total_district };">
+              <td class="align-bottom table-small">
+                <button type="button" class="btn btn-link cursor-pointer" (click)="select(data)">
+                  <i class="fa fa-check text-success" aria-hidden="true"></i>
+                </button>
+              </td>
+              <td class="align-middle">{{data.citycode}}</td>
+              <td class="align-middle">{{data.districtcode}}</td>
+              <td class="align-middle">{{data.districtname}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="navbar navbar-light bg-light px-0 px-2" id="footer">
+        <div class="show-entries">
+          <span class="show">Show &nbsp;</span>
+          <select name="itemsPerPage_district" [(ngModel)]="this.itemsPerPage_district" (change)="this.itemsPerPage_district = $event.target.value; this.loadDistrictData({})">
+            <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+          </select>
+          <span>&nbsp;entries</span>
+        </div>
+        <pagination-controls id="id_district" (pageChange)="this.currentPage_district = $event; this.loadDistrictData({})"></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="custom-modal-background"></div>
+</custom-modal>

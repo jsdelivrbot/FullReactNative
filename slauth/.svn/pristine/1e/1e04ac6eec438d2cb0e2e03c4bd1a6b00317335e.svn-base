@@ -1,0 +1,12 @@
+{
+  "ids": {
+    "token": 1863
+  },
+  "models": {
+    "token": {
+      "A96u5oTVc5QpVcmVXBoiidikSMQzKLslbwAQk1uHrCQA0hhRF9mSrnYzO7WaSwsd": "{\"uid\":\"swm\",\"ttl\":3600,\"id\":\"A96u5oTVc5QpVcmVXBoiidikSMQzKLslbwAQk1uHrCQA0hhRF9mSrnYzO7WaSwsd\",\"created\":\"2017-10-31T09:16:12.444Z\"}",
+      "gFbKYoAsBMd1vDf3d4BojyIn6L8FoEVkhxJFDCSICXkz8IVSALWl1g6w60CoPbJk": "{\"uid\":\"user001001\",\"ttl\":3600,\"id\":\"gFbKYoAsBMd1vDf3d4BojyIn6L8FoEVkhxJFDCSICXkz8IVSALWl1g6w60CoPbJk\",\"created\":\"2017-11-02T02:38:29.938Z\"}",
+      "gvsKwiJu0L8ZMWfgxidYHIX0n5nG6MqbbG7L9uPh7OWPRCBLpDYiTCP6Bt7AYpHG": "{\"uid\":\"user001\",\"ttl\":3600,\"id\":\"gvsKwiJu0L8ZMWfgxidYHIX0n5nG6MqbbG7L9uPh7OWPRCBLpDYiTCP6Bt7AYpHG\",\"created\":\"2017-11-02T02:40:44.804Z\"}"
+    }
+  }
+}

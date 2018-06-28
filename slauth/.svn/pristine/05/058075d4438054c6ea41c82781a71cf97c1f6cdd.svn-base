@@ -1,0 +1,112 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+module.exports = function(Apps) {
+  Apps.validatesUniquenessOf('appcode');
+  Apps.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  Apps.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Apps.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  Apps.listApps = function(token, deleted, parentuser, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = '';
+      if(parentuser === ''){
+        strSQL = 'SELECT apps.id, apps.appcode,apps.appname, apps.deleted, apps.notes, apps.adddate, apps.addwho, apps.editdate, apps.editwho from apps WHERE apps.deleted = '+ deleted;
+      } else {
+        strSQL = 'SELECT apps.id, apps.appcode,apps.appname, apps.deleted, apps.notes, apps.adddate, apps.addwho, apps.editdate, apps.editwho from apps left join userxapp on apps.appcode = userxapp.appcode where userxapp.deleted = '+ deleted +' and userxapp.username = "'+ parentuser +'"';
+      }
+      Apps.dataSource.connector.execute(strSQL, [], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Apps.insertApps = function(token, appcode, appname, url, signout_url, notes, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Apps.create({
+        'appcode': appcode,
+        'appname': appname,
+        'deleted': false,
+        'url': url,
+        'signout_url': signout_url,
+        'notes': notes,
+        'adddate': new Date().toISOString(),
+        'addwho': 'admin',
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Apps.updateApps = function(token, appcode, appname, deleted, url, signout_url, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Apps.findOne({where: {'appcode': appcode}}).then(function(obj){
+        if(obj) {
+          Apps.updateAll({'appcode': appcode},{
+            'appname': appname,
+            'deleted': deleted,
+            'url': url,
+            'signout_url': signout_url,
+            'notes': notes,
+            'editdate': new Date().toISOString(),
+            'editwho': 'admin'
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+        else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'Data is not existed';
+          callback(err);
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Apps.findApps = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Apps.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Apps.getApps = function(token, username, deleted, appcode, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Apps.dataSource.connector.execute('SELECT apps.appcode, apps.url, userxapp.username FROM apps left join userxapp on apps.appcode = userxapp.appcode where userxapp.username = ? and userxapp.deleted = ? and apps.appcode = ? ', [username, deleted, appcode ], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

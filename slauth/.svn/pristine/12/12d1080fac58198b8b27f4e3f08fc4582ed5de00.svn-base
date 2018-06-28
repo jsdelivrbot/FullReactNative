@@ -1,0 +1,140 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-warehouse',
+  templateUrl: './warehouse.component.html',
+  styleUrls: ['./warehouse.component.css']
+})
+export class WarehouseComponent implements OnInit {
+  data_warehouse; ; selected_warehouse; total_warehouse;
+  count_warehouse = 0; delete_warehouse = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+
+  ngOnInit() {
+    this.loadWarehouseData();
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Info', 'Load more');
+          this.loadWarehouseData('', this.count_warehouse);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadWarehouseData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_warehouse = [];
+      this.count_warehouse = skip;
+      this.delete_warehouse = [];
+    }
+    this.appServices.findWarehouse({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip})}, this).then(function(obj){
+      let json = obj.response.json();
+      if(obj.component.data_warehouse) {
+        obj.component.data_warehouse = obj.component.data_warehouse.concat(json.res);
+      }
+      else {
+        obj.component.data_warehouse = json.res;
+      }
+      obj.component.count_warehouse += json.res.length;
+      obj.component.total_warehouse = json.total;
+      Waypoint.refreshAll();
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  insertWarehouseData(data) {
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['deleted'] = false;
+      data['addwho'] = _rs.uid;
+      data['token'] = _rs.id;
+      success.component.appServices.insertWarehouse(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadWarehouseData();
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }).catch(function(errtoken){
+      console.log('Token Invalid');
+    })
+  }
+  updateWarehouseData(data) {
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['deleted'] = false;
+      data['editwho'] = _rs.uid;
+      data['token'] = _rs.id;
+      success.component.appServices.updateWarehouse(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadWarehouseData();
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      });
+    }).catch(function(errtoken){
+      console.log('Invalid');
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_warehouse.push(data);
+    }
+    else {
+      let index = this.delete_warehouse.indexOf(data);
+      this.delete_warehouse.splice(index, 1);
+    }
+  }
+  findWarehouseData(data){
+    this.selected_warehouse = data;
+  }
+  deleteWarehouseData(){
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      success.component.delete_warehouse.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['token'] = _rs.id;
+        success.component.appServices.updateWarehouse(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadWarehouseData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      });
+    }).catch(function(errtoken){
+      console.log('Invalid');
+    })
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_warehouse.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_warehouse.includes(curr_data)){
+          this.delete_warehouse.push(curr_data);
+        }
+      })
+    } else {
+      this.data_warehouse.forEach(x=>x.state = e.target.checked);
+      this.delete_warehouse = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_warehouse.every(_ => _.state);
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "name": "RolexMenu",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "rolecode": {
+      "type": "string",
+      "required": true
+    },
+    "appcode": {
+      "type": "string",
+      "required": true
+    },
+    "menucode": {
+      "type": "string",
+      "required": true
+    },
+    "readonly": {
+      "type": "boolean",
+      "required": true
+    },
+    "edit": {
+      "type": "boolean",
+      "required": true
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "menus": {
+      "type": "hasMany",
+      "model": "Menu",
+      "foreignKey": ""
+    },
+    "roles": {
+      "type": "hasMany",
+      "model": "Roles",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {
+    "listRolexMenu": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "saveRolexMenu": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/save",
+          "verb": "post"
+        }
+      ]
+    },
+    "findRolexMenu": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "getMenuRolexMenu": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "rolecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getmenu",
+          "verb": "post"
+        }
+      ]
+    },
+    "deleteRolexMenu": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/delete",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateRolexMenu": {
+      "accepts": [
+        {
+          "arg": "obj",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

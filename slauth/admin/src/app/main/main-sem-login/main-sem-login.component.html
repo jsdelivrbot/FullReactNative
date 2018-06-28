@@ -1,0 +1,73 @@
+<app-header-sem></app-header-sem>
+<app-top-menu-sem></app-top-menu-sem>
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-11 col-sm-12 col-md-10 col-lg-8 box-shadow mx-auto">
+      <div class="row bg-white">
+        <div class="col-sm-7 col-md-8 col-lg-8 p-0">
+          <img class="img-fluid" src="assets/img/sem-login.png" />
+        </div>
+        <form #frmlogin="ngForm" autocomplete="off" (ngSubmit)="signinSEM(frmlogin.value)" autocomplete="off" class="col-sm-5 col-md-4 col-lg-4 my-auto pt-1 pb-1">
+          <h1>Sign in</h1>
+          <div class="input-group">
+            <span class="input-group-addon ">
+              <span class="text-danger">&nbsp;*</span>Username</span>
+            <input type="text" class="form-control" required autofocus name="username" ngModel>
+          </div>
+          <div class="input-group">
+            <span class="input-group-addon">
+              <span class="text-danger">&nbsp;*</span>Password</span>
+            <input type="password" class="form-control" name="password" required ngModel>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <button type="button" routerLink="/main/sem-signup" class="btn btn-info btn-block">Sign up</button>
+            </div>
+            <div class="col-6">
+              <button [disabled]="!frmlogin.form.valid" class="btn btn-primary btn-block">Sign in</button>
+            </div>
+          </div>
+          <a class="text-muted small cursor-pointer mt-1" data-toggle="modal" data-target="#modalForgotPasswordUsers">Forgot my password?</a>
+        </form>
+      </div>
+      <div class="modal fade" id="modalForgotPasswordUsers" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form #frmForgotPassword="ngForm" id="frmForgotPassword" autocomplete="off">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Forgot Account Info</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <span class="text-danger"> &nbsp;*</span> UserName </span>
+                      <input class="form-control" type="text" name="username" autofocus required ngModel>
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <span class="text-danger"> &nbsp;*</span> Email </span>
+                      <input class="form-control" type="text" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required ngModel>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" [disabled]="!frmForgotPassword.form.valid" (click)="forgotPasswordSEMData(frmForgotPassword.value)">
+                  <i class="fa fa-thumbs-o-up"></i>
+                </button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal">
+                  <i class="fa fa-thumbs-o-down"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

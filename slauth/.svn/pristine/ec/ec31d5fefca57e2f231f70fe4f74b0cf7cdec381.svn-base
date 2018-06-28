@@ -1,0 +1,151 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : SWM
+Source Server Version : 50719
+Source Host           : 124.158.14.35:3306
+Source Database       : swmaut
+
+Target Server Type    : MYSQL
+Target Server Version : 50719
+File Encoding         : 65001
+
+Date: 2017-09-23 11:09:43
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for menu
+-- ----------------------------
+DROP TABLE IF EXISTS `menu`;
+CREATE TABLE `menu` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MENUCODE` varchar(45) NOT NULL,
+  `MENUNAME` varchar(45) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for roles
+-- ----------------------------
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ROLECODE` varchar(45) NOT NULL,
+  `ROLENAME` varchar(45) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for rolexmenu
+-- ----------------------------
+DROP TABLE IF EXISTS `rolexmenu`;
+CREATE TABLE `rolexmenu` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ROLECODE` varchar(45) NOT NULL,
+  `MENUCODE` varchar(45) NOT NULL,
+  `READONLY` int(11) NOT NULL,
+  `EDIT` int(11) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for rolexstorer
+-- ----------------------------
+DROP TABLE IF EXISTS `rolexstorer`;
+CREATE TABLE `rolexstorer` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ROLECODE` varchar(45) NOT NULL,
+  `STORERKEY` varchar(45) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for rolexwarehouse
+-- ----------------------------
+DROP TABLE IF EXISTS `rolexwarehouse`;
+CREATE TABLE `rolexwarehouse` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ROLECODE` varchar(45) NOT NULL,
+  `WAREHOUSECODE` varchar(45) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `USERNAME` varchar(65) NOT NULL,
+  `PASSWORD` varchar(65) NOT NULL,
+  `TEL` varchar(45) NOT NULL,
+  `EMAIL` varchar(128) NOT NULL,
+  `STATUS` int(11) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for userxrole
+-- ----------------------------
+DROP TABLE IF EXISTS `userxrole`;
+CREATE TABLE `userxrole` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `USERNAME` varchar(65) NOT NULL,
+  `ROLECODE` varchar(45) NOT NULL,
+  `NOTES` varchar(200) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for warehouse
+-- ----------------------------
+DROP TABLE IF EXISTS `warehouse`;
+CREATE TABLE `warehouse` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `WAREHOUSECODE` varchar(10) NOT NULL,
+  `WAREHOUSENAME` varchar(200) DEFAULT NULL,
+  `NOTES` varchar(60) DEFAULT NULL,
+  `HIDE` tinyint(4) DEFAULT NULL,
+  `ADDDATE` datetime NOT NULL,
+  `ADDWHO` varchar(65) NOT NULL,
+  `EDITDATE` datetime DEFAULT NULL,
+  `EDITWHO` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `WarehouseCode` (`WAREHOUSECODE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -1,0 +1,113 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+
+module.exports = function(Rolexstorer) {
+
+  Rolexstorer.validatesUniquenessOf({scopedTo: ['username', 'rolecode']});
+  Rolexstorer.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  Rolexstorer.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Rolexstorer.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  Rolexstorer.listRolexStorer = function(token, type, deleted, username, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = 'SELECT distinct storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable from users '
+      +'left join userxrole on users.username = userxrole.username '
+      +'left join rolexwarehouse on userxrole.rolecode = rolexwarehouse.rolecode '
+      +'left join warehouse on rolexwarehouse.warehousecode = warehouse.warehousecode '
+      +'left join rolexstorer on userxrole.rolecode = rolexstorer.rolecode and warehouse.warehousecode = rolexstorer.warehousecode '
+      +'left join storer on rolexstorer.warehousecode = storer.warehousecode and rolexstorer.storerkey = storer.storerkey '
+      +'where userxrole.deleted = false and warehouse.hide = false and storer.type = ? and rolexstorer.deleted = ? and users.username = ? ' ;
+      Rolexstorer.dataSource.connector.execute(strSQL, [type, deleted, username], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Rolexstorer.saveRolexStorer = function(token, rolecode, storerkey, warehousecode, notes, addwho, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Rolexstorer.findOne({where: {'rolecode': rolecode, 'storerkey': storerkey, 'warehousecode': warehousecode}}).then(function(obj){
+        if(obj){
+          Rolexstorer.updateAll({'rolecode': rolecode, 'storerkey': storerkey, 'warehousecode': warehousecode},{
+            'deleted': 0,
+            'notes': notes,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          Rolexstorer.create({
+            'rolecode': rolecode,
+            'storerkey': storerkey,
+            'warehousecode': warehousecode,
+            'deleted': 0,
+            'notes': notes,
+            'adddate': new Date().toISOString(),
+            'addwho': addwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Rolexstorer.deleteRolexStorer = function(token, rolecode, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Rolexstorer.updateAll({'rolecode': rolecode},{
+        'deleted': 1,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Rolexstorer.findRolexStorer = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Rolexstorer.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Rolexstorer.getStorerRolexStorer = function(token, rolecode, arrwarehousecode, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Rolexstorer.dataSource.connector.execute('SELECT storer.id, storer.warehousecode, storer.storerkey, storer.type, storer.company, storer.address1, storer.stockinfo, storer.freeday, storer.ageindays, storer.lottable from storer left join rolexstorer on storer.storerkey = rolexstorer.storerkey where rolexstorer.warehousecode in ('+ arrwarehousecode +') and rolexstorer.rolecode = ? and rolexstorer.deleted = ?', [ rolecode, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+}

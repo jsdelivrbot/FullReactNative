@@ -1,0 +1,86 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { RouterModule, Routes } from '@angular/router';
+
+import { AppServices } from './app.services';
+import { NotifyService } from './notify.service';
+
+import { JSONtoDictionaryPipe } from './pipes/JSONtoDictionary.pipe';
+
+import { AppComponent } from './app.component';
+import { PageNotFoundComponent } from './not-found.component';
+
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/header.component';
+import { LeftMenuComponent } from './layout/left-menu/left-menu.component';
+import { TopMenuComponent } from './layout/top-menu/top-menu.component';
+
+import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+import { AdminHomeComponent } from './admin/admin-home/admin-home.component';
+import { MenuComponent } from './admin/menu/menu.component';
+import { RolesComponent } from './admin/roles/roles.component';
+import { WarehouseComponent } from './admin/warehouse/warehouse.component';
+import { OwnerComponent } from './admin/owner/owner.component';
+import { UsersComponent } from './admin/users/users.component';
+import { UsersmanagementComponent } from './admin/usersmanagement/usersmanagement.component';
+import { AppsComponent } from './admin/apps/apps.component';
+import { RolesmanagementComponent } from './admin/rolesmanagement/rolesmanagement.component';
+import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
+import { AdminMailComponent } from './admin/admin-mail/admin-mail.component';
+import { AdminSignupComponent } from './admin/admin-signup/admin-signup.component';
+import { BaseComponent } from './admin/base/base.component';
+
+const appRoutes: Routes = [
+  { path: '', component: AppComponent },
+  { path: 'admin/login', component: AdminLoginComponent },
+  { path: 'admin/home', component: AdminHomeComponent },
+  { path: 'admin/users', component: AdminUsersComponent },
+  { path: 'admin/mail', component: AdminMailComponent },
+  { path: 'signup', component: AdminSignupComponent },
+  { path: 'menu', component: MenuComponent },
+  { path: 'roles', component: RolesComponent },
+  { path: 'warehouse', component: WarehouseComponent },
+  { path: 'owner', component: OwnerComponent },
+  { path: 'users', component: UsersComponent },
+  { path: 'users/:id', component: UsersmanagementComponent },
+  { path: 'apps', component: AppsComponent },
+  { path: 'roles/:id', component: RolesmanagementComponent },
+  { path: '**', component: PageNotFoundComponent }
+];
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    PageNotFoundComponent,
+    FooterComponent,
+    HeaderComponent,
+    LeftMenuComponent,
+    TopMenuComponent,
+    AdminLoginComponent,
+    AdminHomeComponent,
+    MenuComponent,
+    RolesComponent,
+    WarehouseComponent,
+    OwnerComponent,
+    UsersComponent,
+    UsersmanagementComponent,
+    JSONtoDictionaryPipe,
+    AppsComponent,
+    RolesmanagementComponent,
+    AdminUsersComponent,
+    AdminMailComponent,
+    AdminSignupComponent,
+    BaseComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    RouterModule.forRoot(appRoutes)
+  ],
+  providers: [AppServices, NotifyService, BaseComponent],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

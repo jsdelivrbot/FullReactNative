@@ -1,0 +1,166 @@
+<app-header></app-header>
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2 sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3">
+        <div class="card-deck">
+          <div class="card border-shadow">
+            <div class="card-header bg-transparent border-none text-right">TRAVEL TIME</div>
+            <div id="total_div"></div>
+            <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+          </div>
+          <!-- <div class="card border-shadow">
+            <div class="card-header bg-transparent border-none text-right">TIME LOAD</div>
+            <div id="pie_div"></div>
+            <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+          </div> -->
+          <div class="card border-shadow">
+            <div class="card-header bg-transparent border-none text-right">DAILY UP</div>
+            <div id="totaldeleted_div"></div>
+            <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+          </div>
+
+          <div class="card border-shadow">
+            <div class="card-header bg-transparent border-none text-right">FIGURES</div>
+            <div id="gauge_div" class="mx-auto"></div>
+            <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-sm-8">
+            <div class="card border-shadow">
+              <div class="card-header bg-transparent border-none ">
+                <div class="col-sm-4 pull-left">
+                  <div class="input-group ">
+                    <span class="input-group-addon">Company</span>
+                    <select (change)="loadTotalByCompanyChart($event.target.value)" name="company" class="form-control"  >
+                      <option  *ngFor="let user of data_company" [value]="user.username">{{user.fullname}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-4 pull-right">
+                  <p class="text-right">STATS</p>
+                </div>
+              </div>
+              <div id="totalbycompany_div"></div>
+              <!-- <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead class="thead-default">
+                    <tr>
+                      <th>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </th>
+                      <th>Header</th>
+                      <th>Header</th>
+                      <th>Header</th>
+                      <th>Header</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>Lorem</td>
+                      <td>ipsum</td>
+                      <td>dolor</td>
+                      <td>sit</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>amet</td>
+                      <td>consectetur</td>
+                      <td>adipiscing</td>
+                      <td>elit</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>Integer</td>
+                      <td>nec</td>
+                      <td>odio</td>
+                      <td>Praesent</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>libero</td>
+                      <td>Sed</td>
+                      <td>cursus</td>
+                      <td>ante</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>dapibus</td>
+                      <td>diam</td>
+                      <td>Sed</td>
+                      <td>nisi</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input">
+                          <span class="custom-control-indicator"></span>
+                        </label>
+                      </td>
+                      <td>dapibus</td>
+                      <td>diam</td>
+                      <td>Sed</td>
+                      <td>nisi</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div> -->
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="card border-shadow mb-2">
+              <div class="card-header bg-transparent border-none text-right">WEEK UNITS</div>
+              <div id="barhor_div"></div>
+              <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+            </div>
+            <div class="card border-shadow mb-2">
+              <div class="card-header bg-transparent border-none text-right">TRANSACTION</div>
+              <div id="scatter_div"></div>
+              <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+            </div>
+            <!-- <div class="card border-shadow">
+              <div class="card-header bg-transparent border-none text-right">TRAVEL TIME</div>
+              <div id="barver_div"></div>
+              <div class="card-footer bg-transparent border-none text-muted"><small>Last updated 3 mins ago</small></div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

@@ -1,0 +1,82 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+var limit = 12;
+module.exports = function (City) {
+  City.validatesUniquenessOf();
+  City.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  City.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    City.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  City.findCity = function (filter, callback) {
+    City.find(JSON.parse(filter)).then(function (obj) {
+      callback(null, obj);
+    }).catch(function (err) {
+      callback(err);
+    })
+  };
+  City.listCity = function (callback) {
+    City.dataSource.connector.execute('SELECT id, citycode, cityname FROM city where deleted = false ', [], function(err, res) {
+      if (err)
+      callback(err);
+      else {
+        City.dataSource.connector.execute('SELECT  COUNT(*) AS TOTAL FROM city where deleted = false ', [], function(_err, total) {
+          if (_err) callback(_err);
+          else {
+            res['count'] = total[0].TOTAL;
+            callback(null, res);
+          }
+        });
+      }
+    });
+  };
+  City.insertCity = function (obj, callback) {
+    var data = JSON.parse(obj);
+    City.create({
+      'citycode': data.citycode,
+      'cityname': data.cityname,
+      'adddate': new Date().toISOString(),
+      'addwho': data.addwho
+    }).then(function (obj) {
+      callback(null, obj);
+    }).catch(function (err) {
+      callback(err);
+    });
+  };
+  City.updateCity = function (obj, callback) {
+    var data = JSON.parse(obj);
+    City.findOne({ where: { 'id': data.id } }).then(function (objd) {
+      if (objd) {
+        City.updateAll({ 'id': data.id }, {
+          'citycode': data.citycode,
+          'cityname': data.cityname,
+          'deleted': data.deleted,
+          'editdate': new Date().toISOString(),
+          'editwho': data.editwho
+        }).then(function (objd) {
+          callback(null, objd);
+        }).catch(function (err) {
+          callback(err);
+        });
+      }
+      else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.message = 'Data is not existed';
+        callback(err);
+      }
+    })
+  };
+};

@@ -1,0 +1,26 @@
+<div class="container-fluid p-0">
+  <app-header-wms></app-header-wms>
+  <app-top-menu-wms></app-top-menu-wms>
+  <div class="page-inner">
+    <section>
+      <h2>Contact Us</h2>
+      <p>Ea debet ocurreret per, nec aeterno nominati oportere ei. Vix id choro ceteros. At laoreet nostrum est, iriure platonem reprimique sit cu. Id pri maluisset principes, cu everti philosophia nec, perfecto quaerendum vix ea. Ut mea iuvaret vivendum.</p>
+    </section>
+    <div class="row">
+      <div class="col-sm-4">
+        <input type="text" class="form-control" placeholder="Fullname" />
+      </div>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" placeholder="Email" />
+      </div>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" placeholder="Phone" />
+      </div>
+    </div>
+    <textarea class="form-control" placeholder="How can I help you ?" rows="6"></textarea>
+    <div class="text-right">
+      <button class="btn btn-primary p-3"><i class="fa fa-envelope-o"></i> Request</button>
+    </div>
+  </div>
+  <app-footer-wms></app-footer-wms>
+</div>

@@ -1,0 +1,14 @@
+{
+  "ids": {
+    "token": 2011
+  },
+  "models": {
+    "token": {
+      "A96u5oTVc5QpVcmVXBoiidikSMQzKLslbwAQk1uHrCQA0hhRF9mSrnYzO7WaSwsd": "{\"uid\":\"swm\",\"ttl\":3600,\"id\":\"A96u5oTVc5QpVcmVXBoiidikSMQzKLslbwAQk1uHrCQA0hhRF9mSrnYzO7WaSwsd\",\"created\":\"2017-10-31T09:16:12.444Z\"}",
+      "6alPpDzGB3AUZVmB43O2dfyYp40PaoSLxtS3NfUHaErSTo8TUMemuEcG4cjzobUk": "{\"uid\":\"user001004\",\"ttl\":3600,\"id\":\"6alPpDzGB3AUZVmB43O2dfyYp40PaoSLxtS3NfUHaErSTo8TUMemuEcG4cjzobUk\",\"created\":\"2017-11-02T10:08:53.216Z\"}",
+      "wIKek8bawZ0bbEHZyo0Z8VMxQ6FW1FlQ3cG4D0YEBlFmeq4tNxNygK7aHFWoDeDN": "{\"uid\":\"user001002\",\"ttl\":3600,\"id\":\"wIKek8bawZ0bbEHZyo0Z8VMxQ6FW1FlQ3cG4D0YEBlFmeq4tNxNygK7aHFWoDeDN\",\"created\":\"2017-11-02T10:10:23.688Z\"}",
+      "cQ2Al8HY3zdOvElraicthBsiT9ipkCeaSEXxDmROOctMXXYMrxm6OWhZBqdW1mUq": "{\"uid\":\"admin\",\"ttl\":3600,\"id\":\"cQ2Al8HY3zdOvElraicthBsiT9ipkCeaSEXxDmROOctMXXYMrxm6OWhZBqdW1mUq\",\"created\":\"2017-11-03T05:06:19.051Z\"}",
+      "LqiEztYjyWbMxhC0ftPEbmSyQlcP6CiqojEEI2H5jCxo0oYQugih7RCZ1v5H8BD3": "{\"uid\":\"user001\",\"ttl\":3600,\"id\":\"LqiEztYjyWbMxhC0ftPEbmSyQlcP6CiqojEEI2H5jCxo0oYQugih7RCZ1v5H8BD3\",\"created\":\"2017-11-03T06:56:15.113Z\"}"
+    }
+  }
+}

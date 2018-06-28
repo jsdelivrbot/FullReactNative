@@ -1,0 +1,47 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { NgStyle } from '@angular/common';
+declare var $:any;
+declare var Waypoint:any;
+
+@Component({
+  selector: 'app-main-sem-login',
+  templateUrl: './main-sem-login.component.html',
+  styleUrls: ['./main-sem-login.component.css']
+})
+export class MainSemLoginComponent implements OnInit {
+
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+
+  ngOnInit() {
+  }
+
+  signinSEM(data) {
+    this.appServices.signinUsers({"username": data.username, "password": data.password}, this).then(function(success){
+      let rs = success.response.json().res;
+      success.component.appServices.getApps({'token': rs.token.id, 'username': rs.token.uid, 'deleted': false, 'appcode': 'sem' }, this).then(function(obj){
+        if(obj.response.json().res.length > 0){
+          window.location.href = obj.response.json().res[0].url + success.response.json().res.token.id;
+        } else {
+          success.component.notifyService.show('User not existed!', 'danger');
+        }
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      })
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+  forgotPasswordSEMData(data){
+    this.appServices.forgotPasswordUsers({'username': data.username, 'email': data.email, 'editwho': 'system'}, this).then(function(obj){
+      obj.component.notifyService.show('Process Done! <br/> Check your mail, you will receive an email including a new password from Smartlog System');
+      $('#modalForgotPasswordUsers').modal('hide');
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+}

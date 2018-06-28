@@ -1,0 +1,233 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-envelope"></i> Domain Management</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" [disabled]="this.delete_domain.length === 0"><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="card border-shadow mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'code'; this.loadDomainData({}) " >
+                      Code
+                      <i *ngIf="this.propertyName == 'code' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'code' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <!-- <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'name'; this.loadDomainData({}) " >
+                      Name
+                      <i *ngIf="this.propertyName == 'name' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'name' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th> -->
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'parentuser'; this.loadDomainData({}) " >
+                      Company
+                      <i *ngIf="this.propertyName == 'parentuser' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'parentuser' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'url'; this.loadDomainData({}) " >
+                      URL
+                      <i *ngIf="this.propertyName == 'url' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'url' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                  <th>
+                    <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'description'; this.loadDomainData({}) " >
+                      Description
+                      <i *ngIf="this.propertyName == 'description' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                      <i *ngIf="this.propertyName == 'description' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                    </span>
+                  </th>
+                </tr>
+                <tr class="table-row-search" >
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_code" (keyup.enter)="loadDomainData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_parentuser" (keyup.enter)="loadDomainData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_url" (keyup.enter)="loadDomainData({})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="f_description" (keyup.enter)="loadDomainData({})"/>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_domain | paginate: { id: 'id_domain', itemsPerPage: this.itemsPerPage_domain, currentPage: this.currentPage_domain, totalItems: this.total_domain };">
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                    <label  data-toggle="modal" data-target="#modalEdit" (click)="findDomainData(data)" class="cursor-pointer">
+                      <i class="fa fa-pencil"></i>
+                    </label>
+                  </td>
+                  <td class="align-middle">{{data.code}}</td>
+                  <td class="align-middle">{{data.parentuser}}</td>
+                  <td class="align-middle">{{data.url}}</td>
+                  <td class="align-middle">{{data.description}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_domain" [(ngModel)]="this.itemsPerPage_domain" (change)="this.itemsPerPage_domain = $event.target.value; this.loadDomainData()">
+                <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_domain" (pageChange)="this.currentPage_domain = $event; this.loadDomainData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New Domain</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_domain">
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Code</span>
+                    <input type="text" class="form-control" name="code" [(ngModel)]="data_domain.code" required/>
+                  </div>
+                  <!-- <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Company</span>
+                    <input type="text" class="form-control" name="parentuser" [(ngModel)]="data_domain.parentuser" />
+                  </div> -->
+                  <div class="input-group">
+                    <span class="input-group-addon">Company</span>
+                    <select  [(ngModel)]="data_domain.parentuser" name="parentuser" class="form-control" required>
+                      <option *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>URL</span>
+                    <input type="text" class="form-control" name="url" [(ngModel)]="data_domain.url" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Description</span>
+                    <textarea class="form-control" rows="2" name='description' [(ngModel)]='data_domain.description' ></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" [disabled]="!frmAdd.form.valid" (click)="insertDomainData(frmAdd.value)" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Domain</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteDomainData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <div class="modal-dialog">
+            <form #frmEdit="ngForm" (ngSubmit)="updateDomainData(frmEdit.value)" autocomplete="off">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit System Mail</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_domain">
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Code</span>
+                    <input type="text" class="form-control" name="code" [(ngModel)]="selected_domain.code" required/>
+                  </div>
+                  <!-- <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Company</span>
+                    <input type="text" class="form-control" name="parentuser" [(ngModel)]="selected_domain.parentuser" />
+                  </div> -->
+                  <div class="input-group">
+                    <span class="input-group-addon">Company</span>
+                    <select  [(ngModel)]="selected_domain.parentuser" name="parentuser" class="form-control" required>
+                      <option *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+
+                  <div class="input-group ">
+                    <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>URL</span>
+                    <input type="text" class="form-control" name="url" [(ngModel)]="selected_domain.url" required/>
+                  </div>
+                  <div class="input-group ">
+                    <span class="input-group-addon">Description</span>
+                    <textarea class="form-control" rows="2"  name='description' [(ngModel)]='selected_domain.description' ></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { RouterModule, Routes } from '@angular/router';
+import { Ng2CompleterModule } from "ng2-completer";
+
+import { AppServices } from './app.services';
+import { NotifyService } from './notify.service';
+
+import { JSONtoDictionaryPipe } from './pipes/JSONtoDictionary.pipe';
+
+import { AppComponent } from './app.component';
+import { PageNotFoundComponent } from './not-found.component';
+
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/header.component';
+import { LeftMenuComponent } from './layout/left-menu/left-menu.component';
+import { TopMenuComponent } from './layout/top-menu/top-menu.component';
+
+import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+import { AdminHomeComponent } from './admin/admin-home/admin-home.component';
+import { AdminMenuComponent } from './admin/admin-menu/admin-menu.component';
+import { AdminRolesComponent } from './admin/admin-roles/admin-roles.component';
+import { AdminWarehouseComponent } from './admin/admin-warehouse/admin-warehouse.component';
+import { AdminOwnerComponent } from './admin/admin-owner/admin-owner.component';
+import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
+import { AdminUsersmanagementComponent } from './admin/admin-usersmanagement/admin-usersmanagement.component';
+import { AdminAppsComponent } from './admin/admin-apps/admin-apps.component';
+import { AdminRolesmanagementComponent } from './admin/admin-rolesmanagement/admin-rolesmanagement.component';
+import { AdminSystemUsersComponent } from './admin/admin-systemusers/admin-systemusers.component';
+import { AdminMailComponent } from './admin/admin-mail/admin-mail.component';
+import { AdminSystemcodeComponent } from './admin/admin-systemcode/admin-systemcode.component';
+import { AdminDomainComponent } from './admin/admin-domain/admin-domain.component';
+
+import { AuthManager } from './auth/auth.manager';
+import { AuthService } from './auth/auth.service'
+
+import { NguiAutoCompleteModule } from '@ngui/auto-complete';
+import { NgxPaginationModule } from 'ngx-pagination';
+
+import { Ng2MapModule} from 'ng2-map';
+
+import { ModalService } from './popup/modal.service';
+import { ModalComponent } from './popup/modal.component';
+
+import { PopupCityComponent } from './popup/popup-city/popup-city.component';
+import { PopupDistrictComponent } from './popup/popup-district/popup-district.component';
+import { PopupWardComponent } from './popup/popup-ward/popup-ward.component';
+
+const appRoutes: Routes = [
+  { path: '', component: AppComponent, canActivate: [AuthManager] },
+  { path: 'admin/login', component: AdminLoginComponent, canActivate: [AuthManager] },
+  { path: 'admin/home', component: AdminHomeComponent, canActivate: [AuthManager] },
+  { path: 'admin/systemusers', component: AdminSystemUsersComponent, canActivate: [AuthManager] },
+  { path: 'admin/mail', component: AdminMailComponent, canActivate: [AuthManager] },
+  { path: 'admin/menu', component: AdminMenuComponent, canActivate: [AuthManager] },
+  { path: 'admin/roles', component: AdminRolesComponent, canActivate: [AuthManager] },
+  { path: 'admin/warehouse', component: AdminWarehouseComponent, canActivate: [AuthManager] },
+  { path: 'admin/owner', component: AdminOwnerComponent, canActivate: [AuthManager] },
+  { path: 'admin/users', component: AdminUsersComponent, canActivate: [AuthManager] },
+  { path: 'admin/users/:id', component: AdminUsersmanagementComponent, canActivate: [AuthManager] },
+  { path: 'admin/apps', component: AdminAppsComponent, canActivate: [AuthManager] },
+  { path: 'admin/roles/:id', component: AdminRolesmanagementComponent, canActivate: [AuthManager] },
+  { path: 'admin/systemcode', component: AdminSystemcodeComponent, canActivate: [AuthManager] },
+  { path: 'admin/domain', component: AdminDomainComponent, canActivate: [AuthManager] },
+  { path: '**', component: PageNotFoundComponent, canActivate: [AuthManager] }
+];
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    PageNotFoundComponent,
+    FooterComponent,
+    HeaderComponent,
+    LeftMenuComponent,
+    TopMenuComponent,
+    AdminLoginComponent,
+    AdminHomeComponent,
+    AdminMenuComponent,
+    AdminRolesComponent,
+    AdminWarehouseComponent,
+    AdminOwnerComponent,
+    AdminUsersComponent,
+    AdminUsersmanagementComponent,
+    JSONtoDictionaryPipe,
+    AdminAppsComponent,
+    AdminRolesmanagementComponent,
+    AdminSystemUsersComponent,
+    AdminMailComponent,
+    AdminSystemcodeComponent,
+    ModalComponent,
+    PopupCityComponent,
+    PopupDistrictComponent,
+    PopupWardComponent,
+    AdminDomainComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    NguiAutoCompleteModule,
+    NgxPaginationModule,
+    Ng2CompleterModule,
+    Ng2MapModule.forRoot({apiUrl: 'https://maps.google.com/maps/api/js?key=AIzaSyD19PqZRTYK9eFg0dt6WC8H6GnP4xVItu0'}),
+    RouterModule.forRoot(appRoutes)
+  ],
+  providers: [AppServices, NotifyService, AuthService, AuthManager, ModalService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

@@ -1,0 +1,618 @@
+{
+  "name": "Users",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "username": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "parentuser": {
+      "type": "string",
+      "required": false
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    },
+    "fullname": {
+      "type": "string",
+      "required": true
+    },
+    "tel": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "number",
+      "required": true
+    },
+    "type": {
+      "type": "number",
+      "required": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "listUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "password",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "fullname",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "tel",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "email",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "status",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insert",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "fullname",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "tel",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "email",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "status",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    },
+    "signinUsers": {
+      "accepts": [
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "password",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/signin",
+          "verb": "post"
+        }
+      ]
+    },
+    "signoutUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/signout",
+          "verb": "post"
+        }
+      ]
+    },
+    "signupUsers": {
+      "accepts": [
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "fullname",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "tel",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "email",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "status",
+          "type": "number",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "notes",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/signup",
+          "verb": "post"
+        }
+      ]
+    },
+    "findUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "resetPasswordUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/resetpassword",
+          "verb": "post"
+        }
+      ]
+    },
+    "changePasswordUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "password",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/changepassword",
+          "verb": "post"
+        }
+      ]
+    },
+    "checkToken": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/checktoken",
+          "verb": "post"
+        }
+      ]
+    },
+    "getlistWarehouseUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "number",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getlistwarehouse",
+          "verb": "post"
+        }
+      ]
+    },
+    "getlistMenuUsers": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "number",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getlistwarehouse",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

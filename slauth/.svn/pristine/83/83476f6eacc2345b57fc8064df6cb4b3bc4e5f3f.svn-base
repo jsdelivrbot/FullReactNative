@@ -1,0 +1,21 @@
+<nav class="navbar navbar-light bg-white justify-content-between box-shadow">
+  <button class="btn btn-outline-primary" data-toggle="collapse" data-target="#navbarToggleExternalContent">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="d-md">
+    <ul class="nav nav-pills nav-fill">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/tms-solution">Our Solution</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/tms-about">About Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/tms-testimonials">Testimonials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/main/tms-contact">Contact Us</a>
+      </li>
+    </ul>
+  </div>
+</nav>

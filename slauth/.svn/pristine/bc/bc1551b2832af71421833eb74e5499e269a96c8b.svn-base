@@ -1,0 +1,161 @@
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { NgStyle } from '@angular/common';
+// import { BaseComponent } from './app/admin/base/base.component';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-users',
+  templateUrl: './users.component.html',
+  styleUrls: ['./users.component.css']
+})
+export class UsersComponent implements OnInit {
+  @ViewChild('myModal') el:ElementRef;
+  data_users = []; total_users; selected_users;
+  data_parentuser = [];
+  count_users = 0; delete_users = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+  ngOnInit() {
+    this.loadUsersData();
+    this.loadParentUserData();
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Info', 'Load more');
+          this.loadUsersData('', this.count_users);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadParentUserData() {
+    this.appServices.listUsers({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': ''}, this).then(function(obj){
+      obj.component.data_parentuser = obj.response.json().res;
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  loadUsersData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_users = [];
+      this.count_users = skip;
+      this.delete_users = [];
+    }
+    let _filter = {};
+    if(this.appServices.session.isAdmin){
+      _filter = {'deleted': false};
+    } else {
+      _filter = {'deleted': false, 'parentuser': this.appServices.session.token.uid};
+    }
+    this.appServices.findUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend(_filter, this.filter), 'skip': skip})}, this).then((obj)=>{
+      let json = obj.response.json();
+      if(this.data_users) {
+        this.data_users = this.data_users.concat(json.res);
+      }
+      else {
+        this.data_users = json.res;
+      }
+      this.count_users += json.res.length;
+      this.total_users = json.total;
+      Waypoint.refreshAll();
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  insertUsersData(data) {
+    if(data.password === data.comfirmpassword){
+      this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        data['deleted'] = false;
+        data['addwho'] = _rs.uid;
+        data['type'] = parseInt(data['type']);
+        data['token'] = _rs.id;
+        if(typeof data['status'] === 'undefined'){
+          data['status'] = 1;
+        }
+        data['parentuser'] = data['parentuser']?data['parentuser']:(success.component.appServices.session.isAdmin?'':success.component.appServices.session.token.uid);
+        success.component.appServices.insertUsers(data, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.el.nativeElement.click();
+          success.component.router.navigate(['users/' + res.id]);
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+        localStorage.clear();
+        err.component.appServices.session = {};
+        err.component.router.navigate(['/admin/login']);
+      })
+    } else {
+      this.notifyService.show('Comfirm password not correct!', 'danger');
+    }
+
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_users.push(data);
+    }
+    else {
+      let index = this.delete_users.indexOf(data);
+      this.delete_users.splice(index, 1);
+    }
+  }
+  findUsersData(data){
+    this.router.navigate(['users/'+ data.id]);
+  }
+  deleteUsersData(){
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      success.component.delete_users.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['type'] = parseInt(value['type']);
+        value['token'] = _rs.id;
+        success.component.appServices.updateUsers(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadUsersData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      });
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+      localStorage.clear();
+      err.component.appServices.session = {};
+      err.component.router.navigate(['/admin/login']);
+    })
+  }
+  changeStatus(value, data){
+    data['status'] = value;
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_users.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_users.includes(curr_data)){
+          this.delete_users.push(curr_data);
+        }
+      })
+    } else {
+      this.data_users.forEach(x=>x.state = e.target.checked);
+      this.delete_users = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_users.every(_ => _.state);
+  }
+}

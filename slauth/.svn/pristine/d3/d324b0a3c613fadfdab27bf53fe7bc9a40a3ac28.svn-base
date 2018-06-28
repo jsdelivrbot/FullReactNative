@@ -1,0 +1,47 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { RouterModule, Routes } from '@angular/router';
+
+import { AppServices } from './app.services';
+
+import { AppComponent } from './app.component';
+import { PageNotFoundComponent } from './not-found.component';
+
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/header.component';
+import { LeftMenuComponent } from './layout/left-menu/left-menu.component';
+import { TopMenuComponent } from './layout/top-menu/top-menu.component';
+
+import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+import { AdminHomeComponent } from './admin/admin-home/admin-home.component';
+
+const appRoutes: Routes = [
+  { path: '', component: AppComponent },
+  { path: 'admin/login', component: AdminLoginComponent },
+  { path: 'admin/home', component: AdminHomeComponent },
+  { path: '**', component: PageNotFoundComponent }
+];
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    PageNotFoundComponent,
+    FooterComponent,
+    HeaderComponent,
+    LeftMenuComponent,
+    TopMenuComponent,
+    AdminLoginComponent,
+    AdminHomeComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    RouterModule.forRoot(appRoutes)
+  ],
+  providers: [AppServices],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

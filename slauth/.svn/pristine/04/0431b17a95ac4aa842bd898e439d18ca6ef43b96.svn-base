@@ -1,0 +1,93 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+declare var google:any;
+@Component({
+  selector: 'app-admin-home',
+  templateUrl: './admin-home.component.html',
+  styleUrls: ['./admin-home.component.css']
+})
+export class AdminHomeComponent implements OnInit  {
+  data_company = [];
+  constructor(public router: Router, public appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) {
+  }
+  ngOnInit() {
+    google.charts.setOnLoadCallback(this.loadCompanyData());
+    google.charts.setOnLoadCallback(this.loadTotalChart());
+    google.charts.setOnLoadCallback(this.loadTotalDeletedChart());
+  }
+  loadCompanyData() {
+    this.appServices.findUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'deleted': false, 'parentuser': ''})}, this).then(function(__){
+      __.component.data_company = __.response.json().res;
+      __.component.loadTotalByCompanyChart(__.component.data_company[0].username);
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadTotalChart() {
+    this.appServices.totalStatistics({'token': this.appServices.session.token.id, 'deleted': false}, this).then(function(__){
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total Company');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      _rs.forEach((value, index, arr)=>{
+        data.addRow([value.year.toString(), value.totalcompany, value.totaluser, value.totalwarehouse, value.totalowner]);
+      });
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('total_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadTotalDeletedChart() {
+    this.appServices.totalStatistics({'token': this.appServices.session.token.id, 'deleted': true}, this).then(function(__){
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total Company');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      _rs.forEach((value, index, arr)=>{
+        data.addRow([value.year.toString(), value.totalcompany, value.totaluser, value.totalwarehouse, value.totalowner]);
+      });
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('totaldeleted_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadTotalByCompanyChart(parentuser) {
+    this.appServices.totalByCompanyStatistics({'token': this.appServices.session.token.id, 'deleted': false, 'parentuser': parentuser}, this).then(function(__){
+      let _rs = __.response.json().res;
+      let data = new google.visualization.DataTable();
+      data.addColumn('string', 'Year');
+      data.addColumn('number', 'Total User');
+      data.addColumn('number', 'Total Warehouse');
+      data.addColumn('number', 'Total Owner');
+      _rs.forEach((value, index, arr)=>{
+        data.addRow([value.year.toString(), value.totaluser, value.totalwarehouse, value.totalowner]);
+      });
+      let options = {
+        legend: { position: 'none' },
+      };
+      let chart = new google.charts.Bar(document.getElementById('totalbycompany_div'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+
+}

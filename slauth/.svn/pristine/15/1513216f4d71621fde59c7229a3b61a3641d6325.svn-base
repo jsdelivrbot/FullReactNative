@@ -1,0 +1,94 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+
+module.exports = function(Roles) {
+  Roles.validatesUniquenessOf('rolecode');
+  Roles.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  Roles.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Roles.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  Roles.listRoles = function(token, deleted, parentuser, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Roles.dataSource.connector.execute('SELECT roles.id, roles.rolecode, roles.rolename, roles.deleted, roles.notes, roles.adddate, roles.addwho, roles.editdate, roles.editwho from roles WHERE roles.parentuser = ? and roles.deleted = ?', [parentuser, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Roles.insertRoles = function(token, rolecode, rolename, parentuser, notes, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Roles.create({
+        'rolecode': rolecode,
+        'rolename': rolename,
+        'parentuser': parentuser,
+        'deleted': false,
+        'notes': notes,
+        'addwho': addwho,
+        'adddate': new Date().toISOString(),
+        'addwho': 'admin',
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Roles.updateRoles = function(token, rolecode, rolename, parentuser, deleted, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Roles.findOne({where: {'rolecode': rolecode}}).then(function(obj){
+        if(obj) {
+          Roles.updateAll({'rolecode': rolecode},{
+            'rolename': rolename,
+            'parentuser': parentuser,
+            'deleted': deleted,
+            'notes': notes,
+            'editwho': editwho,
+            'editdate': new Date().toISOString(),
+            'editwho': 'admin'
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+        else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'Data is not existed';
+          callback(err);
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Roles.findRoles = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Roles.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+};

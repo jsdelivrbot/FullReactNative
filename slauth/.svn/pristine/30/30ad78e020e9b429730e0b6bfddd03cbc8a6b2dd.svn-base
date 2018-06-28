@@ -1,0 +1,258 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var md5 = require('md5');
+var limit = 12;
+var _ = require('underscore');
+var uuid = require('uuid');
+
+module.exports = function(Users) {
+  Users.validatesUniquenessOf('username');
+  Users.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  Users.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Users.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  Users.listUsers = function(token, deleted, parentuser, username, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = '';
+      if(username){
+        strSQL = 'SELECT users.id, users.username, users.password, users.parentuser, users.deleted, users.fullname, users.tel, users.email, users.status, users.type, users.notes, users.adddate, users.addwho, users.editdate, users.editwho from users WHERE users.status = 1 and users.username <> "'+ username +'" and users.deleted = ? and users.parentuser = ?';
+      } else {
+        strSQL = 'SELECT users.id, users.username, users.password, users.parentuser, users.deleted, users.fullname, users.tel, users.email, users.status, users.type, users.notes, users.adddate, users.addwho, users.editdate, users.editwho from users WHERE users.status = 1 and users.deleted = ? and users.parentuser = ?';
+      }
+      Users.dataSource.connector.execute(strSQL, [deleted, parentuser], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Users.insertUsers = function(token, username, password, parentuser, tel, fullname, email, status, type, notes, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Users.create({
+        'username': username,
+        'password': md5(password),
+        'parentuser': parentuser,
+        'deleted': false,
+        'tel': tel,
+        'fullname': fullname,
+        'email': email,
+        'status': status,
+        'type': type,
+        'notes': notes,
+        'adddate': new Date().toISOString(),
+        'addwho': addwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.updateUsers = function(token, username, parentuser, deleted, tel, fullname, email, status, type, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Users.updateAll({'username': username},{
+        'parentuser': parentuser,
+        'deleted': deleted,
+        'tel': tel,
+        'fullname': fullname,
+        'email': email,
+        'status': status,
+        'type': type,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.changePasswordUsers = function(token, username, password, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Users.updateAll({'username': username},{
+        'password': md5(password),
+        'editdate': new Date().toISOString(),
+        'editwho': editwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.resetPasswordUsers = function(token, username, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Users.findOne({where: {'username': username, 'status': 1, 'deleted': false}}).then(function(_rs){
+        if(_rs){
+          var password = uuid.v4().substr(0, 8);
+          Users.updateAll({'username': username},{
+            'password': md5(password),
+            'editdate': new Date().toISOString(),
+            'editwho': editwho
+          }).then(function(obj){
+            app.models.SysMail.sendSysMail(_rs.email, 'Reset Password', 'Your new password is: <b>'+password+'</b>', (err, res) => {
+              if(err) {
+                callback(err);
+              } else {
+                callback(null, obj);
+              }
+            })
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          var err = new Error();
+          err.statusCode = err.status = 404;
+          err.message = 'User is not active!';
+          callback(err);
+        }
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.signupUsers = function(username, fullname, tel, email, status, notes, addwho, callback) {
+    var password = uuid.v4().substr(0, 8);
+    Users.create({
+      'username': username,
+      'password': md5(password),
+      'deleted': false,
+      'fullname': fullname,
+      'tel': tel,
+      'email': email,
+      'status': status,
+      'type': 1,
+      'notes': notes,
+      'adddate': new Date().toISOString(),
+      'addwho': addwho,
+    }).then(function(obj){
+      app.models.SysMail.sendSysMail(email, 'Sign Up', 'Your Username is: <b>'+username+'</b> <br>Your new password is: <b>'+password+'</b>', (err, res) => {
+        if(err) {
+          callback(err);
+        } else {
+          callback(null, obj);
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.signinUsers = function(username, password, callback) {
+    Users.findOne({where: {'username': username, 'password': md5(password), 'status': 1, 'deleted': false}}).then(function(obj){
+      if(obj) {
+        app.models.Token._regisToken(obj.username).then(function(token){
+          callback(null, {
+            'user': obj,
+            'token': token
+          });
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.code = err.message = 'USER_NOT_EXIST';
+        callback(err);
+      }
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Users.signoutUsers = function(token, username, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      app.models.Token._deleteToken(username).then(function(res){
+        callback(null, res);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.findUsers = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Users.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.checkToken = function(token, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      callback(null, result);
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.getlistWarehouseUsers = function(token, username, type, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = '';
+      if(type==2){
+        strSQL = 'SELECT warehouse.id, warehouse.warehousecode, warehouse.warehousename, warehouse.parentuser, warehouse.deleted, warehouse.notes, warehouse.hide, warehouse.adddate, warehouse.addwho, warehouse.editdate, warehouse.editwho FROM users '
+                     +' left join userxrole on users.username = userxrole.username '
+                     +' left join roles on userxrole.rolecode = roles.rolecode '
+                     +' left join rolexwarehouse on roles.rolecode = rolexwarehouse.rolecode '
+                     +' left join warehouse on rolexwarehouse.warehousecode = warehouse.warehousecode '
+                     +' where userxrole.deleted = false and rolexwarehouse.deleted = false and warehouse.hide = false and users.username = ?';
+      } else {
+        strSQL = 'SELECT warehouse.id, warehouse.warehousecode, warehouse.warehousename, warehouse.parentuser, warehouse.deleted, warehouse.notes, warehouse.hide, warehouse.adddate, warehouse.addwho, warehouse.editdate, warehouse.editwho FROM warehouse '
+                    +' where warehouse.deleted = false and warehouse.hide = false and warehouse.parentuser = ?';
+      }
+      Users.dataSource.connector.execute(strSQL, [username], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  Users.getlistMenuUsers = function(token, username, warehousecode, type, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQL = '';
+      if(type==2){
+        strSQL = 'SELECT users.username, rolexwarehouse.warehousecode, rolexmenu.menucode, menu.menuurl,  SUM(rolexmenu.edit) as edit, SUM(rolexmenu.readonly) as readonly '
+        +'FROM users '
+        +'left join userxrole on users.username = userxrole.username '
+        +'left join rolexwarehouse on userxrole.rolecode = rolexwarehouse.rolecode '
+        +'left join rolexmenu on userxrole.rolecode = rolexmenu.rolecode '
+        +'left join menu on menu.menucode = rolexmenu.menucode '
+        +'WHERE users.username = ? and rolexmenu.deleted = false and rolexwarehouse.deleted = false and rolexwarehouse.warehousecode = ? and users.type = 2 '
+        +'Group by rolexmenu.menucode';
+      } else {
+        strSQL = 'SELECT ? as username, ? as warehousecode, menu.menucode, menu.menuurl, 1 as edit, 1 as readonly FROM menu where menu.deleted = false'
+      }
+      Users.dataSource.connector.execute(strSQL, [username, warehousecode], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+};

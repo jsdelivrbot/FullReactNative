@@ -1,0 +1,22 @@
+<div class="container-fluid p-0">
+  <app-header-wms></app-header-wms>
+  <app-top-menu-wms></app-top-menu-wms>
+  <div class="page-inner">
+    <section>
+      <h2>Giải pháp quản lý kho Smartlog Warehouse Management System (SWM)</h2>
+      <p>Phần mềm quản lý kho vận Smartlog Warehouse Management System (SWM) được phát triển nhằm đáp ứng nhu cầu của các doanh nghiệp muốn nâng cao chất lượng dịch vụ logistics thông qua tối ưu quy trình cung cấp hàng hóa từ khi nhận hàng đến khi xuất hàng ra khỏi kho lưu trữ. SWM là một lựa chọn lý tưởng cho các doanh nghiệp quản lý logistics cho các loại hàng hoá như thực phẩm, đồ uống, dược phẩm, hóa chất, hàng tiêu dùng, điện tử, dệt may… Với một đội ngũ chuyên gia có nhiều kinh nghiệm làm việc ở các công ty lớn, SWM sẽ cung cấp cho quý doanh nghiệp một giải pháp thông minh, dựa trên việc áp dụng công nghệ hàng đầu thế giới để tối ưu hóa công việc, giảm chi phí trong quá trình vận hành, đồng thời dễ dàng tích hợp với các hệ thống trong doanh nghiệp. Từ đó, quý doanh nghiệp có thể cải thiện dịch vụ cung cấp, nâng cao lợi thế cạnh tranh với mức chi phí hợp lý với doanh nghiệp Việt Nam.</p>
+    </section>
+    <section>
+      <h2>Các tính năng chính của giải pháp quản lý kho SWM</h2>
+      <p>SWM (Smartlog Warehouse Management System) ứng dụng giải thuật thông minh nhằm tối ưu hoá quy trình vận hành của kho hàng từ đó nâng cao chất lượng dịch vụ cung ứng hàng hoá và nâng cao năng suất làm việc. Ngoài ra, quý doanh nghiệp có thể tương tác với khách hàng và các đối tác trên cùng một hệ thống thông qua trao đổi dữ liệu điện tử (EDI) giữa các hệ thống hay tích hợp từ các dịch vụ Web service nhằm giảm thời gian lãng phí, tăng tính chính xác trong truyền đạt dữ liệu và đảm bảo tính trực quan trong toàn chuỗi (visibility). Một tính năng đặc biệt của hệ thống SWM là có thể kết nối với các thiết bị ngoại vi (RF/ Handheld) và các ứng dụng về Internet of Thing (IoT) trong vận hành kho.</p>
+      <ol>
+        <li>Chiến lược sắp xếp hàng hoá (Putaway) và chiến lược soạn hàng (Picking) cho phép tự động và tối ưu hoá.</li>
+        <li>SWM quản lý thông tin hàng hoá tồn kho, lịch sử xuất, nhập và hỗ trợ kiểm đếm.</li>
+        <li>SWM hỗ trợ quản lý cross-docking.</li>
+        <li>SWM hỗ trợ quản lý thông tin, tài chính và nhân sự.</li>
+        <li>SWM tích hợp với các hệ thống khác và các thiết bị ngoại vi.</li>
+      </ol>
+    </section>
+  </div>
+  <app-footer-wms></app-footer-wms>
+</div>

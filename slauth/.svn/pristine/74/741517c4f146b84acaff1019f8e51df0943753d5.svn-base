@@ -1,0 +1,63 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+export class HeaderComponent implements OnInit {
+
+  constructor(private appServices: AppServices,  private notifyService: NotifyService, private router: Router) { }
+
+  ngOnInit() {
+  }
+
+  Signout(){
+    if (localStorage.getItem("currentUser") !== null) {
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      this.appServices.signout({'username': currentUser.user.username}, this).then( function(success){
+        localStorage.clear();
+        success.component.notifyService.show('Signout Success');
+        success.component.router.navigate(['admin/login']);
+      }).catch(function(errtoken){
+        errtoken.component.notifyService.show(errtoken, 'danger');
+      })
+    }
+  }
+
+//   LoadProfileData() {
+//   this.appServices.checkToken({ 'token': this.appServices.account.token }, this).then(function (success) {
+//     let rs_token = success.response.json().res;
+//     success.component.appServices.findUsers({ 'token': rs_token.id, 'filter': JSON.stringify({ 'where': { 'username': rs_token.uid, 'status': 1, 'deleted': false } }) }, this).then(function (obj) {
+//       let rs_user = obj.response.json().res[0];
+//       success.component.appServices.getlistwarehouseUsers({ 'token': rs_token.id, 'username': rs_token.uid, 'type': rs_user.type }).then(function (_obj) {
+//         let rs_lstwh = _obj.response.json().res;
+//         if (rs_lstwh.length > 0) {
+//           localStorage.clear();
+//           if (rs_lstwh.findIndex(function (z) {
+//             if (success.component.appServices.account.whseid === z.warehousecode) return z;
+//           }) >= 0) {
+//             localStorage.setItem('account', JSON.stringify({ 'whseid': success.component.appServices.account.whseid, 'warehousename': success.component.appServices.account.warehousename, 'username': rs_token.uid, 'token': rs_token.id, 'listwarehouse': rs_lstwh, 'currentuser': rs_user }));
+//           } else {
+//             localStorage.setItem('account', JSON.stringify({ 'whseid': rs_lstwh[0].warehousecode, 'warehousename': rs_lstwh[0].warehousename, 'username': rs_token.uid, 'token': rs_token.id, 'listwarehouse': rs_lstwh, 'currentuser': rs_user }));
+//           }
+//           success.component.appServices.account = JSON.parse(localStorage.getItem('account'));
+//           success.component.data_currentuser = rs_user;
+//         } else {
+//           success.component.notifyService.show('User not allow access to warehouse!');
+//         }
+//       }).catch(function (err) {
+//         err.component.notifyService.show(err.err.json().error.message, 'danger');
+//       })
+//     }).catch(function (err) {
+//       err.component.notifyService.show(err.err.json().error.message, 'danger');
+//     })
+//   }).catch(function (err) {
+//     err.component.notifyService.show(err.err.json().error.message, 'danger');
+//   })
+// }
+
+}

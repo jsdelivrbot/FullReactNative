@@ -1,0 +1,32 @@
+{
+  "name": "Stats",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "HardwareStats": {
+      "accepts": [],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/hardware",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

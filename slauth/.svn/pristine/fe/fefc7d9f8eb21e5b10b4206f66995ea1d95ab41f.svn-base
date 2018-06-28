@@ -1,0 +1,47 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var md5 = require('md5');
+
+module.exports = function(Sysusers) {
+  Sysusers.validatesUniquenessOf('username');
+  Sysusers.observe('access', function setMaxLimit(ctx, next) {
+    next();
+  });
+
+  // Sysusers.findsysUsers = function(filter, callback) {
+  //   app.models.Token._validToken(token).then(function(obj){
+  //     Sysusers.find(JSON.parse(filter)).then(function(obj){
+  //       callback(null, obj);
+  //     }).catch(function(err){
+  //       callback(err);
+  //     })
+  //   }).catch(function(err){
+  //     callback(err);
+  //   });
+  // };
+
+  Sysusers.signinsysUsers = function(username, password, callback) {
+    Sysusers.findOne({where: {'username': username, 'password': md5(password), 'status': 1}}).then(function(obj){
+      if(obj) {
+        app.models.Token._regisToken(obj.username).then(function(token){
+          callback(null, {
+            'user': obj,
+            'token': token
+          });
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.code = 'USER_NOT_EXIST';
+        callback(err);
+      }
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

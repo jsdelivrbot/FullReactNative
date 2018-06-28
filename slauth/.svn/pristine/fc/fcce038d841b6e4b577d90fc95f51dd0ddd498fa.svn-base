@@ -1,0 +1,64 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+import * as md5 from "md5";
+declare var $:any;
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+export class HeaderComponent implements OnInit {
+  data_currentuser; isChangePassword = false;
+  constructor(private appServices: AppServices,  private notifyService: NotifyService, private router: Router, private authService:AuthService) { }
+  ngOnInit() {
+  }
+  Signout(){
+      this.appServices.signout({'token': this.appServices.session.token.id, 'username': this.appServices.session.token.uid}, this).then( function(success){
+        success.component.authService.logout();
+        success.component.notifyService.show('Signout Success');
+      }).catch(function(err){
+        err.component.authService.catchErr(err);
+      })
+  }
+  LoadProfileData() {
+      this.appServices.findAdmin({ 'token': this.appServices.session.token.id, 'username': this.appServices.session.token.uid, 'status': 1, 'deleted': false }, this).then(function (success) {
+        let rs_user = success.response.json().res;
+        success.component.data_currentuser = rs_user.user;
+      }).catch(function (err) {
+        err.component.authService.catchErr(err);
+      })
+  }
+  updateProfileData(data){
+      data['deleted'] = false;
+      data['editwho'] = this.appServices.session.token.uid;
+      data['token'] = this.appServices.session.token.id;
+      data['status'] = 1;
+      data['isadmin'] = this.appServices.session.isAdmin;
+      this.appServices.updateAdmin(data, this).then(function(success){
+        let rs_user = success.response.json().res;
+        if(data['currentpassword']){
+          if(data['password'] === data['comfirmpassword']){
+            if(md5(data['currentpassword']) === rs_user.password){
+              success.component.appServices.changePasswordAdmin(data, this).then(function(_obj){
+                success.component.isChangePassword = false;
+                success.component.notifyService.show('Process Done');
+              }).catch(function(err){
+                err.component.authService.catchErr(err);
+              });
+            } else {
+              success.component.notifyService.show('Current Password not correct!', 'danger');
+            }
+          } else {
+            success.component.notifyService.show('Comfirm password not correct!', 'danger');
+          }
+        } else {
+          success.component.notifyService.show('Process Done');
+        }
+      }).catch(function(err){
+        err.component.authService.catchErr(err);
+      })
+  }
+}

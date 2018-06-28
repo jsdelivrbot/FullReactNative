@@ -1,0 +1,147 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+declare var $:any;
+declare var Waypoint:any;
+@Component({
+  selector: 'app-admin-users',
+  templateUrl: './admin-users.component.html',
+  styleUrls: ['./admin-users.component.css']
+})
+export class AdminUsersComponent implements OnInit {
+  data_sysusers; total_sysusers; selected_sysusers; count_sysusers = 0; delete_sysusers = [];
+  filter;
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService) { }
+  ngOnInit() {
+    this.loadSysUsersData();
+    new Waypoint({
+      element: document.getElementById('pagination'),
+      handler: (direction) => {
+        if(direction == 'down') {
+          this.notifyService.show('Info', 'Load more');
+          this.loadSysUsersData('', this.count_sysusers);
+        }
+      },
+      context: document.getElementById('pagination').parentElement.parentElement.parentElement,
+    })
+  }
+  loadSysUsersData(param = '', skip = 0) {
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    if (skip === 0) {
+      this.data_sysusers = [];
+      this.count_sysusers = skip;
+      this.delete_sysusers = [];
+    }
+    this.appServices.findSysUsers({'token': this.appServices.session.token.id, 'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip})}, this).then((obj)=>{
+      let json = obj.response.json();
+      if(this.data_sysusers) {
+        this.data_sysusers = this.data_sysusers.concat(json.res);
+      }
+      else {
+        this.data_sysusers = json.res;
+      }
+      this.count_sysusers += json.res.length;
+      this.total_sysusers = json.total;
+      Waypoint.refreshAll();
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+  insertSysUsersData(data) {
+    if(data.password === data.comfirmpassword){
+      this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+        let _rs = success.response.json().res;
+        data['addwho'] = _rs.uid;
+        data['token'] = _rs.id;
+        if(typeof data['status'] === 'undefined'){
+          data['status'] = 1;
+        }
+        success.component.appServices.insertSysUsers(data, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadSysUsersData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      }).catch(function(errtoken){
+        errtoken.component.notifyService.show(errtoken, 'danger');
+      })
+    } else {
+      this.notifyService.show('Comfirm password not correct!', 'danger');
+    }
+  }
+  updateSysUsersData(data) {
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      data['editwho'] = _rs.uid;
+      data['token'] = _rs.id;
+      data['deleted'] = false;
+      success.component.appServices.updateSysUsers(data, this).then(function(obj){
+        let res = obj.response.json().res;
+        success.component.notifyService.show('Process Done');
+        success.component.loadSysUsersData();
+      }).catch(function(err){
+        err.component.notifyService.show(err.err.json().error.message, 'danger');
+      });
+    }).catch(function(errtoken){
+      errtoken.component.notifyService.show(errtoken, 'danger');
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_sysusers.push(data);
+    }
+    else {
+      let index = this.delete_sysusers.indexOf(data);
+      this.delete_sysusers.splice(index, 1);
+    }
+  }
+  findSysUsersData(data){
+    this.selected_sysusers = data;
+  }
+  deleteSysUsersData(){
+    this.appServices.checkToken({'token':this.appServices.session.token.id}, this).then(function(success){
+      let _rs = success.response.json().res;
+      success.component.delete_sysusers.forEach((value, index, arr) => {
+        value['deleted'] = true;
+        value['editwho'] = _rs.uid;
+        value['token'] = _rs.id;
+        success.component.appServices.updateSysUsers(value, this).then(function(obj){
+          let res = obj.response.json().res;
+          success.component.notifyService.show('Process Done');
+          success.component.loadSysUsersData();
+        }).catch(function(err){
+          err.component.notifyService.show(err.err.json().error.message, 'danger');
+        });
+      });
+    }).catch(function(errtoken){
+      errtoken.component.notifyService.show(errtoken, 'danger');
+    })
+  }
+  changeStatus(value, data){
+    data['status'] = value;
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_sysusers.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_sysusers.includes(curr_data)){
+          this.delete_sysusers.push(curr_data);
+        }
+      })
+    } else {
+      this.data_sysusers.forEach(x=>x.state = e.target.checked);
+      this.delete_sysusers = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_sysusers.every(_ => _.state);
+  }
+}

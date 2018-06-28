@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="jasonsmith2812@gmail.com">
+  <meta name="description" content="Warehouse Management System - Smartlog VN">
+  <link rel="icon" href="img/logo.png">
+
+  <title>Smartlog - Authenticate</title>
+
+  <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="vendor/splitscreen/component.css" rel="stylesheet">
+
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="data-layout" data-layout="header-wms.html"></div>
+    <div class="data-layout" data-layout="top-menu-wms.html"></div>
+    <div class="page-inner">
+      <section>
+        <h2>About us</h2>
+        <p>Lorem ipsum dolor sit amet, graece possit erroribus te qui. Ad eam impetus ullamcorper, eu eam nihil facete equidem. Usu phaedrum maluisset an, ex saepe tincidunt nec. Sed ad utinam accusam, ex vel odio prima pericula, sea an ipsum nullam admodum.</p>
+      </section>
+      <section>
+        <h2>Our Leaders</h2>
+        <p>Eu nec justo maluisset, no mucius ridens consectetuer mel. Vix gubergren intellegat inciderint ei. Ne dicit laoreet cum. Vis et erant admodum, ius sumo referrentur ad, nam in atomorum constituto sententiae.</p>
+      </section>
+      <section>
+        <h2>Our Team</h2>
+        <p>Eu expetenda vituperata vix, tempor accusam luptatum quo ei. Percipit urbanitas voluptaria no vis. Unum nonumy intellegam an vix. Te aperiri malorum recteque has. Doming reprimique liberavisse sit et, id eum quas dictas, his prompta labores tincidunt ne.</p>
+      </section>
+      <section>
+        <h2>Our Works</h2>
+        <p>Falli inimicus his et, legere fastidii nec ex. Cum primis iisque maiorum an. Per virtute petentium in. Vim elitr electram quaerendum cu, cum at luptatum referrentur.</p>
+      </section>
+    </div>
+  </div>
+  <div class="data-layout" data-layout="footer-wms.html"></div>
+
+  <script type="text/javascript" src="vendor/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="vendor/holder/holder.min.js"></script>
+  <script type="text/javascript" src="vendor/popper/popper.min.js"></script>
+  <script type="text/javascript" src="vendor/tether/tether.min.js"></script>
+  <script type="text/javascript" src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/modernizr.custom.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/classie.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/cbpSplitLayout.js"></script>
+
+  <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/layout.js"></script>
+</body>
+</html>

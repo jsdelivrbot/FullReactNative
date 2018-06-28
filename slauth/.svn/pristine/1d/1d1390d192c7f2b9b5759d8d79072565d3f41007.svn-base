@@ -1,0 +1,128 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+import { AuthService } from './../../auth/auth.service';
+declare var $:any;
+@Component({
+  selector: 'app-admin-mail',
+  templateUrl: './admin-mail.component.html',
+  styleUrls: ['./admin-mail.component.css']
+})
+export class AdminMailComponent implements OnInit {
+  data_sysmail = []; selected_sysmail; delete_sysmail = []; currentPage_sysmail = 1; itemsPerPage_sysmail = 5; total_sysmail = 0; data_itemsPerPage = [];
+  filter;
+  data_apps = [];
+  constructor(private router: Router, private appServices: AppServices, private notifyService: NotifyService, private authService: AuthService) { }
+  ngOnInit() {
+    this.loadItemsPerPage();
+    this.loadAppsData();
+  }
+  loadItemsPerPage(){
+    this.appServices.findCodelkup({'filter': JSON.stringify({'where': {'listname': 'Paginate', 'deleted': false}, 'order': 'woflag'})}, this)
+    .then(function(__){
+      let res = __.response.json().res;
+      __.component.data_itemsPerPage = res;
+      __.component.itemsPerPage_sysmail = res[0].short;
+      __.component.loadSysMailData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadSysMailData(param = '') {
+    let skip = (this.currentPage_sysmail-1)*this.itemsPerPage_sysmail;
+    let limit = this.itemsPerPage_sysmail;
+    this.delete_sysmail = [];
+    if(param) {
+      this.filter = $.extend(this.filter, param);
+      let paramIndex = Object.keys(this.filter).indexOf(Object.keys(param)[0]);
+      if(!(Object.values(this.filter)[paramIndex]).like){
+        delete this.filter[Object.keys(param)[0]];
+      }
+    }
+    this.appServices.findSysMail({'filter': JSON.stringify({'where': $.extend({'deleted': false}, this.filter), 'skip': skip, 'limit': limit})}, this)
+    .then(function(__){
+      let json = __.response.json();
+      __.component.data_sysmail = json.res;
+      __.component.total_sysmail = json.total;
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  loadAppsData() {
+    this.appServices.findApps({'filter': JSON.stringify({'where': {'deleted': false}})}, this)
+    .then(function(__){
+      __.component.data_apps = __.response.json().res;
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  insertSysMailData(data) {
+    data['currentuser'] = this.appServices.session.token.uid;
+    data['isdefault'] = typeof data['isdefault'] === 'undefined'?false:data['isdefault'];
+    data['secure'] = typeof data['secure'] === 'undefined'?false:data['secure'];
+    this.appServices.insertSysMail({'obj': JSON.stringify(data)}, this).then(function(__){
+      __.component.notifyService.show('Process Done');
+      __.component.loadSysMailData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  updateSysMailData(data) {
+    data['isdefault'] = this.selected_sysmail['isdefault'];
+    data['deleted'] = false;
+    data['currentuser'] = this.appServices.session.token.uid;
+    this.appServices.updateSysMail({'obj': JSON.stringify(data)}, this).then(function(__){
+      __.component.notifyService.show('Process Done');
+      __.component.loadSysMailData();
+    }).catch((err)=>{
+      this.authService.catchErr(err);
+    })
+  }
+  onChoose(e, data){
+    if(e.target.checked) {
+      this.delete_sysmail.push(data);
+    }
+    else {
+      let index = this.delete_sysmail.indexOf(data);
+      this.delete_sysmail.splice(index, 1);
+    }
+  }
+  findSysMailData(data){
+    this.selected_sysmail = Object.assign({}, data);
+  }
+  deleteSysMailData(){
+    this.delete_sysmail.forEach((value, index, arr) => {
+      value['deleted'] = true;
+      value['isdefault'] = false;
+      value['currentuser'] = this.appServices.session.token.uid;
+      this.appServices.updateSysMail({'obj': JSON.stringify(value)}, this).then(function(__){
+        __.component.notifyService.show('Process Done');
+        __.component.loadSysMailData();
+        $('#modalDelete').modal('hide');
+      }).catch((err)=>{
+        this.authService.catchErr(err);
+      })
+    })
+  }
+  setDefault(data){
+    data['isdefault'] = true;
+    this.updateSysMailData(data);
+  }
+  checkAll(e) {
+    if(e.srcElement.checked){
+      this.data_sysmail.forEach(curr_data=>{
+        curr_data.state = e.target.checked;
+        if(!this.delete_sysmail.includes(curr_data)){
+          this.delete_sysmail.push(curr_data);
+        }
+      })
+    } else {
+      this.data_sysmail.forEach(x=>x.state = e.target.checked);
+      this.delete_sysmail = [];
+    }
+  }
+  isAllChecked() {
+    return this.data_sysmail.every(_ => _.state);
+  }
+}

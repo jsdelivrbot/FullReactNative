@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { ColorsChart,  } from '../../../common/Color';
-import { Button, ListItem, Body, Right,Text, Left, Thumbnail } from 'native-base';
+import { Button, ListItem, Body, Right,Text, Left, Thumbnail, SwipeRow, Icon, View } from 'native-base';
 
 export default class ItemAvatarComponent extends Component {
     render() {
@@ -16,18 +16,28 @@ export default class ItemAvatarComponent extends Component {
   
       let cityname = this.props.item.cityname || '';
       return (
-        <ListItem avatar>
-              <Left>
-                <Thumbnail source={{ uri: 'Image URL' }} />
-              </Left>
-              <Body>
-                <Text>Kumar Pratik</Text>
-                <Text note>Doing what you like will always keep you happy . .</Text>
-              </Body>
-              <Right style={{justifyContent:'center'}}>
-              { (this.props.item.hide ==0 ) ? btnActive : btnWaitActive}
-              </Right>
-        </ListItem>
+        <SwipeRow
+        style={{ backgroundColor: "#9370DB" }}
+        leftOpenValue={75}
+        rightOpenValue={-75}
+        left={
+          <Button success onPress={() => alert("Add")}>
+            <Icon active name="add" style={{ color: "#FFF" }} />
+          </Button>
+        }
+        right={
+          <Button danger onPress={() => alert("Trash")}>
+            <Icon active name="trash" />
+          </Button>
+        }
+        body={
+          <View style={{ paddingLeft: 20 }}>
+            <Text style={{ color: "#FFF" }}>
+              Swipe me to left and right
+            </Text>
+          </View>
+        }
+      />
       );
     }
   }

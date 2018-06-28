@@ -1,0 +1,12 @@
+{
+  "ids": {
+    "Auth": 1,
+    "Token": 2
+  },
+  "models": {
+    "Auth": {},
+    "Token": {
+      "bGOvkNDPXtThCKkVnbkvAlEa9E9KE4cbpKoUzbLBgyeAolmTOpUYVtFrhkAOAwCh": "{\"uid\":\"jack\",\"ttl\":1800,\"id\":\"bGOvkNDPXtThCKkVnbkvAlEa9E9KE4cbpKoUzbLBgyeAolmTOpUYVtFrhkAOAwCh\",\"created\":\"2018-01-29T07:14:05.174Z\"}"
+    }
+  }
+}

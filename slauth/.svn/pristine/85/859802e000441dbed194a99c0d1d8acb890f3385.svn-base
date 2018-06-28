@@ -1,0 +1,347 @@
+import { Injectable }    from '@angular/core';
+import { Http, Headers, Response } from '@angular/http';
+
+import 'rxjs/add/operator/toPromise';
+
+declare var $:any;
+
+@Injectable()
+export class AppServices {
+
+  session;
+
+  headers = new Headers({'Content-Type': 'application/json'});
+  host = 'http://localhost:2999';
+  // host = 'http://slauth-lb.gogoviet.com';
+
+  FIND_SYSUSERS = this.host + '/api/SysUsers/find';
+  SIGNIN_SYSUSERS = this.host + '/api/SysUsers/signin';
+  LIST_SYSUSERS =  this.host + '/api/SysUsers/list';
+  INSERT_SYSUSERS =  this.host + '/api/SysUsers/insert';
+  UPDATE_SYSUSERS =  this.host + '/api/SysUsers/update';
+  CHANGEPASSWORD_SYSUSERS =  this.host + '/api/SysUsers/changepassword';
+
+  CHECK_TOKEN = this.host + '/api/Users/checktoken';
+  FIND_USERS = this.host + '/api/Users/find';
+  LIST_USERS = this.host + '/api/Users/list';
+  INSERT_USERS = this.host + '/api/Users/insert';
+  UPDATE_USERS = this.host + '/api/Users/update';
+  CHANGEPASSWORD_USERS = this.host + '/api/Users/changepassword';
+  SIGNUP_USERS = this.host + '/api/Users/signup';
+  SIGNIN_USERS = this.host + '/api/Users/signin';
+  SIGNOUT = this.host + '/api/Users/signout';
+  SIGNINCLIENT_USERS = this.host + '/api/Users/signinclient';
+  LISTALL_USERS = this.host + '/api/Users/listall';
+  GETLISTWAREHOUSE_USERS = this.host + '/api/Users/getlistwarehouse';
+
+  FIND_MENU = this.host + '/api/Menus/find';
+  LIST_MENU = this.host + '/api/Menus/list';
+  LISTALL_MENU = this.host + '/api/Menus/listall';
+  INSERT_MENU = this.host + '/api/Menus/insert';
+  UPDATE_MENU = this.host + '/api/Menus/update';
+
+  FIND_ROLES = this.host + '/api/Roles/find';
+  LIST_ROLES = this.host + '/api/Roles/list';
+  LISTALL_ROLES = this.host + '/api/Roles/listall';
+  INSERT_ROLES = this.host + '/api/Roles/insert';
+  UPDATE_ROLES = this.host + '/api/Roles/update';
+
+  FIND_WAREHOUSE = this.host + '/api/Warehouses/find';
+  LIST_WAREHOUSE = this.host + '/api/Warehouses/list';
+  LISTALL_WAREHOUSE = this.host + '/api/Warehouses/listall';
+  INSERT_WAREHOUSE = this.host + '/api/Warehouses/insert';
+  UPDATE_WAREHOUSE = this.host + '/api/Warehouses/update';
+
+  FIND_STORER = this.host + '/api/Storers/find';
+  LIST_STORER = this.host + '/api/Storers/list';
+  LISTALL_STORER = this.host + '/api/Storers/listall';
+  INSERT_STORER = this.host + '/api/Storers/insert';
+  UPDATE_STORER = this.host + '/api/Storers/update';
+  GETALLBYWAREHOUSE_STORER =  this.host + '/api/Storers/getallbywarehouse';
+
+  LIST_USERXROLE = this.host + '/api/UserxRoles/list';
+  FIND_USERXROLE = this.host + '/api/UserxRoles/find';
+  SAVE_USERXROLE = this.host + '/api/UserxRoles/save';
+  GETROLES_USERXROLE = this.host + '/api/UserxRoles/getroles';
+  DELETE_USERXROLE = this.host + '/api/UserxRoles/delete';
+
+  FIND_APPS = this.host + '/api/Apps/find';
+  LIST_APPS = this.host + '/api/Apps/list';
+  LISTALL_APPS = this.host + '/api/Apps/listall';
+  LISTALLNOTOKEN_APPS = this.host + '/api/Apps/listallnotoken';
+  INSERT_APPS = this.host + '/api/Apps/insert';
+  UPDATE_APPS = this.host + '/api/Apps/update';
+
+  LIST_USERXAPP = this.host + '/api/UserxApps/list';
+  FIND_USERXAPP = this.host + '/api/UserxApps/find';
+  SAVE_USERXAPP = this.host + '/api/UserxApps/save';
+  GETAPPS_USERXAPP = this.host + '/api/UserxApps/getapps';
+  DELETE_USERXAPP = this.host + '/api/UserxApps/delete';
+
+  LIST_ROLEXWAREHOUSE = this.host + '/api/RolexWarehouses/list';
+  FIND_ROLEXWAREHOUSE = this.host + '/api/RolexWarehouses/find';
+  SAVE_ROLEXWAREHOUSE = this.host + '/api/RolexWarehouses/save';
+  GETWAREHOUSE_ROLEXWAREHOUSE = this.host + '/api/RolexWarehouses/getwarehouse';
+  DELETE_ROLEXWAREHOUSE = this.host + '/api/RolexWarehouses/delete';
+
+  LIST_ROLEXMENU = this.host + '/api/RolexMenus/list';
+  FIND_ROLEXMENU = this.host + '/api/RolexMenus/find';
+  SAVE_ROLEXMENU = this.host + '/api/RolexMenus/save';
+  GETMENU_ROLEXMENU = this.host + '/api/RolexMenus/getmenu';
+  DELETE_ROLEXMENU = this.host + '/api/RolexMenus/delete';
+
+  LIST_ROLEXSTORER = this.host + '/api/RolexStorers/list';
+  FIND_ROLEXSTORER = this.host + '/api/RolexStorers/find';
+  SAVE_ROLEXSTORER = this.host + '/api/RolexStorers/save';
+  GETSTORER_ROLEXSTORER = this.host + '/api/RolexStorers/getstorer';
+  DELETE_ROLEXSTORER = this.host + '/api/RolexStorers/delete';
+
+  constructor(private http: Http) {
+
+  }
+
+  /* FUNCTION */
+
+  findSysUsers(data, component): any {
+    return this.handleAPI(this.FIND_SYSUSERS, data, component);
+  }
+  listSysUsers(data, component): any {
+    return this.handleAPI(this.LIST_SYSUSERS, data, component);
+  }
+  insertSysUsers(data, component): any {
+    return this.handleAPI(this.INSERT_SYSUSERS, data, component);
+  }
+  updateSysUsers(data, component): any {
+    return this.handleAPI(this.UPDATE_SYSUSERS, data, component);
+  }
+  signinSysUsers(data, component): any {
+    return this.handleAPI(this.SIGNIN_SYSUSERS, data, component);
+  }
+  changePasswordSysUsers(data, component): any {
+    return this.handleAPI(this.CHANGEPASSWORD_SYSUSERS, data, component);
+  }
+
+  findMenu(data, component): any {
+    return this.handleAPI(this.FIND_MENU, data, component);
+  }
+  listMenu(data, component): any {
+    return this.handleAPI(this.LIST_MENU, data, component);
+  }
+  listAllMenu(data, component): any {
+    return this.handleAPI(this.LISTALL_MENU, data, component);
+  }
+  insertMenu(data, component): any {
+    return this.handleAPI(this.INSERT_MENU, data, component);
+  }
+  updateMenu(data, component): any {
+    return this.handleAPI(this.UPDATE_MENU, data, component);
+  }
+
+  findRoles(data, component): any {
+    return this.handleAPI(this.FIND_ROLES, data, component);
+  }
+  listRoles(data, component): any {
+    return this.handleAPI(this.LIST_ROLES, data, component);
+  }
+  listAllRoles(data, component): any {
+    return this.handleAPI(this.LISTALL_ROLES, data, component);
+  }
+  insertRoles(data, component): any {
+    return this.handleAPI(this.INSERT_ROLES, data, component);
+  }
+  updateRoles(data, component): any {
+    return this.handleAPI(this.UPDATE_ROLES, data, component);
+  }
+
+  findWarehouse(data, component): any {
+    return this.handleAPI(this.FIND_WAREHOUSE, data, component);
+  }
+  listWarehouse(data, component): any {
+    return this.handleAPI(this.LIST_WAREHOUSE, data, component);
+  }
+  listAllWarehouse(data, component): any {
+    return this.handleAPI(this.LISTALL_WAREHOUSE, data, component);
+  }
+  insertWarehouse(data, component): any {
+    return this.handleAPI(this.INSERT_WAREHOUSE, data, component);
+  }
+  updateWarehouse(data, component): any {
+    return this.handleAPI(this.UPDATE_WAREHOUSE, data, component);
+  }
+
+  findStorer(data, component): any {
+    return this.handleAPI(this.FIND_STORER, data, component);
+  }
+  listStorer(data, component): any {
+    return this.handleAPI(this.LIST_STORER, data, component);
+  }
+  listAllStorer(data, component): any {
+    return this.handleAPI(this.LISTALL_STORER, data, component);
+  }
+  insertStorer(data, component): any {
+    return this.handleAPI(this.INSERT_STORER, data, component);
+  }
+  updateStorer(data, component): any {
+    return this.handleAPI(this.UPDATE_STORER, data, component);
+  }
+  getAllByWarehouseStorer(data, component): any {
+    return this.handleAPI(this.GETALLBYWAREHOUSE_STORER, data, component);
+  }
+
+  checkToken(data, component): any {
+    return this.handleAPI(this.CHECK_TOKEN, data, component);
+  }
+  findUsers(data, component): any {
+    return this.handleAPI(this.FIND_USERS, data, component);
+  }
+  listUsers(data, component): any {
+    return this.handleAPI(this.LIST_USERS, data, component);
+  }
+  insertUsers(data, component): any {
+    return this.handleAPI(this.INSERT_USERS, data, component);
+  }
+  updateUsers(data, component): any {
+    return this.handleAPI(this.UPDATE_USERS, data, component);
+  }
+  changePasswordUsers(data, component): any {
+    return this.handleAPI(this.CHANGEPASSWORD_USERS, data, component);
+  }
+  signupUsers(data, component): any {
+    return this.handleAPI(this.SIGNUP_USERS, data, component);
+  }
+  signinUsers(data, component): any {
+    return this.handleAPI(this.SIGNIN_USERS, data, component);
+  }
+  signout(data, component): any {
+    return this.handleAPI(this.SIGNOUT, data, component);
+  }
+  signinClientUsers(data, component): any {
+    return this.handleAPI(this.SIGNINCLIENT_USERS, data, component);
+  }
+  listAllUsers(data, component): any {
+    return this.handleAPI(this.LISTALL_USERS, data, component);
+  }
+  getlistwarehouseUsers(data, component): any {
+    return this.handleAPI(this.GETLISTWAREHOUSE_USERS, data, component);
+  }
+
+  listUserxRole(data, component): any {
+    return this.handleAPI(this.LIST_USERXROLE, data, component);
+  }
+  saveUserxRole(data, component): any {
+    return this.handleAPI(this.SAVE_USERXROLE, data, component);
+  }
+  findUserxRole(data, component): any {
+    return this.handleAPI(this.FIND_USERXROLE, data, component);
+  }
+  getRolesUserxRole(data, component): any {
+    return this.handleAPI(this.GETROLES_USERXROLE, data, component);
+  }
+  deleteUserxRole(data, component): any {
+    return this.handleAPI(this.DELETE_USERXROLE, data, component);
+  }
+
+  findApps(data, component): any {
+    return this.handleAPI(this.FIND_APPS, data, component);
+  }
+  listApps(data, component): any {
+    return this.handleAPI(this.LIST_APPS, data, component);
+  }
+  listAllApps(data, component): any {
+    return this.handleAPI(this.LISTALL_APPS, data, component);
+  }
+  listAllNoTokenApps(data, component): any {
+    return this.handleAPI(this.LISTALLNOTOKEN_APPS, data, component);
+  }
+  insertApps(data, component): any {
+    return this.handleAPI(this.INSERT_APPS, data, component);
+  }
+  updateApps(data, component): any {
+    return this.handleAPI(this.UPDATE_APPS, data, component);
+  }
+
+  listUserxApp(data, component): any {
+    return this.handleAPI(this.LIST_USERXAPP, data, component);
+  }
+  saveUserxApp(data, component): any {
+    return this.handleAPI(this.SAVE_USERXAPP, data, component);
+  }
+  findUserxApp(data, component): any {
+    return this.handleAPI(this.FIND_USERXAPP, data, component);
+  }
+  getAppsUserxApp(data, component): any {
+    return this.handleAPI(this.GETAPPS_USERXAPP, data, component);
+  }
+  deleteUserxApp(data, component): any {
+    return this.handleAPI(this.DELETE_USERXAPP, data, component);
+  }
+
+  listRolexWarehouse(data, component): any {
+    return this.handleAPI(this.LIST_ROLEXWAREHOUSE, data, component);
+  }
+  saveRolexWarehouse(data, component): any {
+    return this.handleAPI(this.SAVE_ROLEXWAREHOUSE, data, component);
+  }
+  findRolexWarehouse(data, component): any {
+    return this.handleAPI(this.FIND_ROLEXWAREHOUSE, data, component);
+  }
+  getWarehouseRolexWarehouse(data, component): any {
+    return this.handleAPI(this.GETWAREHOUSE_ROLEXWAREHOUSE, data, component);
+  }
+  deleteRolexWarehouse(data, component): any {
+    return this.handleAPI(this.DELETE_ROLEXWAREHOUSE, data, component);
+  }
+
+  listRolexMenu(data, component): any {
+    return this.handleAPI(this.LIST_ROLEXMENU, data, component);
+  }
+  saveRolexMenu(data, component): any {
+    return this.handleAPI(this.SAVE_ROLEXMENU, data, component);
+  }
+  findRolexMenu(data, component): any {
+    return this.handleAPI(this.FIND_ROLEXMENU, data, component);
+  }
+  getMenuRolexMenu(data, component): any {
+    return this.handleAPI(this.GETMENU_ROLEXMENU, data, component);
+  }
+  deleteRolexMenu(data, component): any {
+    return this.handleAPI(this.DELETE_ROLEXMENU, data, component);
+  }
+
+  listRolexStorer(data, component): any {
+    return this.handleAPI(this.LIST_ROLEXSTORER, data, component);
+  }
+  saveRolexStorer(data, component): any {
+    return this.handleAPI(this.SAVE_ROLEXSTORER, data, component);
+  }
+  findRolexStorer(data, component): any {
+    return this.handleAPI(this.FIND_ROLEXSTORER, data, component);
+  }
+  getStorerRolexStorer(data, component): any {
+    return this.handleAPI(this.GETSTORER_ROLEXSTORER, data, component);
+  }
+  deleteRolexStorer(data, component): any {
+    return this.handleAPI(this.DELETE_ROLEXSTORER, data, component);
+  }
+
+
+  /* Common Function */
+  private handleAPI(URL, data, component) {
+    $('.loading').fadeIn();
+    return new Promise((resolve, reject) => {
+      this.http.post(URL, data, this.headers)
+      .toPromise()
+      .then(function (response) {
+        setTimeout(function(){
+          $('.loading').fadeOut();
+        }, 500);
+        resolve({response, component});
+      }).catch(function(err){
+        setTimeout(function(){
+          $('.loading').fadeOut();
+        }, 500);
+        reject({err, component});
+      });
+    });
+  }
+}

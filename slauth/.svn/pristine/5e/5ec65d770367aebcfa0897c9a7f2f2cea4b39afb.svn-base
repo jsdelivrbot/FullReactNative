@@ -1,0 +1,23 @@
+<div class="container-fluid p-0">
+  <app-header-wms></app-header-wms>
+  <app-top-menu-wms></app-top-menu-wms>
+  <div class="page-inner">
+    <section>
+      <h2>About us</h2>
+      <p>Smartlog Việt Nam là start-up tiên phong về phát triển các giải pháp công nghệ thông tin cho hoạt động logistics tại Việt Nam. Với đội ngũ chuyên gia có nhiều năm kinh nghiệm trong ngành chuỗi cung ứng, logistics và học hỏi kiến thức, mô hình quốc tế, chúng tôi đang từng bước thay đổi cách vận hành logistics theo xu hướng cách mạng công nghiệp 4.0, từ đó khách hàng có thể nâng cao chất lượng dịch vụ và cải thiện hiệu quả vận hành nội bộ.</p>
+    </section>
+    <section>
+      <h2>Our Leaders</h2>
+      <p>Mr. Kurt Bình - Nhà sáng lập Smartlog: Tốt nghiệp Master of Supply Chain Management, MIT, Mỹ. Hơn 15 năm kinh nghiệm trong ngành logistics và supply chain bao gồm tư vấn chiến lược, triển khai  vận hành các dự án lớn.</p>
+    </section>
+    <section>
+      <h2>Our Team</h2>
+      <p>Đội ngũ Smartlog bao gồm các chuyên gia trong ngành logistics và các lập trình viên có nhiều kinh nghiệm trong phát triển giải pháp trong ngành. Smartlog phát triển sản phẩm dựa trên sự thấu hiểu vấn đề của khách hàng và học hỏi các công nghệ hiện đại trên thế giới nhằm phát triển các phải pháp phù hợp với thị trường Việt Nam. </p>
+    </section>
+    <section>
+      <h2>Our Works</h2>
+      <p>Smartlog tự hào là giải pháp logistics được xây dựng phù hợp với thị trường Việt Nam, đáp ứng được những yêu cầu của các doanh nghiệp lớn, vừa và nhỏ với các loại hình dịch vụ khác nhau. Ngoài ra, Smartlog tập trung vào áp dụng các công nghệ mới nhất về giải thuật thông minh nhằm cung cấp cho khách hàng các giải pháp nâng cao sự tối ưu về nguồn lực và quản lý. Đăc biệt, các doanh nghiệp trong chuỗi cung ứng có thể liên kết và hợp tác về dòng thông tin hiệu quả thông qua các cổng truyền thông tin như FTP, Web service…</p>
+    </section>
+  </div>
+  <app-footer-wms></app-footer-wms>
+</div>

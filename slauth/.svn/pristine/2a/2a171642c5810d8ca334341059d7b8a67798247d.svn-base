@@ -1,0 +1,269 @@
+<app-header></app-header>
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2 sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3">
+        <div class="d-flex justify-content-between">
+          <h2><i class="fa fa-user-circle-o"></i> Owner</h2>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
+            <i class="fa fa-plus-square-o"></i> New
+          </button>
+          <button class="btn btn-outline-danger" data-toggle="modal" data-target="#modalDelete" disabled><i class="fa fa-trash"></i> Delete</button>
+        </div>
+        <div class="mt-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr  class="tr-default">
+                  <th rowspan="2">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <th>Warehouse code</th>
+                  <th>Owner code</th>
+                  <th>Company</th>
+                  <th>Address</th>
+                  <th *ngIf="this.appServices.session.isAdmin">Company</th>
+                </tr>
+                <tr class="table-row-search">
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadOwnerData({'warehousecode':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadOwnerData({'storerkey':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadOwnerData({'company':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadOwnerData({'address1':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                  <th *ngIf="this.appServices.session.isAdmin">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" class="form-control" (keyup.enter)="loadOwnerData({'parentuser':{'like':$event.target.value}})"/>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of data_owner | paginate: { id: 'id_owner', itemsPerPage: this.itemsPerPage_owner, currentPage: this.currentPage_owner, totalItems: this.total_owner };">
+                  <td>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findOwnerData(data)" class="align-middle">{{data.warehousecode}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findOwnerData(data)" class="align-middle">{{data.storerkey}}</td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findOwnerData(data)">
+                    {{data.company}}
+                  </td>
+                  <td data-toggle="modal" data-target="#modalEdit" (click)="findOwnerData(data)">
+                    {{data.address1}}
+                  </td>
+                  <td *ngIf="this.appServices.session.isAdmin" data-toggle="modal" data-target="#modalEdit" (click)="findOwnerData(data)">
+                    {{data.parentuser}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <div class="form-inline">
+              <span>Show &nbsp;</span>
+              <select name="itemsPerPage_owner" [(ngModel)]="this.itemsPerPage_owner" (change)="this.itemsPerPage_owner = $event.target.value; this.loadOwnerData()">
+                <option *ngFor="let data of data_itemsPerPage" [value]="data.short">{{data.short}}</option>
+              </select>
+              <span>&nbsp;entries</span>
+            </div>
+            <pagination-controls id="id_owner" (pageChange)="this.currentPage_owner = $event; this.loadOwnerData()"></pagination-controls>
+          </div>
+        </div>
+        <div class="modal fade" id="modalNew" tabindex="-1">
+          <form #frmAdd="ngForm" (ngSubmit)="insertOwnerData(frmAdd.value)" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">New Owner</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_owner">
+                  <div class="input-group " *ngIf="this.appServices.session.isAdmin">
+                    <span class="input-group-addon">Company</span>
+                    <select (change)="this.loadWarehouseData($event.target.value)" [(ngModel)]="data_owner.parentuser" required name="parentuser" class="form-control">
+                      <option   *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Warehouse code </span>
+                    <select [(ngModel)]="data_owner.warehousecode" required name="warehousecode" class="custom-select form-control">
+                      <option *ngFor="let whs of data_warehouse" [ngValue]="whs.warehousecode" >{{whs.warehousename}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Owner code</span>
+                    <input type="text" required class="form-control" name="storerkey" [(ngModel)]="data_owner.storerkey" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Owner name</span>
+                    <input type="text" required class="form-control" name="company" [(ngModel)]="data_owner.company" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Address</span>
+                    <input type="text" class="form-control" name="address1" [(ngModel)]="data_owner.address1" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Stock Info</span>
+                    <input type="text" class="form-control" name="stockinfo" [(ngModel)]="data_owner.stockinfo" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Free Day</span>
+                    <input type="text" class="form-control" name="freeday" [(ngModel)]="data_owner.freeday" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notify PO</span>
+                    <input type="number" class="form-control" name="ageindays" [(ngModel)]="data_owner.ageindays"/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='data_owner.notes1' name='notes1' ></textarea>
+                  </div>
+                  <p class="m-0 text-muted">Input ASN</p>
+                  <div class="pl-3">
+                    <label class="custom-control custom-checkbox" *ngFor="let lottable of data_lottable   | jsontodic" ngModelGroup="lottable" >
+                      <div ngModelGroup="{{lottable}}">
+                        <input type="checkbox" class="custom-control-input" name="active" [(ngModel)]="data_lottable[lottable].active">
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description">{{data_lottable[lottable].label === '' ? lottable : data_lottable[lottable].label}}</span>
+                        <input type="text" class="form-control input-sm" name="label" [(ngModel)]="data_lottable[lottable].label">
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmAdd.form.valid"><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalEdit" tabindex="-1">
+          <form #frmEdit="ngForm" (ngSubmit)="updateOwnerData(this.selected_owner)" autocomplete="off">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Owner</h5>
+                  <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="selected_owner">
+                  <div class="input-group " *ngIf="this.appServices.session.isAdmin">
+                    <span class="input-group-addon">Company</span>
+                    <select (change)="loadWarehouseData(data_owner.parentuser)" [(ngModel)]="selected_owner.parentuser" required name="parentuser" class="form-control">
+                      <option disabled  *ngFor="let item of data_parentuser" [ngValue]="item.username">{{item.username}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Warehouse code
+                    </span>
+                    <select [(ngModel)]="selected_owner.warehousecode" required name="warehousecode" class="custom-select form-control" >
+                      <option *ngFor="let whs of data_warehouse" [ngValue]="whs.warehousecode" disabled>{{whs.warehousename}}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Owner code</span>
+                    <input type="text" required class="form-control" name="storerkey" [(ngModel)]="selected_owner.storerkey" readonly/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Owner name</span>
+                    <input type="text" required class="form-control" name="company" [(ngModel)]="selected_owner.company" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Address</span>
+                    <input type="text"  class="form-control" name="address1" [(ngModel)]="selected_owner.address1" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Stock Info</span>
+                    <input type="text"  class="form-control" name="stockinfo" [(ngModel)]="selected_owner.stockinfo" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Free Day</span>
+                    <input type="text"  class="form-control" name="freeday" [(ngModel)]="selected_owner.freeday" />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notify PO</span>
+                    <input type="number"  class="form-control" name="ageindays" [(ngModel)]="selected_owner.ageindays"/>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">Notes</span>
+                    <textarea class="form-control" rows="2" [(ngModel)]='selected_owner.notes1' name='notes1' ></textarea>
+                  </div>
+                  <p class="m-0 text-muted">Input ASN</p>
+                  <div class="pl-3">
+                    <label class="custom-control custom-checkbox" *ngFor="let lottable of selected_lottable   | jsontodic" ngModelGroup="lottable" >
+                      <div ngModelGroup="{{lottable}}">
+                        <input type="checkbox" class="custom-control-input" name="active" [(ngModel)]="selected_lottable[lottable].active">
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description">{{selected_lottable[lottable].label === '' ? lottable : selected_lottable[lottable].label }}</span>
+                        <input type="text" class="form-control input-sm" name="label" [(ngModel)]="selected_lottable[lottable].label">
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmEdit.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal fade" id="modalDelete" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Owner</h5>
+                <button class="close" data-dismiss="modal" type="button">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete these records?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteOwnerData()"><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

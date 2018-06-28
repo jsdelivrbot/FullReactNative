@@ -1,0 +1,50 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppServices } from './../../app.services';
+import { NotifyService } from './../../notify.service';
+
+
+@Component({
+  selector: 'app-admin-login',
+  templateUrl: './admin-login.component.html',
+  styleUrls: ['./admin-login.component.css']
+})
+export class AdminLoginComponent implements OnInit {
+  data_sysusers;
+  constructor(private router: Router, private appServices: AppServices, private notifyService:NotifyService) { }
+  ngOnInit() {
+  }
+
+  signin(data) {
+    this.appServices.signinSysUsers({"username": data.username, "password": data.password}, this).then(function(obj){
+      if(obj.response.json().res !== null){
+        localStorage.setItem('currentUser', JSON.stringify({'user': obj.response.json().res.user, 'token': obj.response.json().res.token, 'isAdmin': true}));
+        obj.component.appServices.session =  JSON.parse(localStorage.getItem('currentUser'));
+
+        console.log(obj.component.appServices.session);
+
+        obj.component.notifyService.show('Signin Success!');
+        obj.component.router.navigate(['admin/home']);
+      } else {
+        obj.component.appServices.signinUsers({"username": data.username, "password": data.password, 'type': 1}, this).then(function(_obj){
+          if(_obj.response.json().res !== null){
+            localStorage.setItem('currentUser', JSON.stringify({'user': _obj.response.json().res.user, 'token': _obj.response.json().res.token, 'isAdmin': false}));
+            obj.component.appServices.session =  JSON.parse(localStorage.getItem('currentUser'));
+
+            console.log(obj.component.appServices.session);
+
+            obj.component.notifyService.show('Signin Success!');
+            obj.component.router.navigate(['admin/home']);
+          } else {
+            obj.component.notifyService.show('USER_NOT_EXIST', 'danger');
+          }
+        }).catch(function(_err){
+          _err.component.notifyService.show(_err.err.json().error.message, 'danger');  //err.err.json().error.code
+        })
+      }
+    }).catch(function(err){
+      err.component.notifyService.show(err.err.json().error.message, 'danger');
+    })
+  }
+
+}

@@ -1,0 +1,40 @@
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-11 col-sm-12 col-md-10 col-lg-8 box-shadow mx-auto">
+      <div class="row bg-white">
+        <div class="col-sm-7 col-md-8 col-lg-8 p-0">
+          <img class="img-fluid" src="assets/img/login.jpg" />
+        </div>
+        <form class="col-sm-5 col-md-4 col-lg-4 my-auto pt-1 pb-1" #frmadminlogin="ngForm" autocomplete="off" (ngSubmit)="signin(frmadminlogin.value)">
+          <h1>Sign in</h1>
+          <div class="input-group">
+            <span class="input-group-addon">Username</span>
+            <input type="text" class="form-control"  required autofocus name="username" ngModel >
+          </div>
+          <div class="input-group">
+            <span class="input-group-addon">Password</span>
+            <input type="password" class="form-control"  required name="password" ngModel >
+          </div>
+          <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+            <input type="checkbox" class="custom-control-input">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description"><small>Keep me signed in</small></span>
+          </label>
+          <br/>
+          <br/>
+
+          <!-- routerLink="/admin/home" -->
+          <div class="row">
+            <div class="col-sm-6">
+              <button [disabled]="!frmadminlogin.form.valid" class="btn btn-sm btn-primary btn-block">Sign in</button>
+            </div>
+            <div class="col-sm-6">
+              <button routerLink="/signup" class="btn btn-sm btn-info btn-block">Sign up</button>
+            </div>
+          </div>
+          <a href="#" class="text-muted small">Forgot my password</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

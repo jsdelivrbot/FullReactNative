@@ -1,0 +1,110 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+
+module.exports = function(RolexWarehouse) {
+  RolexWarehouse.validatesUniquenessOf({scopedTo: ['rolecode', 'warehousecode']});
+  RolexWarehouse.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  RolexWarehouse.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    RolexWarehouse.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  RolexWarehouse.listRolexWarehouse = function(token, deleted, username, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      let strSQl = 'SELECT warehouse.id, warehouse.warehousecode, warehouse.warehousename, warehouse.parentuser, warehouse.deleted, warehouse.notes, warehouse.hide, warehouse.adddate, warehouse.addwho, warehouse.editdate, warehouse.editwho from users '
+                    +'left join userxrole on users.username = userxrole.username '
+                    +'left join roles on userxrole.rolecode = roles.rolecode '
+                    +'left join rolexwarehouse on userxrole.rolecode = rolexwarehouse.rolecode '
+                    +'left join warehouse on rolexwarehouse.warehousecode = warehouse.warehousecode '
+                    +'where userxrole.deleted = false and rolexwarehouse.deleted = ? and users.username = ?';
+      RolexWarehouse.dataSource.connector.execute(strSQl, [deleted, username], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexWarehouse.saveRolexWarehouse = function(token, rolecode, warehousecode, notes, addwho, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexWarehouse.findOne({where: {'rolecode': rolecode, 'warehousecode': warehousecode}}).then(function(obj){
+        if(obj){
+          RolexWarehouse.updateAll({'rolecode': rolecode, 'warehousecode': warehousecode},{
+            'deleted': 0,
+            'notes': notes,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          RolexWarehouse.create({
+            'rolecode': rolecode,
+            'warehousecode': warehousecode,
+            'deleted': 0,
+            'notes': notes,
+            'adddate': new Date().toISOString(),
+            'addwho': addwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexWarehouse.deleteRolexWarehouse = function(token, rolecode, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexWarehouse.updateAll({'rolecode': rolecode},{
+        'deleted': 1,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexWarehouse.findRolexWarehouse = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexWarehouse.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexWarehouse.getWarehouseRolexWarehouse = function(token, rolecode, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexWarehouse.dataSource.connector.execute('SELECT warehouse.id, warehouse.warehousecode, warehouse.warehousename, warehouse.deleted, warehouse.notes, warehouse.hide, warehouse.adddate, warehouse.addwho, warehouse.editdate, warehouse.editwho from warehouse left join RolexWarehouse on warehouse.warehousecode = RolexWarehouse.warehousecode where RolexWarehouse.rolecode = ? and RolexWarehouse.deleted = ?', [rolecode, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+ };
+};

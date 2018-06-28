@@ -1,0 +1,112 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+
+module.exports = function(Userxapp) {
+  Userxapp.validatesUniquenessOf({scopedTo: ['username', 'appcode']});
+  Userxapp.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+
+  Userxapp.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Userxapp.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+
+  Userxapp.listUserxApp = function(token, deleted, skip, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxapp.find({where: {'deleted': deleted}, skip: skip}).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Userxapp.saveUserxApp = function(token, username, appcode, notes, addwho, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxapp.findOne({where: {'username': username, 'appcode': appcode}}).then(function(obj){
+        if(obj){
+          Userxapp.updateAll({'username': username, 'appcode': appcode},{
+            'deleted': 0,
+            'notes': notes,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          Userxapp.create({
+            'username': username,
+            'appcode': appcode,
+            'deleted': 0,
+            'notes': notes,
+            'adddate': new Date().toISOString(),
+            'addwho': addwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Userxapp.deleteUserxApp = function(token, username, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxapp.updateAll({'username': username},{
+        'deleted': 1,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+
+  Userxapp.findUserxApp = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxapp.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Userxapp.getAppsUserxApp = function(token, username, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxapp.dataSource.connector.execute('SELECT apps.id, apps.appcode,apps.appname, apps.deleted, apps.notes, apps.adddate, apps.addwho, apps.editdate, apps.editwho FROM apps left join Userxapp on apps.appcode = Userxapp.appcode where Userxapp.username = ? and Userxapp.deleted = ?', [username, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+};

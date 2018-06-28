@@ -1,0 +1,265 @@
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2"></div>
+    <div class="sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-header></app-header>
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3 pr-2 pl-4">
+        <section class="content-header">
+          <div class="d-flex justify-content-between">
+            <h2><i class="fa fa-home"></i> Warehouse Management </h2>
+            <button class="btn btn-primary" (click)="this.new()"><i class="fa fa-plus"></i> New</button>
+          </div>
+        </section>
+        <section class="content">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tablist" role="tab" (click)="this.clickTablist()">List Warehouses</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabdetail" role="tab" (click)="this.clickTabdetail()">Warehouse Detail</a>
+            </li>
+          </ul>
+          <div class="card border-shadow tab-content">
+            <div class="tab-pane fade show active" id="tablist">
+              <div class="mt-3 container-fluid">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th rowspan="2">
+                          <label class="custom-control custom-checkbox" >
+                            <input type="checkbox" class="custom-control-input" [checked]="isAllChecked()" (change)="checkAll($event)">
+                            <span class="custom-control-indicator"></span>
+                          </label>
+                        </th>
+                        <th *ngIf="this.appServices.session.isAdmin" >
+                          <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'warehouse.warehousecode'; this.loadWarehouseData({}) ">
+                            Warehouse Code
+                            <i *ngIf="this.propertyName == 'warehouse.warehousecode' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                            <i *ngIf="this.propertyName == 'warehouse.warehousecode' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                          </span>
+                        </th>
+                        <th>
+                          <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'warehouse.warehousename'; this.loadWarehouseData({}) ">
+                            Warehouse Name
+                            <i *ngIf="this.propertyName == 'warehouse.warehousename' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                            <i *ngIf="this.propertyName == 'warehouse.warehousename' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                          </span>
+                        </th>
+                        <th *ngIf="this.appServices.session.isAdmin">
+                          <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'warehouse.parentuser'; this.loadWarehouseData({}) ">
+                            Company
+                            <i *ngIf="this.propertyName == 'warehouse.parentuser' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                            <i *ngIf="this.propertyName == 'warehouse.parentuser' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                          </span>
+                        </th>
+                        <th colspan="2">
+                          <span class="cursor-pointer" (click)="this.order = this.order=='ASC' ? 'DESC' : 'ASC'; this.propertyName = 'warehouse.hide'; this.loadWarehouseData({}) ">
+                            Status
+                            <i *ngIf="this.propertyName == 'warehouse.hide' && this.order=='ASC'" class="fa fa-angle-up"></i>
+                            <i *ngIf="this.propertyName == 'warehouse.hide' && this.order=='DESC'" class="fa fa-angle-down"></i>
+                          </span>
+                        </th>
+                      </tr>
+                      <tr class="table-row-search">
+                        <th *ngIf="this.appServices.session.isAdmin">
+                          <div class="input-group" >
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" [(ngModel)]="f_warehousecode" (keyup.enter)="loadWarehouseData({})"/>
+                          </div>
+                        </th>
+                        <th>
+                          <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" [(ngModel)]="f_warehousename" (keyup.enter)="loadWarehouseData({})"/>
+                          </div>
+                        </th>
+                        <th *ngIf="this.appServices.session.isAdmin">
+                          <div class="input-group" >
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" [(ngModel)]="f_parentuser" (keyup.enter)="loadWarehouseData({})"/>
+                          </div>
+                        </th>
+                        <th colspan="2">
+                          <div class="input-group" >
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <select class="form-control " [(ngModel)]="f_hide" (change)="this.f_hide = $event.target.value; this.loadWarehouseData({})">
+                              <option value=""> All</option>
+                              <option value="1"> InActive</option>
+                              <option value="0"> Active</option>
+                            </select>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of data_warehouse | paginate: { id: 'id_warehouse', itemsPerPage: this.itemsPerPage_warehouse, currentPage: this.currentPage_warehouse, totalItems: this.total_warehouse };">
+                        <td>
+                          <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" (change)="onChoose($event, data)" [(ngModel)]="data.state">
+                            <span class="custom-control-indicator"></span>
+                          </label>
+                          <label (click)="findWarehouseData(data); clickTabdetail()" class="cursor-pointer">
+                            <i class="fa fa-pencil"></i>
+                          </label>
+                        </td>
+                        <td *ngIf="this.appServices.session.isAdmin">
+                          {{data.warehousecode}}
+                        </td>
+                        <td>
+                          {{data.warehousename}}
+                        </td>
+                        <td *ngIf="this.appServices.session.isAdmin" >
+                          {{data.parentuser}}
+                        </td>
+                        <td data-toggle="modal" data-target="#modalEdit" (click)="findWarehouseData(data)">
+                          <span *ngIf="!data.hide" class="btn btn-sm btn-success">Active</span>
+                          <span *ngIf="data.hide" class="btn btn-sm btn-danger">Inactive</span>
+                        </td>
+                        <td *ngIf="this.appServices.session.isAdmin && !data.hide" class="cursor-pointer" (click)="go(data)">
+                          <i class="fa fa-arrow-circle-right"></i>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-12 d-flex justify-content-between">
+                  <div class="form-inline">
+                    <span>Show &nbsp;</span>
+                    <select name="itemsPerPage_warehouse" [(ngModel)]="this.itemsPerPage_warehouse" (change)="this.itemsPerPage_warehouse = $event.target.value; this.loadWarehouseData({})">
+                      <option *ngFor="let data of this.appServices.session.paginate" [value]="data.short">{{data.short}}</option>
+                    </select>
+                    <span>&nbsp;entries</span>
+                  </div>
+                  <pagination-controls id="id_warehouse" (pageChange)="this.currentPage_warehouse = $event; this.loadWarehouseData({})"></pagination-controls>
+                </div>
+              </div>
+            </div>
+            <div  class="tab-pane fade" id="tabdetail">
+              <section *ngIf="selected_warehouse" class="container-fluid">
+                <form #frm="ngForm" autocomplete="false">
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <div class="float-right">
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalDelete" *ngIf="this.selected_warehouse.id"  disabled  >
+                          <i class="fa fa-trash"></i> Delete
+                        </button>
+                        <button type="submit" [disabled]="!frm.form.valid"  class="btn btn-success" (click)="this.saveWarehouseData(this.selected_warehouse)" >
+                          <i class="fa fa-floppy-o"></i> Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-6">
+                      <div class="input-group " *ngIf="this.appServices.session.isAdmin">
+                        <span class="input-group-addon">Company</span>
+                        <select  [(ngModel)]="selected_warehouse.parentuser" name="parentuser" class="form-control" required>
+                          <option *ngFor="let item of data_parentuser" [value]="item.username">{{item.username}}</option>
+                        </select>
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">Warehouse Code</span>
+                        <input type="text" class="form-control" name="warehousecode" [(ngModel)]="selected_warehouse.warehousecode" required/>
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">Warehouse Name</span>
+                        <input type="text" class="form-control" name="warehousename" [(ngModel)]="selected_warehouse.warehousename" required/>
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">City</span>
+                        <input type="text" class="form-control " name="cityname" [(ngModel)]="selected_warehouse.cityname"
+                        (keyup.enter)="this.openModalCity()" readonly required >
+                        <span class="fa fa-search" (click)="this.openModalCity()"></span>
+                        <input type="hidden" name="citycode" [(ngModel)]="selected_warehouse.citycode" />
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">District</span>
+                        <input type="text" class="form-control " name="districtname" [(ngModel)]="selected_warehouse.districtname"
+                        (keyup.enter)="this.openModalDistrict()" readonly required>
+                        <span class="fa fa-search" (click)="this.openModalDistrict()"></span>
+                        <input type="hidden" name="districtcode" [(ngModel)]="selected_warehouse.districtcode" />
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">Ward</span>
+                        <input type="text" class="form-control " name="wardname" [(ngModel)]="selected_warehouse.wardname"
+                        (keyup.enter)="this.openModalWard()" readonly required>
+                        <span class="fa fa-search" (click)="this.openModalWard()"></span>
+                        <input type="hidden" name="wardcode" [(ngModel)]="selected_warehouse.wardcode" />
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">Address</span>
+                        <input type="text" class="form-control" name="address" [(ngModel)]="selected_warehouse.address" required/>
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-addon">Notes</span>
+                        <textarea class="form-control" rows="2" [(ngModel)]='selected_warehouse.notes' name='notes'></textarea>
+                      </div>
+                      <label class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" name="hide" [(ngModel)]="selected_warehouse.hide">
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description">Not Use</span>
+                      </label>
+                    </div>
+                    <div class="col-6">
+                      <ng2-map [options]="mapOptions" center="10.809463, 106.714643" (mapReady$)="onMapReady($event)" (mapClick)="onMapClick($event)" style="height: 50vh">
+                      </ng2-map>
+                    </div>
+                  </div>
+                </form>
+
+                <div class="modal fade" id="modalDelete" tabindex="-1">
+                   <div class="modal-dialog">
+                     <div class="modal-content">
+                       <div class="modal-header">
+                         <h5 class="modal-title text-danger">Delete Warehouse</h5>
+                         <button class="close" data-dismiss="modal" type="button">
+                           <span>&times;</span>
+                         </button>
+                       </div>
+                       <div class="modal-body">
+                         <p>Do you want to delete <b> {{this.selected_warehouse.warehousecode}} </b>?</p>
+                       </div>
+                       <div class="modal-footer">
+                         <button class="btn btn-danger" (click)="deleteWarehouseData()"><i class="fa fa-thumbs-o-up"></i></button>
+                         <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                <div class="modal fade" id="modalConfirmUpdate" tabindex="-1">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-danger">Change Location Warehouse</h5>
+                        <button class="close" data-dismiss="modal" type="button">
+                          <span>&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Are you sure to change this Warehouse to New Location??</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-danger" (click)="c_yes()"><i class="fa fa-thumbs-o-up"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="c_no()"  data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <app-popup-city #modalCity (onSelect)="selectCity($event)"></app-popup-city>
+                <app-popup-district #modalDistrict (onSelect)="selectDistrict($event)"></app-popup-district>
+                <app-popup-ward #modalWard (onSelect)="selectWard($event)"></app-popup-ward>
+
+              </section>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

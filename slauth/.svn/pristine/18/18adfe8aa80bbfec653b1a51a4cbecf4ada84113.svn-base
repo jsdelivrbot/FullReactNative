@@ -1,0 +1,15 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-main-wms-login',
+  templateUrl: './main-wms-login.component.html',
+  styleUrls: ['./main-wms-login.component.css']
+})
+export class MainWmsLoginComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}

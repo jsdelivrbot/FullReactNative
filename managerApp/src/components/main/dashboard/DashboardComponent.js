@@ -68,9 +68,9 @@ export default class DashboardComponent extends Component {
                 </Button> */}
          
      
-                <BarchartComponent/>
+                <BarchartComponent totalCompany = {this.state.data[0]}/>
             
-                <PieChartComponent/>
+                <PieChartComponent />
                 
             </Content>
         );

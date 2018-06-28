@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="jasonsmith2812@gmail.com">
+  <meta name="description" content="Warehouse Management System - Smartlog VN">
+  <link rel="icon" href="img/logo.png">
+
+  <title>Smartlog - Authenticate</title>
+
+  <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="vendor/splitscreen/component.css" rel="stylesheet">
+
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="data-layout" data-layout="header-tms.html"></div>
+    <div class="data-layout" data-layout="top-menu-tms.html"></div>
+    <div class="page-inner">
+      <section>
+        <h2>Your Trial</h2>
+        <p>Ea debet ocurreret per, nec aeterno nominati oportere ei. Vix id choro ceteros. At laoreet nostrum est, iriure platonem reprimique sit cu. Id pri maluisset principes, cu everti philosophia nec, perfecto quaerendum vix ea. Ut mea iuvaret vivendum.</p>
+      </section>
+      <div class="card-deck">
+        <div class="card text-center">
+          <div class="card-body">
+            <h4 class="m-0">Small Value</h4>
+            <hr/>
+            <p class="m-0">5 users</p>
+            <p class="m-0">Local Server</p>
+            <p class="m-0">1 Domain</p>
+            <p class="m-0"><del>Support 24/24</del></p>
+            <p class="m-0"><del>Tool Analysis</del></p>
+            <p class="m-0"><del>Watchlist Notification</del></p>
+            <hr/>
+            <p class="display-4"><b>$0</b></p>
+            <p class="m-0">For new starter</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-outline-primary">Access now</button>
+          </div>
+        </div>
+        <div class="card text-white bg-primary text-center">
+          <div class="card-body">
+            <h4 class="m-0">Best Offer</h4>
+            <hr/>
+            <p class="m-0">20 users</p>
+            <p class="m-0">Cloud Services</p>
+            <p class="m-0">1 Domain</p>
+            <p class="m-0">Support 24/24</p>
+            <p class="m-0"><del>Tool Analysis</del></p>
+            <p class="m-0"><del>Watchlist Notification</del></p>
+            <hr/>
+            <p class="display-4"><b>$99</b></p>
+            <p class="m-0">paid annually per month</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-warning">Access now</button>
+          </div>
+        </div>
+        <div class="card text-center">
+          <div class="card-body">
+            <h4 class="m-0">Enterprise Solution</h4>
+            <hr/>
+            <p class="m-0">Unlimited users</p>
+            <p class="m-0">Cloud Services</p>
+            <p class="m-0">Multi Domain</p>
+            <p class="m-0">Support 24/24</p>
+            <p class="m-0">Tool Analysis</p>
+            <p class="m-0">Watchlist Notification</p>
+            <hr/>
+            <p class="display-4"><b>$999</b></>
+            <p class="m-0">paid annually per month</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-outline-primary">Access now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="data-layout" data-layout="footer-tms.html"></div>
+
+  <script type="text/javascript" src="vendor/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="vendor/holder/holder.min.js"></script>
+  <script type="text/javascript" src="vendor/popper/popper.min.js"></script>
+  <script type="text/javascript" src="vendor/tether/tether.min.js"></script>
+  <script type="text/javascript" src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/modernizr.custom.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/classie.js"></script>
+  <script type="text/javascript" src="vendor/splitscreen/cbpSplitLayout.js"></script>
+
+  <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/layout.js"></script>
+</body>
+</html>

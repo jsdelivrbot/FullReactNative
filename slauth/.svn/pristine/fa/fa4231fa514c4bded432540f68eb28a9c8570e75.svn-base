@@ -1,0 +1,110 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var limit = 12;
+var _ = require("underscore");
+
+module.exports = function(Userxrole) {
+  Userxrole.validatesUniquenessOf({scopedTo: ['username', 'rolecode']});
+  Userxrole.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+
+  Userxrole.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    Userxrole.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  Userxrole.listUserxRole = function(token, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxrole.dataSource.connector.execute('SELECT userxrole.id, userxrole.username, userxrole.rolecode, userxrole.deleted, userxrole.notes, userxrole.adddate, userxrole.addwho, userxrole.editdate, userxrole.editwho FROM userxrole WHERE userxrole.deleted = ?', [deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Userxrole.saveUserxRole = function(token, username, rolecode, notes, addwho, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxrole.findOne({where: {'username': username, 'rolecode': rolecode}}).then(function(obj){
+        if(obj){
+          Userxrole.updateAll({'username': username, 'rolecode': rolecode},{
+            'deleted': 0,
+            'notes': notes,
+            'editdate': new Date().toISOString(),
+            'editwho': editwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          Userxrole.create({
+            'username': username,
+            'rolecode': rolecode,
+            'deleted': 0,
+            'notes': notes,
+            'adddate': new Date().toISOString(),
+            'addwho': addwho,
+          }).then(function(obj){
+            callback(null, obj);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Userxrole.deleteUserxrole = function(token, username, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxrole.updateAll({'username': username},{
+        'deleted': 1,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho,
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+
+  Userxrole.findUserxRole = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxrole.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  Userxrole.getRolesUserxRole = function(token, username, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Userxrole.dataSource.connector.execute('SELECT roles.id, roles.rolecode,roles.rolename, roles.deleted, roles.notes, roles.adddate, roles.addwho, roles.editdate, roles.editwho FROM roles left join userxrole on roles.rolecode = userxrole.rolecode where userxrole.username = ? and userxrole.deleted = ?', [username, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+ };
+
+};

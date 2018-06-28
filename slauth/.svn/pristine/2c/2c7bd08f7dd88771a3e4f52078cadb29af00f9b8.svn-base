@@ -1,0 +1,42 @@
+import { Injectable } from '@angular/core';
+import { Http, Headers } from '@angular/http';
+import { AppServices } from './../app.services';
+import { Router } from '@angular/router';
+declare var $:any;
+
+@Injectable()
+export class AuthService {
+  constructor(private http: Http, private router: Router, private appServices: AppServices) {
+  }
+  login(session) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').hide();
+    sessionStorage.setItem('session', session);
+    this.appServices.session = JSON.parse(sessionStorage.getItem('session'));
+    this.router.navigate(['admin/home']);
+  }
+  logout() {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').hide();
+    sessionStorage.removeItem('session');
+    this.router.navigate(['admin/login']);
+  }
+  expired(){
+    $('.modal').modal('hide');
+    $('.modal-backdrop').hide();
+    this.appServices.session.showDialog = true;
+    sessionStorage.removeItem('session');
+  }
+  catchErr(err){
+    $('.modal').modal('hide');
+    $('.modal-backdrop').hide();
+    let message = typeof err.err.json().error.message === undefined ? 'Error' : err.err.json().error.message;
+    err.component.notifyService.show(err.err.json().error.message, 'danger');
+    if(message === 'TOKEN_EXPIRED'){
+      this.expired();
+    }
+    if(message === 'INVALID_ACCESS'){
+      this.logout();
+    }
+  }
+}

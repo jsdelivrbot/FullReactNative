@@ -7,6 +7,7 @@ import {
 import HeaderComponent from "../../header/HeaderComponent";
 import { Color, ColorsChart } from "../../../../common/Color";
 import ItemWarehouseComponent from "../warehouse/ItemWarehouseComponent";
+import ItemAvatarComponent from "../../item-flatlist/ItemAvatarComponent";
 
 
 export default class SystemMailComponent extends Component {
@@ -22,7 +23,7 @@ export default class SystemMailComponent extends Component {
   }
   createDataTest (){
     let data = new Array();
-    for(let i=0;i<10;i++){
+    for(let i=0;i<30;i++){
       data.push({
         name: 'A ' +i ,
         email: `m${i}@gmail.com`
@@ -52,7 +53,7 @@ export default class SystemMailComponent extends Component {
             : null
           }
           renderItem={({ item, index }) => {
-            return <ItemWarehouseComponent {...this.props} item={item} index={index} />;
+            return <ItemAvatarComponent {...this.props} item={item} index={index} />;
           }}
           refreshControl = {
             <RefreshControl   

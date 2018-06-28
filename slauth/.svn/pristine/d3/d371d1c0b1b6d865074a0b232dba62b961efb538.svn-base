@@ -1,0 +1,38 @@
+<app-header-wms></app-header-wms>
+<app-top-menu-wms></app-top-menu-wms>
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-11 col-sm-12 col-md-10 col-lg-8 box-shadow mx-auto">
+      <div class="row bg-white">
+        <div class="col-sm-7 col-md-8 col-lg-8 p-0">
+          <img class="img-fluid" src="assets/img/wms-login.jpg" />
+        </div>
+        <form #frmlogin="ngForm" autocomplete="off" (ngSubmit)="signin(frmlogin.value)" autocomplete="off" class="col-sm-5 col-md-4 col-lg-4 my-auto pt-1 pb-1">
+          <h1>Sign in</h1>
+          <div class="input-group ">
+            <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Application </span>
+            <select required name="appcode" class="form-control" ngModel>
+              <option *ngFor="let app of data_apps" [ngValue]="app.appcode">{{app.appname}}</option>
+            </select>
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon "><span class="text-danger">&nbsp;*</span>Username</span>
+            <input type="text" class="form-control" required autofocus name="username" ngModel>
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Password</span>
+            <input type="password" class="form-control" name="password" required ngModel>
+          </div>
+          <br/>
+          <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+            <input type="checkbox" class="custom-control-input" name="rememberme" ngModel>
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description"><small>Keep me signed in</small></span>
+          </label>
+          <button [disabled]="!frmlogin.form.valid"  class="btn btn-sm btn-primary btn-block mt-3 mb-3">Sign in</button>
+          <a href="#" class="text-muted small">Forgot my password</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

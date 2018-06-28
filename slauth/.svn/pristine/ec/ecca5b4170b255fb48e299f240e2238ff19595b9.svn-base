@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+<head>
+  <title>Domain Model Visualizer</title>
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/1.3.0/moment-duration-format.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+  google.charts.load('current', {packages: ['corechart', 'gauge']});
+  </script>
+
+  <style type="text/css">
+  body {
+    height: 100%;
+    margin: 0;
+    font-family: 'helvetica neue', helvetica, arial, sans-serif;
+  }
+  body #header {
+    background-color: #08592b !important;
+    width: 100%;
+    top: 0;
+    font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    height: 60px;
+  }
+
+  body #header a#logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    padding: 20px 0 20px 60px !important;
+  }
+  .black_overlay{
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index:1001;
+    -moz-opacity: 0.8;
+    opacity:.80;
+    filter: alpha(opacity=80);
+  }
+
+  .white_content {
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 30%;
+    height: 50%;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+    font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+    z-index:1002;
+    overflow: auto;
+  }
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+  }
+  .close:hover {
+    color: #06D85F;
+  }
+  </style>
+</head>
+<body>
+  <div id='header'>
+    <div class="swagger-ui-wrap">
+      <a id="logo">Domain Model Visualizer</a>
+    </div>
+  </div>
+  <div id="mynetwork" style="height:70vh"></div>
+  <div class="container-fluid">
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header bg-info">
+          <h5 class="mb-0">
+            <a data-toggle="collapse" href="#collapseOne" class="text-white">
+              SYSTEM STATISTICS
+            </a>
+          </h5>
+        </div>
+        <div id="collapseOne" class="collapse" data-parent="#accordion">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6">
+                <div id="mysystem"></div>
+                <div id="mygauge"></div>
+              </div>
+              <div class="col-6">
+                <div id="mymem"></div>
+                <div id="mystats"></div>
+              </div>
+            </div>
+            <div id="mylog"></div>
+            <div id="mycpus"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  // create an array with nodes
+  var nodes = new vis.DataSet(<%- JSON.stringify(nodes, ["id", "label", "title"]) %>);
+  // create an array with edges
+  var edges = new vis.DataSet(<%- JSON.stringify(edges) %>);
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {
+    nodes: {
+      shape: 'dot',
+      borderWidth: 1,
+      scaling: {
+        label: {
+          min: 2000
+        }
+      },
+      font: {
+        color: '#343434',
+        size: 15, // px
+        face: 'arial',
+        background: 'none',
+        strokeWidth: 0, // px
+        strokeColor: '#ffffff',
+        align: 'left'
+      }
+    },
+    layout: {
+      randomSeed: 2,
+      improvedLayout: true
+    }
+  }
+
+  var network = new vis.Network(container, data, options);
+
+  var cpus = [
+    ['Run Time', 'User', 'System', 'Idle', 'IRQ']
+  ];
+  var mem = [
+    ['Run Time', 'Used', 'Free']
+  ];
+  var log = [
+    ['Action', 'API', 'Overall']
+  ];
+  let runtime = 0;
+  let totalIdleCPU = 0;
+  let totalRunCPU = 0;
+  recall();
+  function recall(){
+    $.ajax({
+      method: "POST",
+      url: "./api/Stats/hardware"
+    }).done(function(obj) {
+      if(runtime == 0) {
+        runtime = obj.res.uptime;
+      }
+      let sys = '<h3>'+obj.res.hostname+' ('+obj.res.arch+')</h3>';
+      sys += '<p>'+obj.res.type+' ('+obj.res.platform+')</p>';
+      sys += '<small>Running over: '+moment.duration(obj.res.uptime, 'seconds').format()+'</small>';
+      document.getElementById('mysystem').innerHTML = sys;
+
+      obj.res.cpus.forEach(function(value, index, arr){
+        totalIdleCPU += value.times.idle;
+        totalRunCPU += value.times.user + value.times.sys + value.times.irq;
+        if(index == arr.length - 1) {
+          cpus.push([
+            Math.round(obj.res.uptime - runtime), value.times.user, value.times.sys, value.times.idle, value.times.irq
+          ]);
+        }
+      })
+      mem.push([
+        Math.round(obj.res.uptime - runtime), obj.res.usedmem, obj.res.freemem
+      ]);
+      if(obj.res.log.APIResponseTime) {
+        log.push([
+          Object.keys(obj.res.log.APIResponseTime)[0], obj.res.log.APIResponseTime[Object.keys(obj.res.log.APIResponseTime)[0]].api / 1000, obj.res.log.OverallResponseTime / 1000
+        ])
+      }
+
+      google.charts.setOnLoadCallback(drawGauge);
+      function drawGauge() {
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Memory', Math.round(obj.res.usedmem / obj.res.totalmem * 100)],
+          ['CPU', Math.round(totalRunCPU / (totalIdleCPU + totalRunCPU) * 100)]
+        ]);
+        var chart = new google.visualization.Gauge(document.getElementById('mygauge'));
+        chart.draw(data, {
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        });
+      }
+
+      google.charts.setOnLoadCallback(drawCPU);
+      function drawCPU() {
+        var data = google.visualization.arrayToDataTable(cpus);
+        var options = {
+          title: obj.res.cpus[obj.res.cpus.length - 1].model,
+          hAxis: {title: 'Seconds', textPosition: 'none'},
+          vAxis: {title: 'Data', textPosition: 'none' }
+        };
+        var chart = new google.visualization.AreaChart(document.getElementById('mycpus'));
+        chart.draw(data, options);
+      }
+
+      google.charts.setOnLoadCallback(drawMem);
+      function drawMem() {
+        var data = google.visualization.arrayToDataTable(mem);
+        var options = {
+          hAxis: {title: 'Seconds', textPosition: 'none'},
+          vAxis: {title: 'Data', textPosition: 'none' }
+        };
+        var chart = new google.visualization.AreaChart(document.getElementById('mystats'));
+        chart.draw(data, options);
+      }
+
+      google.charts.setOnLoadCallback(drawLog);
+      function drawLog() {
+        var data = google.visualization.arrayToDataTable(log);
+        var options = {
+          hAxis: {title: 'Seconds', textPosition: 'none'},
+          vAxis: {title: 'Data', textPosition: 'none' }
+        };
+        var chart = new google.visualization.AreaChart(document.getElementById('mylog'));
+        chart.draw(data, options);
+      }
+
+      google.charts.setOnLoadCallback(drawStats);
+      function drawStats() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Size'],
+          ['Used',  obj.res.usedmem],
+          ['Free',  obj.res.freemem]
+        ]);
+        var options = {
+          title: 'Memory: ' + Math.floor(obj.res.totalmem / 1000000) + 'mb',
+          is3D: true,
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('mymem'));
+        chart.draw(data, options);
+      }
+      setTimeout(function(){
+        recall();
+      }, 1000);
+    });
+  }
+  </script>
+  <div id="light" class="white_content">
+  </div>
+  <div id="fade" class="black_overlay"></div>
+</body>
+</html>

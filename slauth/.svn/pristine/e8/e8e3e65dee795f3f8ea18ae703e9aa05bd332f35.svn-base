@@ -1,0 +1,157 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+module.exports = function(RolexMenu) {
+  RolexMenu.validatesUniquenessOf({scopedTo: ['rolecode','appcode', 'menucode']});
+  RolexMenu.afterRemote('**', function(ctx, result, next) {
+    if(result.res['count']){
+      _.extend(ctx.result, {'total': result.res['count']});
+      next();
+    } else {
+      var where = ctx.args;
+      if(ctx.args.filter) {
+        where = JSON.parse(ctx.args.filter).where;
+      }
+      RolexMenu.count(where, function (err, count) {
+        _.extend(ctx.result, {'total': count});
+        next();
+      })
+    }
+  });
+  RolexMenu.saveRolexMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      RolexMenu.findOne({where: {'rolecode': data.rolecode, 'menucode': data.menucode, 'deleted': false}}).then(function(object){
+        if(object){
+          RolexMenu.updateAll({'rolecode': data.rolecode, 'menucode': data.menucode, 'deleted': false},{
+            'readonly': data.readonly,
+            'edit': data.edit,
+            'deleted': false,
+            'notes': data.notes,
+            'editdate': new Date().toISOString(),
+            'editwho': data.editwho,
+          }).then(function(res){
+            callback(null, data);
+          }).catch(function(err){
+            callback(err);
+          })
+        } else {
+          RolexMenu.create({
+            'rolecode': data.rolecode,
+            'menucode': data.menucode,
+            'readonly': data.readonly,
+            'edit': data.edit,
+            'deleted': false,
+            'notes': data.notes,
+            'adddate': new Date().toISOString(),
+            'addwho': data.addwho,
+          }).then(function(res){
+            callback(null, res);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  RolexMenu.getMenuRolexMenu = function(token, rolecode, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexMenu.dataSource.connector.execute('SELECT rolexmenu.id, rolexmenu.rolecode, rolexmenu.menucode, menu.menuname, rolexmenu.readonly, rolexmenu.edit, menu.deleted, rolexmenu.notes, rolexmenu.adddate, rolexmenu.addwho, rolexmenu.editdate, rolexmenu.editwho FROM rolexmenu left join menu on rolexmenu.menucode = menu.menucode where rolexmenu.rolecode = ? and menu.deleted = ?', [rolecode, deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  //new version
+  RolexMenu.findRolexMenu = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      RolexMenu.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexMenu.listRolexMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      RolexMenu.dataSource.connector.execute("SELECT A.appcode, A.menucode, menuname, CASE WHEN(edit IS NULL) THEN 0 ELSE edit END as edit,  CASE WHEN(readonly IS NULL) THEN 0 ELSE readonly END as readonly FROM "
+      +"( "
+      +"SELECT menu.appcode, menu.menucode, menu.menuname "
+      +"FROM menu where menu.appcode = ?  and menu.deleted = false "
+      +") A "
+      +"LEFT JOIN  "
+      +"( "
+      +"SELECT rolexmenu.appcode, rolexmenu.menucode, rolexmenu.edit, rolexmenu.readonly from rolexmenu where rolecode = ? and rolexmenu.deleted = false "
+      +") B "
+      +"ON  A.menucode = B.menucode and A.appcode = B.appcode ", [data.appcode, data.rolecode], function(err, res){
+        if(err) callback(err);
+        callback(null, res);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexMenu.updateRolexMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      data.rolexmenu.forEach(function(value, index, arr){
+        RolexMenu.findOne({where: {'rolecode': value.rolecode, 'appcode': value.appcode, 'menucode': value.menucode}}).then(function(object){
+          if(object){
+            RolexMenu.updateAll({'rolecode': value.rolecode, 'appcode': value.appcode, 'menucode': value.menucode},{
+              'readonly': value.readonly,
+              'edit': value.edit,
+              'deleted': false,
+              'editdate': new Date().toISOString(),
+              'editwho': data.editwho,
+            }).then(function(res){
+            }).catch(function(err){
+            })
+          } else {
+            RolexMenu.create({
+              'rolecode': value.rolecode,
+              'appcode': value.appcode,
+              'menucode': value.menucode,
+              'readonly': value.readonly,
+              'edit': value.edit,
+              'deleted': false,
+              'adddate': new Date().toISOString(),
+              'addwho': data.addwho,
+            }).then(function(res){
+            }).catch(function(err){
+            })
+          }
+        })
+      });
+      callback(null, data);
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  RolexMenu.deleteRolexMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      RolexMenu.updateAll({'rolecode': data.rolecode},{
+        'deleted': true,
+        'editdate': new Date().toISOString(),
+        'editwho': data.editwho,
+      }).then(function(res){
+        callback(null, data);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

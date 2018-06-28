@@ -1,0 +1,18 @@
+{
+  "db": {
+    "name": "db",
+    "localStorage": "slauth",
+    "file": "db",
+    "connector": "memory"
+  },
+  "mysql": {
+    "host": "115.79.136.114",
+    "port": 3306,
+    "url": "",
+    "database": "swmaut",
+    "password": "123456",
+    "name": "mysql",
+    "user": "root",
+    "connector": "mysql"
+  }
+}

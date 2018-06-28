@@ -85,7 +85,7 @@ export class ApiService {
             if (res.ok) {
                 return Promise.resolve(resJson);
             } else {
-                Promise.reject(resJson.error)
+               return Promise.reject(resJson.error)
             }
         } catch (err) {
             Promise.reject(err);
@@ -107,10 +107,10 @@ export class ApiService {
             if (res.ok) {
                 return Promise.resolve(resJson);
             } else {
-                Promise.reject(resJson.error)
+               return Promise.reject(resJson.error)
             }
         } catch (err) {
-            Promise.reject(err);
+           return Promise.reject(err);
         }
 
     }

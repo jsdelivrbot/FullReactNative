@@ -1,0 +1,113 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+module.exports = function(Menu) {
+  Menu.validatesUniquenessOf({scopedTo: ['menucode', 'appcode']});
+  Menu.afterRemote('**', function(ctx, result, next) {
+    if(result.res['count']){
+      _.extend(ctx.result, {'total': result.res['count']});
+      next();
+    } else {
+      var where = ctx.args;
+      if(ctx.args.filter) {
+        where = JSON.parse(ctx.args.filter).where;
+      }
+      Menu.count(where, function (err, count) {
+        _.extend(ctx.result, {'total': count});
+        next();
+      })
+    }
+  });
+  Menu.listMenu = function(token, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Menu.dataSource.connector.execute('SELECT menu.id, menu.menucode, menu.menuname, false as readonly, false as edit, menu.deleted, menu.notes, menu.adddate, menu.addwho, menu.editdate, menu.editwho from menu WHERE menu.deleted = ?', [deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+  //new version
+  Menu.findMenu = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      Menu.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Menu.insertMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Menu.findOne({where: {'menucode': data.menucode, 'appcode': data.appcode}}).then(function(object){
+        if(object){
+          if(object.deleted){
+            Menu.updateAll({'menucode': data.menucode, 'appcode': data.appcode},{
+              'menuname': data.menuname,
+              'menuurl': data.menuurl,
+              'deleted': data.deleted,
+              'notes': data.notes,
+              'adddate': new Date().toISOString(),
+              'addwho': data.addwho,
+              'editdate': new Date().toISOString(),
+              'editwho': data.addwho
+            }).then(function(res){
+              data['id'] = object.id;
+              callback(null, data);
+            }).catch(function(err){
+              callback(err);
+            })
+          } else {
+            var err = new Error();
+            err.statusCode = err.status = 404;
+            err.message = 'Data is not existed';
+            callback(err);
+          }
+        } else {
+          Menu.create({
+            'appcode': data.appcode,
+            'menucode': data.menucode,
+            'menuname': data.menuname,
+            'menuurl': data.menuurl,
+            'deleted': false,
+            'notes': data.notes,
+            'adddate': new Date().toISOString(),
+            'addwho': data.addwho
+          }).then(function(res){
+            callback(null, res);
+          }).catch(function(err){
+            callback(err);
+          })
+        }
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  Menu.updateMenu = function(obj, callback) {
+    var data = JSON.parse(obj);
+    app.models.Token._validToken(data.token).then(function(result){
+      Menu.updateAll({'menucode': data.menucode, 'appcode': data.appcode},{
+        'menuname': data.menuname,
+        'menuurl': data.menuurl,
+        'deleted': data.deleted,
+        'notes': data.notes,
+        'editdate': new Date().toISOString(),
+        'editwho': data.editwho
+      }).then(function(res){
+        callback(null, data);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+
+};

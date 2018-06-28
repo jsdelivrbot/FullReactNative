@@ -1,0 +1,192 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var md5 = require('md5');
+var limit = 12;
+var _ = require('underscore');
+var nodemailer = require('nodemailer');
+
+module.exports = function(SysMail) {
+  SysMail.validatesUniquenessOf({scopedTo: ['appcode', 'user']});
+  SysMail.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  SysMail.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if(ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    SysMail.count(where, function (err, count) {
+      _.extend(ctx.result, {'total': count});
+      _.extend(ctx.result, {'page': count / limit});
+      next();
+    })
+  });
+  SysMail.listSysMail = function(token, deleted, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysMail.dataSource.connector.execute('SELECT sysmail.id, sysmail.appcode, sysmail.user, sysmail.user, sysmail.pass, sysmail.type, sysmail.host, sysmail.secure, sysmail.port, sysmail.notes FROM sysmail WHERE sysmail.deleted = ?', [deleted], function(err, obj){
+        if(err) callback(err);
+        callback(null, obj);
+      })
+    }).catch(function(err){
+      callback(err);
+    })
+  };
+  SysMail.insertSysMail = function(token, appcode, user, pass, isdefault, type, host, secure, port, notes, addwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      if(isdefault){
+        SysMail.updateAll({'appcode': appcode},{
+          'isdefault': false,
+          'editdate': new Date().toISOString(),
+          'editwho': addwho
+        }).then(function(obj_udp){
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      SysMail.create({
+        'appcode': appcode,
+        'user': user,
+        'pass': pass,
+        'isdefault': isdefault,
+        'deleted': false,
+        'type': type,
+        'host': host,
+        'secure': secure,
+        'port': port,
+        'notes': notes,
+        'adddate': new Date().toISOString(),
+        'addwho': addwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+  SysMail.updateSysMail = function(token, appcode, user, pass, deleted, isdefault, type, host, secure, port, notes, editwho, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      if(isdefault){
+        SysMail.updateAll({'appcode': appcode},{
+          'isdefault': false,
+          'editdate': new Date().toISOString(),
+          'editwho': editwho
+        }).then(function(obj_udp){
+        }).catch(function(err){
+          callback(err);
+        });
+      }
+      SysMail.updateAll({'appcode': appcode, 'user': user},{
+        'pass': pass,
+        'deleted': deleted,
+        'isdefault': isdefault,
+        'type': type,
+        'host': host,
+        'secure': secure,
+        'port': port,
+        'notes': notes,
+        'editdate': new Date().toISOString(),
+        'editwho': editwho
+      }).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      });
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+
+  SysMail.findSysMail = function(token, filter, callback) {
+    app.models.Token._validToken(token).then(function(result){
+      SysMail.find(JSON.parse(filter)).then(function(obj){
+        callback(null, obj);
+      }).catch(function(err){
+        callback(err);
+      })
+    }).catch(function(err){
+      callback(err);
+    });
+  };
+
+  SysMail.sendSysMail = function(username, to, subject, body, callback) {
+    app.models.UserxApp.findOne({where: {'username': username, 'deleted': false}}).then(function(userxapp){
+      if(userxapp){
+        SysMail.findOne({where: {'appcode': userxapp.appcode, 'isdefault': true}}).then(function(obj){
+          if(obj) {
+            let user = obj.user;
+            let pass = obj.pass;
+            let transporter = nodemailer.createTransport({
+              type: obj.type,
+              host: obj.host,
+              port: obj.port,
+              secure: obj.secure,
+              auth: {
+                user: user,
+                pass: pass
+              }
+            });
+            let mailOptions = {
+              from: '"Support" <'+user+'>',
+              to: to,
+              subject: subject,
+              html: body
+            };
+            transporter.sendMail(mailOptions, (err, data) => {
+              if (err) {
+                callback(err);
+              } else {
+                callback(null, data);
+              }
+            });
+          }
+          else {
+            SysMail.findOne({where: {'appcode': userxapp.appcode}}).then(function(_obj){
+              if(_obj) {
+                let user = _obj.user;
+                let pass = _obj.pass;
+                let transporter = nodemailer.createTransport({
+                  type: _obj.type,
+                  host: _obj.host,
+                  port: _obj.port,
+                  secure: _obj.secure,
+                  auth: {
+                    user: user,
+                    pass: pass
+                  }
+                });
+                let mailOptions = {
+                  from: '"Support" <'+user+'>',
+                  to: to,
+                  subject: subject,
+                  html: body
+                };
+                transporter.sendMail(mailOptions, (err, data) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, data);
+                  }
+                });
+              }
+              else {
+                var err = new Error();
+                err.statusCode = err.status = 404;
+                err.message = 'Mail is not found';
+                callback(err);
+              }
+            })
+          }
+        })
+      } else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.message = 'Mail is not found';
+        callback(err);
+      }
+    })
+  };
+};

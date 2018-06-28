@@ -1,0 +1,779 @@
+{
+  "name": "Storer",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "warehousecode": {
+      "type": "string",
+      "required": true
+    },
+    "storerkey": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "parentuser": {
+      "type": "string",
+      "required": true
+    },
+    "sourceversion": {
+      "type": "number"
+    },
+    "company": {
+      "type": "string",
+      "required": true
+    },
+    "vat": {
+      "type": "string"
+    },
+    "address1": {
+      "type": "string"
+    },
+    "address2": {
+      "type": "string"
+    },
+    "address3": {
+      "type": "string"
+    },
+    "address4": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "isocntrycode": {
+      "type": "string"
+    },
+    "contact1": {
+      "type": "string"
+    },
+    "contact2": {
+      "type": "string"
+    },
+    "phone1": {
+      "type": "string"
+    },
+    "phone2": {
+      "type": "string"
+    },
+    "fax1": {
+      "type": "string"
+    },
+    "fax2": {
+      "type": "string"
+    },
+    "email1": {
+      "type": "string"
+    },
+    "email2": {
+      "type": "string"
+    },
+    "b_contact1": {
+      "type": "string"
+    },
+    "b_contact2": {
+      "type": "string"
+    },
+    "b_company": {
+      "type": "string"
+    },
+    "b_address1": {
+      "type": "string"
+    },
+    "b_address2": {
+      "type": "string"
+    },
+    "b_address3": {
+      "type": "string"
+    },
+    "b_address4": {
+      "type": "string"
+    },
+    "b_city": {
+      "type": "string"
+    },
+    "b_state": {
+      "type": "string"
+    },
+    "b_zip": {
+      "type": "string"
+    },
+    "b_country": {
+      "type": "string"
+    },
+    "b_isocntrycode": {
+      "type": "string"
+    },
+    "b_phone1": {
+      "type": "string"
+    },
+    "b_phone2": {
+      "type": "string"
+    },
+    "b_fax1": {
+      "type": "string"
+    },
+    "b_fax2": {
+      "type": "string"
+    },
+    "b_email1": {
+      "type": "string"
+    },
+    "creditlimit": {
+      "type": "string"
+    },
+    "cartongroup": {
+      "type": "string"
+    },
+    "pickcode": {
+      "type": "string"
+    },
+    "createpataskonrfreceipt": {
+      "type": "string"
+    },
+    "calculateputawaylocation": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "defaultstrategy": {
+      "type": "string"
+    },
+    "defaultskurotation": {
+      "type": "string"
+    },
+    "defaultrotation": {
+      "type": "string"
+    },
+    "scac_code": {
+      "type": "string"
+    },
+    "title1": {
+      "type": "string"
+    },
+    "title2": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "susr1": {
+      "type": "string"
+    },
+    "susr2": {
+      "type": "string"
+    },
+    "susr3": {
+      "type": "string"
+    },
+    "susr4": {
+      "type": "string"
+    },
+    "susr5": {
+      "type": "string"
+    },
+    "susr6": {
+      "type": "string"
+    },
+    "multizoneplpa": {
+      "type": "string"
+    },
+    "cwoflag": {
+      "type": "string"
+    },
+    "rollreceipt": {
+      "type": "string"
+    },
+    "notes1": {
+      "type": "string"
+    },
+    "notes2": {
+      "type": "string"
+    },
+    "apportionrule": {
+      "type": "string"
+    },
+    "enableoppxdock": {
+      "type": "string"
+    },
+    "allowovershipment": {
+      "type": "string"
+    },
+    "maximumorders": {
+      "type": "number"
+    },
+    "minimumpercent": {
+      "type": "number"
+    },
+    "orderdatestartdays": {
+      "type": "number"
+    },
+    "orderdateenddays": {
+      "type": "number"
+    },
+    "ordertyperestrict01": {
+      "type": "string"
+    },
+    "ordertyperestrict02": {
+      "type": "string"
+    },
+    "ordertyperestrict03": {
+      "type": "string"
+    },
+    "ordertyperestrict04": {
+      "type": "string"
+    },
+    "ordertyperestrict05": {
+      "type": "string"
+    },
+    "ordertyperestrict06": {
+      "type": "string"
+    },
+    "opporderstrategykey": {
+      "type": "string"
+    },
+    "receiptvalidationtemplate": {
+      "type": "string"
+    },
+    "allowautocloseforpo": {
+      "type": "string"
+    },
+    "allowautocloseforasn": {
+      "type": "string"
+    },
+    "allowautocloseforps": {
+      "type": "string"
+    },
+    "allowsystemgeneratedlpn": {
+      "type": "string"
+    },
+    "allowduplicatelicenseplates": {
+      "type": "string"
+    },
+    "allowcommingledlpn": {
+      "type": "string"
+    },
+    "lpnbarcodesymbology": {
+      "type": "string"
+    },
+    "lpnbarcodeformat": {
+      "type": "string"
+    },
+    "allowsinglescanreceiving": {
+      "type": "string"
+    },
+    "lpnlength": {
+      "type": "number"
+    },
+    "applicationid": {
+      "type": "string"
+    },
+    "sscc1stdigit": {
+      "type": "number"
+    },
+    "uccvendornumber": {
+      "type": "string"
+    },
+    "caselabeltype": {
+      "type": "string"
+    },
+    "autoprintlabellpn": {
+      "type": "string"
+    },
+    "autoprintlabelputaway": {
+      "type": "string"
+    },
+    "lpnstartnumber": {
+      "type": "string"
+    },
+    "nextlpnnumber": {
+      "type": "string"
+    },
+    "lpnrollbacknumber": {
+      "type": "string"
+    },
+    "barcodeconfigkey": {
+      "type": "string"
+    },
+    "defaultputawaystrategy": {
+      "type": "string"
+    },
+    "autocloseasn": {
+      "type": "string"
+    },
+    "autoclosepo": {
+      "type": "string"
+    },
+    "trackinventoryby": {
+      "type": "string"
+    },
+    "dupcaseid": {
+      "type": "string"
+    },
+    "defaultreturnsloc": {
+      "type": "string"
+    },
+    "defaultqcloc": {
+      "type": "string"
+    },
+    "piskuxloc": {
+      "type": "string"
+    },
+    "ccskuxloc": {
+      "type": "string"
+    },
+    "ccadjbyrf": {
+      "type": "string"
+    },
+    "orderbreakdefault": {
+      "type": "string"
+    },
+    "skusetuprequired": {
+      "type": "string"
+    },
+    "defaultqclocout": {
+      "type": "string"
+    },
+    "enablepackingdefault": {
+      "type": "string"
+    },
+    "defaultpackinglocation": {
+      "type": "string"
+    },
+    "generatepacklist": {
+      "type": "string"
+    },
+    "packingvalidationtemplate": {
+      "type": "string"
+    },
+    "inspectatpack": {
+      "type": "string"
+    },
+    "addressoverwriteindicator": {
+      "type": "string"
+    },
+    "accountingentity": {
+      "type": "string"
+    },
+    "createoppxdtasks": {
+      "type": "number"
+    },
+    "issueoppxdtasks": {
+      "type": "number"
+    },
+    "oppxdpickfrom": {
+      "type": "string"
+    },
+    "obxdstage": {
+      "type": "string"
+    },
+    "kship_carrier": {
+      "type": "number"
+    },
+    "spsuomweight": {
+      "type": "string"
+    },
+    "spsuomdimension": {
+      "type": "string"
+    },
+    "adddate": {
+      "type": "date"
+    },
+    "addwho": {
+      "type": "string"
+    },
+    "editdate": {
+      "type": "date"
+    },
+    "editwho": {
+      "type": "string"
+    },
+    "groupcode": {
+      "type": "string"
+    },
+    "lotexport": {
+      "type": "number"
+    },
+    "upccode": {
+      "type": "number"
+    },
+    "groupofcargo": {
+      "type": "number"
+    },
+    "priorityuom": {
+      "type": "number"
+    },
+    "stockcount_nsx": {
+      "type": "number"
+    },
+    "stockcount_hsd": {
+      "type": "number"
+    },
+    "stockinfo": {
+      "type": "string"
+    },
+    "freeday": {
+      "type": "string"
+    },
+    "allocatestrategykey": {
+      "type": "string"
+    },
+    "ageindays": {
+      "type": "number"
+    },
+    "lottable": {
+      "type": "string"
+    },
+    "countlottable": {
+      "type": "string"
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "listStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "username",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/list",
+          "verb": "post"
+        }
+      ]
+    },
+    "getAllByWarehouseStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "arrwarehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/getallbywarehouse",
+          "verb": "post"
+        }
+      ]
+    },
+    "findStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "filter",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/find",
+          "verb": "post"
+        }
+      ]
+    },
+    "insertStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "storerkey",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "company",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "address1",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "lottable",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "stockinfo",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "freeday",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "ageindays",
+          "type": "number",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "notes1",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "addwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/insert",
+          "verb": "post"
+        }
+      ]
+    },
+    "updateStorer": {
+      "accepts": [
+        {
+          "arg": "token",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "deleted",
+          "type": "boolean",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "warehousecode",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "storerkey",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "type",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "parentuser",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "company",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "arg": "address1",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "lottable",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "stockinfo",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "freeday",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "ageindays",
+          "type": "number",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "notes1",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "arg": "editwho",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "returns": [
+        {
+          "arg": "res",
+          "type": "string",
+          "root": false,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "http": [
+        {
+          "path": "/update",
+          "verb": "post"
+        }
+      ]
+    }
+  }
+}

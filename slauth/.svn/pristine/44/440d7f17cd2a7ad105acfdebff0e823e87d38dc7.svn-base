@@ -1,0 +1,85 @@
+'use strict';
+var app = require('../../server/server');
+var shortid = require('shortid');
+var _ = require("underscore");
+var limit = 12;
+module.exports = function (District) {
+  District.validatesUniquenessOf();
+  District.observe('access', function setMaxLimit(ctx, next) {
+    ctx.query.limit = limit;
+    next();
+  });
+  District.afterRemote('**', function (ctx, result, next) {
+    var where = ctx.args;
+    if (ctx.args.filter) {
+      where = JSON.parse(ctx.args.filter).where;
+    }
+    District.count(where, function (err, count) {
+      _.extend(ctx.result, { 'total': count });
+      _.extend(ctx.result, { 'page': count / limit });
+      next();
+    })
+  });
+  District.findDistrict = function (filter, callback) {
+    District.find(JSON.parse(filter)).then(function (obj) {
+      callback(null, obj);
+    }).catch(function (err) {
+      callback(err);
+    })
+  };
+  District.listDistrict = function (citycode, callback) {
+    District.dataSource.connector.execute('SELECT id, citycode, districtcode, districtname FROM district where deleted = false and citycode = ? ', [citycode], function(err, res) {
+      if (err)
+      callback(err);
+      else {
+        District.dataSource.connector.execute('SELECT  COUNT(*) AS TOTAL FROM district where deleted = false and citycode = ? ', [citycode], function(err, total) {
+          if (err) callback(err);
+          else {
+            res['count'] = total[0].TOTAL;
+            callback(null, res);
+          }
+        });
+      }
+    });
+  };
+  District.insertDistrict = function (obj, callback) {
+    var data = JSON.parse(obj);
+    District.create({
+      'citycode': data.citycode,
+      'districtcode': data.districtcode,
+      'districtname': data.districtname,
+      'deleted': false,
+      'adddate': new Date().toISOString(),
+      'addwho': data.addwho,
+    }).then(function (obj) {
+      callback(null, obj);
+    }).catch(function (err) {
+      callback(err);
+    });
+  };
+  District.updateDistrict = function (obj, callback) {
+    var data = JSON.parse(obj);
+    District.findOne({ where: { 'id': data.id } }).then(function (obj) {
+      if (obj) {
+        District.updateAll({ 'id': data.id }, {
+          'citycode': data.citycode,
+          'districtcode': data.districtcode,
+          'districtname': data.districtname,
+          'deleted': data.deleted,
+          'editdate': new Date().toISOString(),
+          'editwho': data.editwho
+        }).then(function (obj) {
+          callback(null, obj);
+        }).catch(function (err) {
+          callback(err);
+        });
+      }
+      else {
+        var err = new Error();
+        err.statusCode = err.status = 404;
+        err.message = 'Data is not existed';
+        callback(err);
+      }
+    })
+  };
+};

@@ -23,7 +23,7 @@ export default class BarchartComponent extends Component {
 
   constructor(props) {
     super(props);
-
+  
     this.state = {
       legend: {
         enabled: true,
@@ -36,20 +36,29 @@ export default class BarchartComponent extends Component {
       },
       data: {
         dataSets: [{
-          values: [200],
-          label: 'Company A',
+          values: [28],
+          label: 'totalowner',
           config: {
             drawValues: false,
             colors: [processColor(ColorsChart[0])],
           }
         }, {
-          values: [40],
-          label: 'Company B',
+          values: [0],
+          label: 'totaluser',
           config: {
             drawValues: false,
             colors: [processColor(ColorsChart[1])],
           }
-        }, ],
+        }, 
+        {
+          values: [0],
+          label: 'totalwarehouse',
+          config: {
+            drawValues: false,
+            colors: [processColor(ColorsChart[2])],
+          }
+        }, 
+      ],
         config: {
           barWidth: 0.2,
           group: {
@@ -60,28 +69,23 @@ export default class BarchartComponent extends Component {
         }
       },
       xAxis: {
-        valueFormatter: ['1990'],
+        valueFormatter: ['2018'],
         granularityEnabled: true,
         granularity: 1,
         axisMaximum: 1,
         axisMinimum: 0,
         centerAxisLabels: true
       },
-      yAxis: {
+      yAxis : {
         left: {
-          drawLabels: true, //是否绘制左y轴数值
-          drawAxisLine: true,
-          drawGridLines: false,
-          zeroLine: {
-            enabled: true,
-            lineWidth: 2
-          },
-          granularity: 1 //左y轴步进值
+          granularityEnabled: true,
+          granularity: 20
         },
         right: {
-          enabled: true, //是否绘制右y轴数值
-          granularity: 1 //右y轴步进值
-        },
+          granularityEnabled: true,
+          granularity: 20
+        }
+  
       },
       marker: {
         enabled: true,
@@ -98,7 +102,7 @@ export default class BarchartComponent extends Component {
     this.setState({ ...this.state,
       highlights: [{
         x: 1,
-        y: 40
+        y: 10
       }, {
         x: 2,
         y: 50
@@ -122,26 +126,33 @@ export default class BarchartComponent extends Component {
   }
 
   render() {
-    return (
-      <Container style={styles.container}>
-          <BarChart
-          
-            style={styles.chart}
-            xAxis={this.state.xAxis}
-            yAxis={this.state.yAxis}
-            data={this.state.data}
-            legend={this.state.legend}
-            drawValueAboveBar={false}
-            animation={{ durationX: 2000 }}
-            onSelect={this.handleSelect.bind(this)}
-            onChange={(event) => console.log(event.nativeEvent)}
-            highlights={this.state.highlights}
-            marker={this.state.marker}
-            chartDescription={{text: ''}}
-          />
-        </Container>
-
-    );
+    if(this.props.totalCompany) {
+      alert(JSON.stringify(this.props.totalCompany));
+      return (
+        <Container style={styles.container}>
+            <BarChart
+            
+              style={styles.chart}
+              xAxis={this.state.xAxis}
+              yAxis={this.state.yAxis}
+              data={this.state.data}
+              legend={this.state.legend}
+              drawValueAboveBar={true}
+              animation={{ durationX: 2000 }}
+              onSelect={this.handleSelect.bind(this)}
+              onChange={(event) => console.log(event.nativeEvent)}
+              highlights={this.state.highlights}
+              marker={this.state.marker}
+              chartDescription={{text: ''}}
+            />
+          </Container>
+  
+      );
+    }
+    else {
+      return null
+    }
+   
   }
 }
 

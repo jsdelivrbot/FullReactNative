@@ -5,6 +5,7 @@ import ConfigWarehouseComponent from './src/components/main/master-data/warehous
 import TestListComponent from './src/components/main/test-component/TestListComponent';
 import TestLoginComponent from './src/components/main/test-component/TestLoginComponent';
 import RNChart from './src/components/main/test-component/RNChart';
+import SystemMailComponent from './src/components/main/master-data/system-mail/SystemMailComponent';
 
 console.disableYellowBox = true;
-AppRegistry.registerComponent('managerApp', () => App);
+AppRegistry.registerComponent('managerApp', () => SystemMailComponent);

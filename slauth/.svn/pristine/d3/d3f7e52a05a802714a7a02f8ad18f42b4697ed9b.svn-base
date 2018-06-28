@@ -1,0 +1,24 @@
+import { Injectable } from '@angular/core';
+import { Http, Headers } from '@angular/http';
+import { AppServices } from './../app.services';
+import { Router } from '@angular/router';
+
+@Injectable()
+export class AuthService {
+  isAuthenticated: boolean = false;
+
+  constructor(private http: Http, private router: Router, private appServices: AppServices) {
+  }
+  login(session) {
+    this.isAuthenticated = true;
+    sessionStorage.setItem('session', session);
+    this.appServices.session = JSON.parse(sessionStorage.getItem('session'));
+    this.router.navigate(['admin/home']);
+  }
+  logout() {
+    this.isAuthenticated = false;
+    sessionStorage.removeItem('session');
+    this.router.navigate(['admin/login']);
+  }
+
+}

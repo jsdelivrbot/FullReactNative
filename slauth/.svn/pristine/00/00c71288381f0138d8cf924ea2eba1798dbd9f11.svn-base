@@ -1,0 +1,111 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "loopback-component-visualizer",
+        "scope": null,
+        "escapedName": "loopback-component-visualizer",
+        "name": "loopback-component-visualizer",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "D:\\wamp\\www\\slauth"
+    ]
+  ],
+  "_from": "loopback-component-visualizer@latest",
+  "_id": "loopback-component-visualizer@1.2.1",
+  "_inCache": true,
+  "_location": "/loopback-component-visualizer",
+  "_nodeVersion": "6.4.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/loopback-component-visualizer-1.2.1.tgz_1499749521979_0.05923871789127588"
+  },
+  "_npmUser": {
+    "name": "pbhadauria2000",
+    "email": "pbhadauria@hotmail.com"
+  },
+  "_npmVersion": "3.10.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "loopback-component-visualizer",
+    "scope": null,
+    "escapedName": "loopback-component-visualizer",
+    "name": "loopback-component-visualizer",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/loopback-component-visualizer/-/loopback-component-visualizer-1.2.1.tgz",
+  "_shasum": "e398407d278a92273a6d823b28d865243cb97b0d",
+  "_shrinkwrap": null,
+  "_spec": "loopback-component-visualizer",
+  "_where": "D:\\wamp\\www\\slauth",
+  "author": {
+    "name": "prashantbaid, pbhadauria2000"
+  },
+  "bugs": {
+    "url": "https://github.com/yantrashala/loopback-component-visualizer/issues"
+  },
+  "contributors": [
+    {
+      "name": "prashantbaid"
+    },
+    {
+      "name": "pbhadauria2000"
+    },
+    {
+      "name": "mennu"
+    }
+  ],
+  "dependencies": {
+    "lodash": "^4.12.0"
+  },
+  "description": "Loopback component to visualize models and their relationships",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "loopback": "^2.28.0",
+    "loopback-datasource-juggler": "^2.46.0",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "e398407d278a92273a6d823b28d865243cb97b0d",
+    "tarball": "https://registry.npmjs.org/loopback-component-visualizer/-/loopback-component-visualizer-1.2.1.tgz"
+  },
+  "gitHead": "09010b036a867962abd363af6f44aeb33f79be6f",
+  "homepage": "https://github.com/yantrashala/loopback-component-visualizer#readme",
+  "license": "MIT",
+  "main": "./index.js",
+  "maintainers": [
+    {
+      "name": "mennu",
+      "email": "naveenmeher07@gmail.com"
+    },
+    {
+      "name": "pbhadauria2000",
+      "email": "pbhadauria@hotmail.com"
+    },
+    {
+      "name": "prashantb",
+      "email": "prashantvbaid@gmail.com"
+    }
+  ],
+  "name": "loopback-component-visualizer",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yantrashala/loopback-component-visualizer.git"
+  },
+  "scripts": {
+    "coverage": "istanbul cover _mocha",
+    "test": "mocha"
+  },
+  "version": "1.2.1"
+}

@@ -1,0 +1,54 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { RouterModule, Routes } from '@angular/router';
+
+import { AppServices } from './app.services';
+
+import { AppComponent } from './app.component';
+import { PageNotFoundComponent } from './not-found.component';
+
+import { HeaderWmsComponent } from './layout/header-wms/header-wms.component';
+import { TopMenuWmsComponent } from './layout/top-menu-wms/top-menu-wms.component';
+import { FooterWmsComponent } from './layout/footer-wms/footer-wms.component';
+import { FooterTmsComponent } from './layout/footer-tms/footer-tms.component';
+import { TopMenuTmsComponent } from './layout/top-menu-tms/top-menu-tms.component';
+import { HeaderTmsComponent } from './layout/header-tms/header-tms.component';
+
+import { MainHomeComponent } from './main/main-home/main-home.component';
+import { MainWmsLoginComponent } from './main/main-wms-login/main-wms-login.component';
+import { MainTmsLoginComponent } from './main/main-tms-login/main-tms-login.component';
+
+const appRoutes: Routes = [
+  { path: '', component: AppComponent },
+  { path: 'main/home', component: MainHomeComponent },
+  { path: 'main/wms-login', component: MainWmsLoginComponent },
+  { path: 'main/tms-login', component: MainTmsLoginComponent },
+  { path: '**', component: PageNotFoundComponent }
+];
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    PageNotFoundComponent,
+    HeaderWmsComponent,
+    TopMenuWmsComponent,
+    FooterWmsComponent,
+    FooterTmsComponent,
+    TopMenuTmsComponent,
+    HeaderTmsComponent,
+    MainHomeComponent,
+    MainWmsLoginComponent,
+    MainTmsLoginComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    RouterModule.forRoot(appRoutes)
+  ],
+  providers: [AppServices],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

@@ -1,0 +1,203 @@
+<app-header></app-header>
+<div class="container-fluid">
+  <div class="row row-offcanvas row-offcanvas-left">
+    <div class="col-6 col-sm-3 col-lg-2 sidebar-offcanvas p-0">
+      <app-left-menu></app-left-menu>
+    </div>
+    <div class="col-12 col-sm-12 col-lg-10 p-0">
+      <app-top-menu></app-top-menu>
+      <div class="container-fluid pt-3 pb-3">
+        <h2><i class="fa fa-signal"></i> Users Management</h2>
+        <hr/>
+        <button type="button" class="btn btn-sm btn-primary" (click)="BacktoListusers()" >
+          <i class="fa fa-reply"></i> Back to List Users
+        </button>
+        <form #frmEdit="ngForm" (ngSubmit)="updateUsersData(frmEdit.value)">
+          <button class="btn btn-sm btn-outline-danger pull-right" data-toggle="modal" data-target="#modalDeleteUsers" >
+            <i class="fa fa-trash"></i> Delete
+          </button>
+          <button type="submit" [disabled]="!frmEdit.form.valid" class="btn btn-sm btn-outline-success pull-right">
+            <i class="fa fa-floppy-o"></i> Save
+          </button>
+          <button type="button" (click)="refreshUsersData()" class="btn btn-sm btn-outline-secondary pull-right">
+            <i class="fa fa-times"></i> Cancel
+          </button>
+          <div class="mt-3">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#tabUsersDetail" role="tab">Users Detail</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tabUsersPermission" role="tab">Users Permission</a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="tabUsersDetail">
+                <div class="row mt-3">
+                  <div class="col-sm-12" *ngIf="data_users">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group pull-right">
+                          <p class="m-0 text-muted">Status</p>
+                          <div class="btn-group btn-group-circle" data-toggle="buttons" >
+                            <label class="btn btn-success btn-sm" *ngIf="data_users.status"  (click)="changeStatus(data_users)">
+                              <input type="radio" name="status" value="1" [(ngModel)]='data_users.status' class="toggle"> Active
+                            </label>
+                            <label class="btn btn-danger btn-sm " *ngIf="!data_users.status" (click)="changeStatus(data_users)">
+                              <input type="radio" name="status" value="0" [(ngModel)]='data_users.status' class="toggle" > InActive
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>UserName</span> -->
+                          <input type="text" required class="form-control" name="username" [(ngModel)]="data_users.username" required  maxlength ="65" readonly/>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Email</span> -->
+                          <input type="email" required class="form-control" name="email" [(ngModel)]="data_users.email"  maxlength ="128"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Tel</span> -->
+                          <input type="tel" required class="form-control" name="tel" [(ngModel)]="data_users.tel"  maxlength ="45"/>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Type</span> -->
+                          <select [(ngModel)]="data_users.type" required name="type" class="custom-select form-control">
+                            <option value="1">Level 1</option>
+                            <option value="2">Level 2</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Password</span>
+                          <input type="password" required maxlength ="65" class="form-control" name="password" [(ngModel)]="data_users.password"/> -->
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="input-group">
+                          <!-- <span class="input-group-addon">Notes</span> -->
+                          <textarea class="form-control" rows="2" [(ngModel)]='data_users.notes' name='notes' maxlength="200"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group">
+                          <button class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modalChangePasswordUsers" >
+                            <i class="fa fa-trash"></i> ChangePass
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="tabUsersPermission">
+                <div class="row mt-3">
+                  <div class="col-sm-12">
+                    <div class="d-flex justify-content-between">
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="modal fade" #myModal id="modalDeleteUsers" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Users</h5>
+              </div>
+              <div class="modal-body">
+                <p>Do you want to delete this user?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-danger" (click)="deleteUsersData(data_users)" ><i class="fa fa-thumbs-o-up"></i></button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- #myModal -->
+        <div class="modal fade"  id="modalChangePasswordUsers" tabindex="-1">
+          <form #frmChangePass="ngForm" (ngSubmit)="changePasswordUsersData(frmChangePass.value)">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Change Password</h5>
+                  <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" *ngIf="data_users">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>UserName</span>
+                        <input type="text" required class="form-control" name="username" required  maxlength ="65" [(ngModel)]="data_users.username" readonly/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Password current</span>
+                        <input type="password" required class="form-control" name="passwordold" required  maxlength ="65" ngModel/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="text-danger">&nbsp;*</span> Password new</span>
+                        <input type="password" required class="form-control" name="password"  maxlength ="64" ngModel/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="text-danger">&nbsp;*</span>Confirm Password New</span>
+                        <input type="password" required class="form-control" name="confirmpassword"  maxlength ="64" ngModel/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" [disabled]="!frmChangePass.form.valid" ><i class="fa fa-save"></i></button>
+                  <button class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="data-layout" data-layout="footer.html"></div>
