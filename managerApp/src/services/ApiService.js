@@ -4,9 +4,6 @@ import {
 import {
     Global
 } from "../common/Global";
-
-const HOST = 'http://slauth-lb.gogoviet.com/api/';
-//const HOST = 'http://5b2aa92f3a8ea3001418d7d2.mockapi.io/';
 export class ApiService {
     static get(url) {
         const options = {
@@ -14,7 +11,7 @@ export class ApiService {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
-                'token': (Global.userInfo != null) ? Global.userInfo.token.id : ''
+                'token': (Global.userInfo != null) ? Global.userInfo.token : ''
             }
         }
         return new Promise(async (resolve, reject) => {
@@ -22,7 +19,7 @@ export class ApiService {
                 reject(new Error("timeout"))
             }, 5000)
             try {
-                let res = await fetch(HOST + url, options);
+                let res = await fetch(Global.HOST.administrator + url, options);
                 let resJson = await res.json();
                 if (res.ok) {
                     resolve(resJson);
@@ -40,7 +37,7 @@ export class ApiService {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
-                'token': (Global.userInfo != null) ? Global.userInfo.token.id : ''
+                'token': (Global.userInfo != null) ? Global.userInfo.token : ''
             },
             body: JSON.stringify(data)
         }
@@ -49,7 +46,38 @@ export class ApiService {
                 reject(new Error("timeout"))
             }, 5000)
             try {
-                let res = await fetch(HOST + url, options);
+                let res = await fetch(Global.HOST.administrator + url, options);
+                let resJson = await res.json();
+                if (res.ok) {
+                    resolve(resJson);
+                } else {
+                    reject(resJson.error)
+                }
+            } catch (err) {
+                reject(err);
+            }
+        })
+
+    }
+    static postHostUser(url, data) {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+                'token': (Global.userInfo != null) ? Global.userInfo.token : ''
+            },
+            body: JSON.stringify(data)
+        }
+       // alert(Global.userInfo.token.id);
+        return new Promise(async (resolve, reject) => {
+            setTimeout(() => {
+                reject(new Error("timeout"))
+            }, 5000)
+            try {
+                let keyHost = (Global.userInfo) ? Global.userInfo.parentuser : 'administrator';
+                alert(keyHost);
+                let res = await fetch(Global.HOST[keyHost] + url, options);
                 let resJson = await res.json();
                 if (res.ok) {
                     resolve(resJson);
@@ -76,11 +104,11 @@ export class ApiService {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
-                'token': (Global.userInfo != null) ? Global.userInfo.token.id : ''
+                'token': (Global.userInfo != null) ? Global.userInfo.token : ''
             }
         }
         try {
-            let res = await fetch(HOST + url, options);
+            let res = await fetch(Global.HOST.administrator + url, options);
             let resJson = await res.json();
             if (res.ok) {
                 return Promise.resolve(resJson);
@@ -88,7 +116,7 @@ export class ApiService {
                return Promise.reject(resJson.error)
             }
         } catch (err) {
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
     static async postNoTimeOut(url, data) {
@@ -97,12 +125,12 @@ export class ApiService {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
-                'token': (Global.userInfo != null) ? Global.userInfo.token.id : ''
+                'token': (Global.userInfo != null) ? Global.userInfo.token : ''
             },
             body: JSON.stringify(data)
         }
         try {
-            let res = await fetch(HOST + url, options);
+            let res = await fetch(Global.HOST.administrator + url, options);
             let resJson = await res.json();
             if (res.ok) {
                 return Promise.resolve(resJson);

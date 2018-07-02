@@ -93,7 +93,7 @@ export default class SideMenuComponent extends Component {
   }
   render() {
     const { logo, content } = sideMenuStyles;
-    const userName = (Global.userInfo)? Global.userInfo.user.username : ' ';
+    const userName = (Global.userInfo)? Global.userInfo.token.uid : ' ';
     return (
       <Container style={{ flex: 1 }}>
         <Container style={{ alignItems: "center", flex: 20 }}>

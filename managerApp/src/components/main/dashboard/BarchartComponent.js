@@ -17,74 +17,54 @@ import {
 import {
   Container,
   Content,
-  ListItem
+  ListItem,
+  Text
 } from 'native-base';
 export default class BarchartComponent extends Component {
 
   constructor(props) {
     super(props);
-  
+    
     this.state = {
       legend: {
         enabled: true,
-        textSize: 14,
+        textSize: 10,
         form: "SQUARE",
-        formSize: 14,
+        formSize: 5,
         xEntrySpace: 2,
         yEntrySpace: 2,
         wordWrapEnabled: true
       },
       data: {
-        dataSets: [{
-          values: [28],
-          label: 'totalowner',
-          config: {
-            drawValues: false,
-            colors: [processColor(ColorsChart[0])],
-          }
-        }, {
-          values: [0],
-          label: 'totaluser',
-          config: {
-            drawValues: false,
-            colors: [processColor(ColorsChart[1])],
-          }
-        }, 
-        {
-          values: [0],
-          label: 'totalwarehouse',
-          config: {
-            drawValues: false,
-            colors: [processColor(ColorsChart[2])],
-          }
-        }, 
-      ],
+        dataSets: [],
         config: {
-          barWidth: 0.2,
+          barWidth: 0,
           group: {
             fromX: 0,
             groupSpace: 0.1,
-            barSpace: 0.1,
+            barSpace: 0,
           },
         }
       },
       xAxis: {
-        valueFormatter: ['2018'],
+        valueFormatter: [],
         granularityEnabled: true,
         granularity: 1,
-        axisMaximum: 1,
+        axisMaximum: 0,
         axisMinimum: 0,
         centerAxisLabels: true
       },
       yAxis : {
-        left: {
-          granularityEnabled: true,
-          granularity: 20
-        },
-        right: {
-          granularityEnabled: true,
-          granularity: 20
-        }
+        granularityEnabled: true,
+        // granularity: 10,
+        // left: {
+        //   granularityEnabled: true,
+        //   granularity: 20
+        // },
+        // right: {
+        //   granularityEnabled: true,
+        //   granularity: 20
+        // }
   
       },
       marker: {
@@ -96,7 +76,42 @@ export default class BarchartComponent extends Component {
 
     };
   }
+  loadData(listData){
+    let data = this.state.data
+    let xAxis = this.state.xAxis
+    data.dataSets = [];
+    xAxis.valueFormatter = [];
+    if (listData.length > 0 ){
+      xAxis.axisMaximum = listData.length;
+      let temp = Object.keys(listData[0]);
+      if (temp.length > 0) {
+        for(let i=0;i<temp.length;i++){
+          if(i === 0) {
+            xAxis.valueFormatter = listData.map(x => {
+               return x[temp[0]].toString();
+            })
+          } else {
+            data.dataSets.push({
+              values: listData.map(x => {
+                 return x[temp[i]];
+              }),
+              label: temp[i],
+              config: {
+                drawValues: false,
+                colors: [processColor(ColorsChart[i-1])],
+              }
+            });
+          }
+        }
+      }
+      data.config.barWidth = (temp.length>1) ? (0.9/(temp.length-1)) : 0 
+    }
 
+    this.setState({
+      data: data,
+      xAxis: xAxis
+    })
+  }
   componentDidMount() {
 
     this.setState({ ...this.state,
@@ -126,12 +141,14 @@ export default class BarchartComponent extends Component {
   }
 
   render() {
-    if(this.props.totalCompany) {
-      alert(JSON.stringify(this.props.totalCompany));
+    if(this.state.data.dataSets.length >0) {
+      // alert(JSON.stringify(this.props.totalCompany));
       return (
         <Container style={styles.container}>
+            <Text>
+              {` ${this.props.title}`}
+            </Text>
             <BarChart
-            
               style={styles.chart}
               xAxis={this.state.xAxis}
               yAxis={this.state.yAxis}
@@ -141,7 +158,7 @@ export default class BarchartComponent extends Component {
               animation={{ durationX: 2000 }}
               onSelect={this.handleSelect.bind(this)}
               onChange={(event) => console.log(event.nativeEvent)}
-              highlights={this.state.highlights}
+             // highlights={this.state.highlights}
               marker={this.state.marker}
               chartDescription={{text: ''}}
             />
@@ -158,7 +175,7 @@ export default class BarchartComponent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: Dimensions.get('screen').width
+    height: 300
   },
   chart: {
     flex: 1

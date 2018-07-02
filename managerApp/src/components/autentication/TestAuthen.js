@@ -1,71 +1,34 @@
 import React, { Component } from "react";
-import { TouchableOpacity, Alert,AsyncStorage,Image } from "react-native";
+import { TouchableOpacity, Alert,Image } from "react-native";
 import { styles, sideMenuStyles } from "../../common/Styles";
 import { STRINGS } from "../../common/Language";
-import { Container, Item, Input,Text, Spinner, Content, View } from "native-base";
-import { MainScreen, MenuScreen } from "../../common/ScreenName";
+import { Container, Item, Input,Text, Spinner} from "native-base";
 import { AuthService } from "../../services/AuthService";
 import { ColorsChart, Color } from "../../common/Color";
 import { Notifiy } from "../../common/Notify";
 import { widthScreen, keyStore } from "../../common/Constraint";
-import { Global } from "../../common/Global";
-import { ApiService } from "../../services/ApiService";
+
 const authService = new AuthService();
-class SignInComponent extends Component {
+class TetAuthen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
       password: "",
       isLoading: false,
-      firstLoading: true,
+      firstLoading: false,
     }; 
   }
   componentWillMount(){  
-    ApiService.timeoutRequest(AsyncStorage.getItem(keyStore),5000).then(data => {
-  
-      if(data !=null) {
-        
-        Global.userInfo = JSON.parse(data)
-        this.props.navigation.navigate(MainScreen);
-      }
-      this.setState({
-        firstLoading: false
-      })
-    }).catch(_ => {
-      Global.userInfo =null
-      this.setState({
-        firstLoading: false
-      })
-    });
-  }
-  onLogin(){
-    this.setState({
-      isLoading: true
-    })
-    const { username, password } = this.state;
-    authService.login(username,password).then((data) => { 
-      this.props.navigation.navigate(MainScreen);
-      this.setState({
-        isLoading: false
-      })
-    }).catch(err => {
-      Notifiy.warning(STRINGS.SIGNIN.messageLogin);
-      this.setState({
-        isLoading: false
-      })
-    })
+   
   }
    onSignIn() {
     this.setState({
       isLoading: true
     })
     const { username, password } = this.state;
-      authService.signIn(username,password).then( async data => { 
-      Global.userInfo = data.res;
-      // Global.HOST = 'http://swm-lb.gogoviet.com/api/';
-      ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(data.res)),5000);
-      this.props.navigation.navigate(MainScreen);
+      authService.login(username,password).then(  data => { 
+        alert(JSON.stringify(data))
       this.setState({
         isLoading: false
       })
@@ -124,7 +87,7 @@ class SignInComponent extends Component {
         >
           <Text style={buttonText}>{STRINGS.SIGNIN.fogotPassword}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={bigButton} onPress={this.onLogin.bind(this)}>
+        <TouchableOpacity style={bigButton} onPress={this.onSignIn.bind(this)}>
           <Text style={buttonText}>{STRINGS.SIGNIN.signIn}</Text>
         </TouchableOpacity>
       </Container>
@@ -132,4 +95,4 @@ class SignInComponent extends Component {
   }
 }
 
-export default SignInComponent;
+export default TetAuthen;

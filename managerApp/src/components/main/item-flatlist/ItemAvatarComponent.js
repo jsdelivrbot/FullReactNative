@@ -1,39 +1,31 @@
 import React, { Component } from 'react'
-
+import { Alert } from 'react-native'
 import { ColorsChart,  } from '../../../common/Color';
-import { Button, ListItem, Body, Right,Text, Left, Thumbnail, SwipeRow, Icon, View } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Button, ListItem, Body, Right,Text, Left, Thumbnail, SwipeRow, View } from 'native-base';
 
 export default class ItemAvatarComponent extends Component {
     render() {
-        const btnActive = <Button success style={{ height: 20 }}>
-                              <Text style={{ fontSize: 7 }}>Active </Text>
-                          </Button>
-      const btnWaitActive = <Button warning style={{ height: 20 }}>
-                          <Text style={{ fontSize: 7 }}>Active </Text>
-                        </Button>
-      const logoBadge = 'S';
-      const rdColor = Math.floor(Math.random()*100) % ColorsChart.length;
-  
-      let cityname = this.props.item.cityname || '';
       return (
         <SwipeRow
         style={{ backgroundColor: "#9370DB" }}
+        swipeToOpenPercent= {false}
         leftOpenValue={75}
         rightOpenValue={-75}
         left={
-          <Button success onPress={() => alert("Add")}>
-            <Icon active name="add" style={{ color: "#FFF" }} />
+          <Button success onPress={this.props.onEdit}>
+            <Icon active name="pencil" style={{ color: "#FFF",fontSize:20  }} />
           </Button>
         }
         right={
-          <Button danger onPress={() => alert("Trash")}>
-            <Icon active name="trash" />
+          <Button danger onPress={this.props.onDelete}>
+            <Icon active name="trash" style={{ color: "#FFF",fontSize:20 }}/>
           </Button>
         }
         body={
           <View style={{ paddingLeft: 20 }}>
             <Text style={{ color: "#FFF" }}>
-              Swipe me to left and right
+              {this.props.item.name}
             </Text>
           </View>
         }

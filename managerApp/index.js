@@ -6,6 +6,6 @@ import TestListComponent from './src/components/main/test-component/TestListComp
 import TestLoginComponent from './src/components/main/test-component/TestLoginComponent';
 import RNChart from './src/components/main/test-component/RNChart';
 import SystemMailComponent from './src/components/main/master-data/system-mail/SystemMailComponent';
-
+import TesAuthen from './src/components/autentication/TestAuthen';
 console.disableYellowBox = true;
-AppRegistry.registerComponent('managerApp', () => SystemMailComponent);
+AppRegistry.registerComponent('managerApp', () =>App);

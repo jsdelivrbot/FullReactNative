@@ -19,9 +19,9 @@ export default class HeaderComponent extends Component {
                     </Button>
                 </Left>
                 <Right>
-                    <Button transparent >
+                    {/* <Button transparent >
                         <Icon name='search'/>
-                    </Button>
+                    </Button> */}
                 </Right>
                 
             </Header>

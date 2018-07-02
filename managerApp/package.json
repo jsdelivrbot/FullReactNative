@@ -23,8 +23,10 @@
     "react-native": "0.55.4",
     "react-native-charts-wrapper": "^0.4.3",
     "react-native-localization": "^1.0.9",
+    "react-native-swipeout": "^2.3.3",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "^2.1.0"
+    "react-navigation": "^2.1.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

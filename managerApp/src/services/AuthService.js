@@ -19,12 +19,13 @@ import {
 import {
     Notifiy
 } from '../common/Notify';
+import { APIREQUEST } from './ApiRequest';
 export class AuthService {
     constructor() {
         if (!Global.userInfo) {
             AsyncStorage.getItem(keyStore).then(data => {
-                if(data!=null){
-                    Global.userInfo =JSON.parse(data)
+                if (data != null) {
+                    Global.userInfo = JSON.parse(data)
                 }
             }).catch(_ => Global.userInfo = null);
         }
@@ -36,32 +37,30 @@ export class AuthService {
                 password
             })
         }
-        return ApiService.post(APIRESOURCE.SIGNIN, data);
+        return ApiService.post(APIRESOURCE.USER.SIGNIN, data);
     }
-    login(username,password) {
+    login(username, password) {
         return new Promise((resolve, reject) => {
-            ApiService.postNoTimeOut('Users/signin', {
+            ApiService.post(APIRESOURCE.USER.SIGNIN, {
                 obj: JSON.stringify({ username, password })
-            }).then(response => {
-                
-                let data1 = response.json().res;
-                alert(JSON.stringify(data1))
-                ApiService.post('Users/aftersignin', {
+            }).then(res => {
+                let data1 = res.res;
+                ApiService.post(APIRESOURCE.USER.AFTERSIGNIN, {
                     obj: JSON.stringify({
                         token: data1.token.id,
                         username: data1.user.username,
-                        appcode: 'wms',
+                        appcode: Global.appcode.wms,
                         type: data1.user.type
                     })
                 }).then(response => {
-                    alert(JSON.stringify(response))
-                    let data2 = response.json().res;
+
+                    let data2 = response.res;
                     if (!data2.owner || data2.owner.length === 0) {
                         throw 'NO_OWNER';
                     } else if (!data2.warehouse || data2.warehouse.length === 0) {
                         throw 'NO_WAREHOUSE';
                     } else {
-                        Global.user = {
+                        Global.userInfo = {
                             token: data1.token.id,
                             parentuser: data1.user.parentuser,
                             username: data1.user.username,
@@ -70,22 +69,16 @@ export class AuthService {
                             tel: data1.user.tel,
                             type: data1.user.type,
                             owners: data2.owner,
-                            strOwners: data2.owner.map(owner => `'${owner.storerkey}'`).join(),
                             warehouses: data2.warehouse,
                             whseid: data2.warehouse[0].warehousecode,
                             warehousename: data2.warehouse[0].warehousename
                         };
-                        //ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(Global.user)),5000);
-                        resolve();
+                        ApiService.timeoutRequest( AsyncStorage.setItem(keyStore,JSON.stringify(Global.userInfo)),8000);
+                        resolve(Global.userInfo);
                     }
-                }).catch(err => {
-                    reject(err);
-                });
-            }).catch(err => {
-                reject(err);
-            });
-        });
-
+                }).catch(err => reject(err))
+            }).catch(err => reject(err))
+        })
     }
 
 }
